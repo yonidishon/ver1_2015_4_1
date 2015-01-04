@@ -1,6 +1,11 @@
 function [result, resultD] = PCA_Motion_Saliency_Core(fx,fy,I_RGB)
 
-resultD = globalDistinctness(fx,fy,I_RGB);
+nanIdx = isnan(fx) || isnan(fy);
+fx(nanIdx) = 0;
+fy(nanIdx) = 0;
+rad = sqrt(fx.^2+fy.^2); 
+alpha = atan2(-fx, -fy)/pi;
+resultD = globalDistinctness(alpha,rad,I_RGB);
 C = zeros(11,2);
 Cw = zeros(11,1);
 idx=1;
@@ -11,7 +16,7 @@ for th=1:-0.1:0.1
     Cw(idx) = th;
     idx=idx+1;
 end
-% just comment
+
 C(11,:) = round([size(resultD,2)/2 size(resultD,1)/2]);
 Cw(11) = 5;
 [X Y] = meshgrid(1:size(resultD,2),1:size(resultD,1));
@@ -21,7 +26,7 @@ result = stableNormalize(resultD.*W);
 resultD = stableNormalize(resultD);
 end
 
-function [result] = globalDistinctness(fx,fy,I_RGB)
+function [result] = globalDistinctness(a,rad,I_RGB)
 
 orgSize=size(I_RGB);
 orgSize=orgSize(1:2);
@@ -31,7 +36,7 @@ stDistinc = zeros(orgSize(1),orgSize(2),numOfLevels);
 Pyramid = I_RGB;
 
 for pInd=1:numOfLevels
-    ST  = globalDiff(fx,fy,Pyramid);
+    ST  = globalDiff(a,rad,Pyramid);
     stDistinc(:,:,pInd) = imresize(ST,orgSize,'bicubic');
     %clDistinc(:,:,pInd) = imresize(CL,orgSize,'bicubic');
     Pyramid = impyramid(Pyramid, 'reduce');
@@ -50,7 +55,7 @@ out = imfill(stResult);
 %result = stableNormalize(clResult.*out);
 result = stableNormalize(out);
 end
-function [sDiffMap] = globalDiff(fx,fy,I_RGB)
+function [sDiffMap] = globalDiff(a,rad,I_RGB)
 I_LAB = single(rgb2lab(I_RGB));
 imSize = size(I_LAB);
 imSize=imSize(1:2);
@@ -72,13 +77,13 @@ spm = [L_SPM' A_SPM B_SPM];
 STATSA = regionprops(SEGMENTS,I_LAB(:,:,2).^2,'MeanIntensity');
 STATSB = regionprops(SEGMENTS,I_LAB(:,:,3).^2,'MeanIntensity');
 
-[sErrorL_fx,sErrorL_fy]=structDifference(fx,fy,L_SPM,STATS2,SEGMENTS,numOfSegments,imSize);
+[sErrorL_fx,sErrorL_fy]=structDifference(a,rad,L_SPM,STATS2,SEGMENTS,numOfSegments,imSize);
 sErrorL_fx = discardEdges(stableNormalize(sErrorL_fx));
 sErrorL_fy = discardEdges(stableNormalize(sErrorL_fy));
-[sErrorA_fx,sErrorA_fy]=structDifference(fx,fy,A_SPM',STATSA,SEGMENTS,numOfSegments,imSize);
+[sErrorA_fx,sErrorA_fy]=structDifference(a,rad,A_SPM',STATSA,SEGMENTS,numOfSegments,imSize);
 sErrorA_fx = discardEdges(stableNormalize(sErrorA_fx));
 sErrorA_fy = discardEdges(stableNormalize(sErrorA_fy));
-[sErrorB_fx,sErrorB_fy]=structDifference(fx,fy,B_SPM',STATSB,SEGMENTS,numOfSegments,imSize);
+[sErrorB_fx,sErrorB_fy]=structDifference(a,rad,B_SPM',STATSB,SEGMENTS,numOfSegments,imSize);
 sErrorB_fx = discardEdges(stableNormalize(sErrorB_fx));
 sErrorB_fy = discardEdges(stableNormalize(sErrorB_fy));
 
@@ -108,19 +113,19 @@ avg = [STATS.MeanIntensity];
 end
 
 
-function [sError_fx,sError_fy] = structDifference(fx,fy,L_SPM,STATS2,SEGMENTS,numOfSegments,imSize)
+function [sError_fx,sError_fy] = structDifference(a,rad,L_SPM,STATS2,SEGMENTS,numOfSegments,imSize)
 sPixelVar=[STATS2.MeanIntensity]-(L_SPM).^2; %Calc variance
-[~,IX] = sort(sPixelVar,'descend');
-IX = (IX(1:round(numOfSegments/4)));
+[~,IX] = sort(sPixelVar,'descend'); % getting indices of pixels in variance in descending order
+IX = (IX(1:round(numOfSegments/4))); % narrow to highest 25% indices
 SOI = ismember(SEGMENTS, IX);
 clear SEGMENTS;
 IX = (find(SOI));
 if (~strcmp(mexext,'mexw64'))
-    pVecL_fx = im2col(padarray(double(fx),[4 4],'replicate'),[7 7],'sliding')';
-     pVecL_fy = im2col(padarray(double(fy),[4 4],'replicate'),[7 7],'sliding')';
+    pVecL_fx = im2col(padarray(double(a),[4 4],'replicate'),[7 7],'sliding')';
+     pVecL_fy = im2col(padarray(double(rad),[4 4],'replicate'),[7 7],'sliding')';
 else
-    pVecL_fx = im2colstep(padarray(double(fx),[4 4],'replicate'),[7 7])';
-    pVecL_fy = im2colstep(padarray(double(fy),[4 4],'replicate'),[7 7])';
+    pVecL_fx = im2colstep(padarray(double(a),[4 4],'replicate'),[7 7])';
+    pVecL_fy = im2colstep(padarray(double(rad),[4 4],'replicate'),[7 7])';
 end
 Lm_fx = repmat(mean(pVecL_fx,2),[1 size(pVecL_fx,2)]);
 Lm_fy = repmat(mean(pVecL_fy,2),[1 size(pVecL_fy,2)]);
