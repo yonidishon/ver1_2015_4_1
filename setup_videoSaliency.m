@@ -21,7 +21,8 @@ saveRoot = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0';
 proj_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0';
 saliency_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
 result_dir = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0\cache';
-lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2014_12_31'; % Y:\ is CGM10
+lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_01_04'; % Y:\ is CGM10
+%lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2014_12_31'; % Y:\ is CGM10
 %-------------------------------------------------------------------------%
 
 % Local Folders creation

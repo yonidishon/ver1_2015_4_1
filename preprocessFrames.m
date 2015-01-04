@@ -57,6 +57,19 @@ for ifr = 1:nfr
             data.image = read(vr, ind);
             save(cacheFile, 'data');
         end
+        % motion
+        if ((~isfield(s.data,'ofx')) || (~isfield(s.data,'ofy')))
+            % 1st or second frame no data on optical flow
+            if ind==1 || ind==2
+                [data.ofx, data.ofy]=deal(zeros(size(f)));
+                save(cacheFile, 'data');
+            else
+                fp = read(vr, ind - 2);
+                [data.ofx, data.ofy] = Coarse2FineTwoFrames(f, fp, ofParam);
+                save(cacheFile, 'data');
+            end
+        end
+    
 %         if (~isfield(s.data, 'saliencyPqft')) % there is no PQFT data add it
 %             if (ind > 3)
 %                 img_3 = read(vr, ind - 3);
@@ -80,6 +93,11 @@ for ifr = 1:nfr
             data.saliencyPCA = PCA_Saliency(data.image);
             save(cacheFile, 'data');
         end
+        if (~isfield(s.data, 'saliencyMotionPCA')) % there is no Motion PCA saliency data - add it
+            data.saliencyMotionPCA = PCA_Motion_Saliency(data.ofx,data.ofy,data.image);
+            save(cacheFile, 'data');
+        end
+        
         if (~isfield(s.data, 'saliencyGBVS')) % there is no PCA saliency data - add it
             fg = rgb2gray(data.image);
             if ((max(fg(:)) - min(fg(:))) < 40 || sum(imhist(fg) == 0) > 200) % not contrast enough
@@ -103,17 +121,20 @@ for ifr = 1:nfr
         if (~isfield(s.data,'objectness'))
             data.objectness=computeObjectnessmap(data.image);
         end
-        if (~isfield(s.data,'segments'))
-            if (size(data.image,3)==1) % grayscale image is treated as colored
-                I_RGB=repmat(data.image,[1 1 3]);
-                I_LAB = single(rgb2lab(I_RGB));
-            else
-                I_LAB = single(rgb2lab(data.image));
-            end
-            SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
-            [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
-            data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
+        if (~isfield(s.data,'Fused_Saliency'))
+            data.Fused_Saliency=data.saliencyMotionPCA*data.saliencyPCA;
         end
+%         if (~isfield(s.data,'segments'))
+%             if (size(data.image,3)==1) % grayscale image is treated as colored
+%                 I_RGB=repmat(data.image,[1 1 3]);
+%                 I_LAB = single(rgb2lab(I_RGB));
+%             else
+%                 I_LAB = single(rgb2lab(data.image));
+%             end
+%             SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
+%             [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
+%             data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
+%         end
         %data.saliencyGBVS = data.saliency;
         clear s;
         frs{ifr} = data;
@@ -138,21 +159,24 @@ for ifr = 1:nfr
     %Objectness
     data.objectness=computeObjectnessmap(data.image);         
     
-    %SLIC
-    if (size(data.image,3)==1) % grayscale image is treated as colored
-        I_RGB=repmat(data.image,[1 1 3]);
-        I_LAB = single(rgb2lab(I_RGB));
-    else
-        I_LAB = single(rgb2lab(data.image));
-    end
-    SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
-    [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
-    data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
+%     %SLIC
+%     if (size(data.image,3)==1) % grayscale image is treated as colored
+%         I_RGB=repmat(data.image,[1 1 3]);
+%         I_LAB = single(rgb2lab(I_RGB));
+%     else
+%         I_LAB = single(rgb2lab(data.image));
+%     end
+%     SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
+%     [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
+%     data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
     
     %%%%% static saliency %%%%%%
     
     % PCA saliency
     data.saliencyPCA = PCA_Saliency(data.image);
+    
+    %%%%% Motion saliency %%%%%%
+    data.saliencyMotionPCA = PCA_Motion_PCA(data.ofx,data.ofy,data.image);
     
 %%%%%%%%% OTHER SALIENCY METHODS (ALREADY COMPUTED BY DIMA ON DIEM)%%%%%%%%
 %     % GBVS saliency
@@ -197,6 +221,9 @@ for ifr = 1:nfr
     data.index = frIdx;
     data.videoName = vr.name;
     %data.saliencyGBVS = data.saliency;
+    
+    % fusion Saliency map
+    data.Fused_Saliency=data.saliencyMotionPCA*data.saliencyPCA;
     
     % save
     frs{ifr} = data;

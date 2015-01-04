@@ -46,9 +46,11 @@ gazeParam.pointSigma = 10;
 videos = videoListLoad(DataRoot, 'DIEM');
 nv = length(videos);
 
-testIdx = 1:nv;
-testSubset = 1:length(testIdx);
+% testIdx = 1:nv;
+% testSubset = 1:length(testIdx);
 % testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % used by Borji
+testIdx = [8,34,42,44,48,53,54,55,59,70,74,83,84]; % limited run 4/1/2015
+testSubset = 1:length(testIdx);
 % testSubset = 11:length(testIdx);
 % testSubset = 9;
 % jumpFromType = 'prev-int'; % 'center', 'gaze', 'prev-cand', 'prev-int'
