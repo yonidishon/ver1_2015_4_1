@@ -11,7 +11,7 @@ for th=1:-0.1:0.1
     Cw(idx) = th;
     idx=idx+1;
 end
-
+% just comment
 C(11,:) = round([size(resultD,2)/2 size(resultD,1)/2]);
 Cw(11) = 5;
 [X Y] = meshgrid(1:size(resultD,2),1:size(resultD,1));
