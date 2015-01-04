@@ -62,7 +62,7 @@ for ifr = 1:nfr
         if ((~isfield(s.data,'ofx')) || (~isfield(s.data,'ofy')))
             % 1st or second frame no data on optical flow
             if ind==1 || ind==2
-                [data.ofx, data.ofy]=deal(zeros(size(f)));
+                [data.ofx, data.ofy]=deal(zeros(size(f,1),size(f,2)));
                 save(cacheFile, 'data');
             else
                 fp = read(vr, ind - 2);
@@ -151,7 +151,7 @@ for ifr = 1:nfr
     % motion
     % 1st or second frame no data on optical flow
     if ind==1 || ind==2 
-        [data.ofx, data.ofy]=deal(zeros(size(f)));
+        [data.ofx, data.ofy]=deal(zeros(size(f,1),size(f,2)));
     else
         fp = read(vr, ind - 2);
         [data.ofx, data.ofy] = Coarse2FineTwoFrames(f, fp, ofParam);
@@ -177,7 +177,7 @@ for ifr = 1:nfr
     data.saliencyPCA = PCA_Saliency(data.image);
     
     %%%%% Motion saliency %%%%%%
-    data.saliencyMotionPCA = PCA_Motion_PCA(data.ofx,data.ofy,data.image);
+    data.saliencyMotionPCA = PCA_Motion_Saliency(data.ofx,data.ofy,data.image);
     
 %%%%%%%%% OTHER SALIENCY METHODS (ALREADY COMPUTED BY DIMA ON DIEM)%%%%%%%%
 %     % GBVS saliency

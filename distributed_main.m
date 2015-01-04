@@ -35,7 +35,7 @@ methods = {'PCA','Dimtry','self', 'center', 'GBVS', 'PQFT', 'Hou'};
 cache.frameRoot = fullfile(saveRoot, 'cache');
 % cache.featureRoot = fullfileCreate(cache.root, '00_features_v6');
 % cache.gazeRoot = fullfileCreate(cache.root, '00_gaze');
-cache.renew = false; %true; % use in case the preprocessing mechanism updated
+cache.renew = true;%false; %true; % use in case the preprocessing mechanism updated
 % cache.renewFeatures = true; % use in case the feature extraction is updated
 % cache.renewJumps = true; % recalculate the final result
 
@@ -49,7 +49,7 @@ nv = length(videos);
 % testIdx = 1:nv;
 % testSubset = 1:length(testIdx);
 testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % used by Borji
-testSubset = 1:length(testIdx); %comment
+testSubset = 1:length(testIdx);
 % testSubset = 11:length(testIdx);
 % testSubset = 9;
 % jumpFromType = 'prev-int'; % 'center', 'gaze', 'prev-cand', 'prev-int'

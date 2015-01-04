@@ -1,6 +1,6 @@
 function [result, resultD] = PCA_Motion_Saliency_Core(fx,fy,I_RGB)
 UNKNOWN_FLOW_THRESH=1e9;
-idxUnknown = (abs(u)> UNKNOWN_FLOW_THRESH) | (abs(v)> UNKNOWN_FLOW_THRESH) ;
+idxUnknown = (abs(fx)> UNKNOWN_FLOW_THRESH) | (abs(fy)> UNKNOWN_FLOW_THRESH) ;
 fx(idxUnknown) = 0;
 fy(idxUnknown) = 0;
 rad = sqrt(fx.^2+fy.^2); 
@@ -98,7 +98,7 @@ clear STATSA STATSB;
 %reconError = sErrorL+sErrorA+sErrorB;
 reconError = sErrorL_fx+sErrorL_fy+sErrorA_fx+sErrorA_fy+sErrorB_fx+sErrorB_fy;
 rErrorMap=min(reconError(:)) .* ones(imSize);
-rErrorMap(5:(end-4),5:(end-4))=reconError(5:(end-4),5:(end-4));
+rErrorMap(4:(end-3),4:(end-3))=reconError(4:(end-3),4:(end-3));
 
 sDiffMap = rErrorMap;
 
@@ -112,7 +112,7 @@ end
 
 function result = discardEdges(map)
 result=min(map(:)) .* ones(size(map));
-result(5:(end-4),5:(end-4))=map(5:(end-4),5:(end-4));
+result(4:(end-3),4:(end-3))=map(4:(end-3),4:(end-3));
 end
 function [avg] = segAvg(SEGMENTS,map)
 STATS = regionprops(SEGMENTS,map,'MeanIntensity','PixelValues');
@@ -128,11 +128,11 @@ SOI = ismember(SEGMENTS, IX);
 clear SEGMENTS;
 IX = (find(SOI));
 if (~strcmp(mexext,'mexw64'))
-    pVecL_fx = im2col(padarray(double(a),[4 4],'replicate'),[7 7],'sliding')';
-     pVecL_fy = im2col(padarray(double(rad),[4 4],'replicate'),[7 7],'sliding')';
+    pVecL_fx = im2col(padarray(double(a),[3 3],'replicate'),[7 7],'sliding')';
+     pVecL_fy = im2col(padarray(double(rad),[3 3],'replicate'),[7 7],'sliding')';
 else
-    pVecL_fx = im2colstep(padarray(double(a),[4 4],'replicate'),[7 7])';
-    pVecL_fy = im2colstep(padarray(double(rad),[4 4],'replicate'),[7 7])';
+    pVecL_fx = im2colstep(padarray(double(a),[3 3],'replicate'),[7 7])';
+    pVecL_fy = im2colstep(padarray(double(rad),[3 3],'replicate'),[7 7])';
 end
 Lm_fx = repmat(mean(pVecL_fx,2),[1 size(pVecL_fx,2)]);
 Lm_fy = repmat(mean(pVecL_fy,2),[1 size(pVecL_fy,2)]);
