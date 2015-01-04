@@ -2,8 +2,8 @@
 %% directories
 global dropbox;
 global gdrive;
-dropbox = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0\Dimarudoy_saliency\Dropbox';
-gdrive = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0\Dimarudoy_saliency\GDrive';
+dropbox = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency\Dropbox';
+gdrive = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency\GDrive';
 % dataRoot = 'C:\Users\dmitryr\Documents\Dima Adobe\mturk\results';
 % frameRoot = 'C:\Users\dmitryr\Documents\Dima Adobe\DIEM\frames';
 % saveRoot = 'C:\Users\dmitryr\Documents\Dima Adobe\mturk\save';
@@ -46,8 +46,8 @@ addpath(proj_dir);
 addpath(genpath(fullfile(gdrive, 'Software', 'dollar_261')));
 
 %% toolboxes
-addpath(genpath(fullfile(proj_dir, 'objectness'))); % objectness
-addpath(genpath(fullfile(proj_dir,'PCA_Saliency'))); % PCA saliency
+addpath(genpath(fullfile(proj_dir,'toolbox', 'objectness'))); % objectness
+addpath(genpath(fullfile(proj_dir,'toolbox','PCA_Saliency'))); % PCA saliency
 addpath(fullfile(gdrive, 'Software', 'OpticalFlow')); % optical flow
 addpath(fullfile(gdrive, 'Software', 'OpticalFlow\mex'));
 % addpath(fullfile(gdrive, 'Software', 'randomforest-matlab', 'RF_Class_C')); % random forests

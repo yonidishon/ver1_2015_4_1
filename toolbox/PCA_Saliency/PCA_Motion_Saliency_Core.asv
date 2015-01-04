@@ -1,5 +1,5 @@
 function [result, resultD] = PCA_Motion_Saliency_Core(fx,fy,I_RGB)
-
+idxUnknown = (abs(u)> UNKNOWN_FLOW_THRESH) | (abs(v)> UNKNOWN_FLOW_THRESH) ;
 nanIdx = isnan(fx) || isnan(fy);
 fx(nanIdx) = 0;
 fy(nanIdx) = 0;
@@ -156,6 +156,10 @@ end
 function valueMap = stableNormalize(valueMap)
     sortVMap = sort(valueMap(:),'descend');
     sortVMap(isnan(sortVMap))=[];
+    if max(sortVMap) == 0 && min(sortVMap)==0
+        valueMap=zeros(size(valueMap));
+        return;
+    end
     valueMap = valueMap./mean(sortVMap(1:max(round(numel(sortVMap)*.01),1)));
     valueMap(valueMap>1)=1;
 end

@@ -27,7 +27,8 @@ function boxes = runObjectness(img,numberSamples,params)
 %boxes - samples windows from the objectness measure
 %      - each row contains a window using the format [xmin ymin xmax ymax score]
 
-dir_root = pwd;%change this to an absolute path
+%dir_root = pwd;%change this to an absolute path
+dir_root = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0\toolbox\objectness\objectness-release-v2.2';
 
 img = gray2rgb(img);
 

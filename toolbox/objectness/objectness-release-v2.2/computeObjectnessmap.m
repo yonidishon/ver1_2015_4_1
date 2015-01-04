@@ -19,5 +19,5 @@ boxes = runObjectness(im,numberSamples);
 %toc
 %figure,imshow(imgExample),drawBoxes(boxes);
 %figure;
-objHeatMap = computeObjectnessHeatMap(im,boxes);
+objHeatMap = computeObjectnessHeatMap_modified(im,boxes);
 end

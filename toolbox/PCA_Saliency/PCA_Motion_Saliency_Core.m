@@ -1,8 +1,8 @@
 function [result, resultD] = PCA_Motion_Saliency_Core(fx,fy,I_RGB)
-
-nanIdx = isnan(fx) || isnan(fy);
-fx(nanIdx) = 0;
-fy(nanIdx) = 0;
+UNKNOWN_FLOW_THRESH=1e9;
+idxUnknown = (abs(u)> UNKNOWN_FLOW_THRESH) | (abs(v)> UNKNOWN_FLOW_THRESH) ;
+fx(idxUnknown) = 0;
+fy(idxUnknown) = 0;
 rad = sqrt(fx.^2+fy.^2); 
 alpha = atan2(-fx, -fy)/pi;
 resultD = globalDistinctness(alpha,rad,I_RGB);
@@ -12,6 +12,13 @@ idx=1;
 for th=1:-0.1:0.1
     bw = resultD>=th;
     STATS =regionprops(uint8(bw),'centroid','Area');
+    if isempty(STATS) % no objects in the image
+        % best guess is a center-bias
+        C(idx,:)=round([size(resultD,2)/2 size(resultD,1)/2]);
+        Cw(idx)=th;
+        idx=idx+1;
+        continue;
+    end
     C(idx,:) = round(reshape([STATS.Centroid],2,[])');
     Cw(idx) = th;
     idx=idx+1;
@@ -156,6 +163,10 @@ end
 function valueMap = stableNormalize(valueMap)
     sortVMap = sort(valueMap(:),'descend');
     sortVMap(isnan(sortVMap))=[];
+    if max(sortVMap) == 0 && min(sortVMap)==0
+        valueMap=zeros(size(valueMap));
+        return;
+    end
     valueMap = valueMap./mean(sortVMap(1:max(round(numel(sortVMap)*.01),1)));
     valueMap(valueMap>1)=1;
 end

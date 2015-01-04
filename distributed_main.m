@@ -48,9 +48,8 @@ nv = length(videos);
 
 % testIdx = 1:nv;
 % testSubset = 1:length(testIdx);
-% testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % used by Borji
-testIdx = [8,34,42,44,48,53,54,55,59,70,74,83,84]; % limited run 4/1/2015
-testSubset = 1:length(testIdx);
+testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % used by Borji
+testSubset = 1:length(testIdx); %comment
 % testSubset = 11:length(testIdx);
 % testSubset = 9;
 % jumpFromType = 'prev-int'; % 'center', 'gaze', 'prev-cand', 'prev-int'
@@ -127,6 +126,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         warning('Run failed on %s- check log!',videos{iv});
         warnNum=warnNum+1;
         if warnNum>=3
+            diary off;
+            fclose(fileID);
             error('Run failed on 3 files aborting run on comp %s',getComputerName());
         end
     end

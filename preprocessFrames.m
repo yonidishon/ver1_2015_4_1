@@ -44,6 +44,7 @@ end
 
 nfr = length(frIdx);
 frs = cell(nfr, 1);
+NUMWINDOBJ=1000;
 
 for ifr = 1:nfr
     ind = frIdx(ifr);
@@ -119,10 +120,10 @@ for ifr = 1:nfr
             save(cacheFile, 'data');
         end
         if (~isfield(s.data,'objectness'))
-            data.objectness=computeObjectnessmap(data.image);
+            data.objectness=computeObjectnessmap(data.image,NUMWINDOBJ);
         end
         if (~isfield(s.data,'Fused_Saliency'))
-            data.Fused_Saliency=data.saliencyMotionPCA*data.saliencyPCA;
+            data.Fused_Saliency=data.saliencyMotionPCA.*data.saliencyPCA;
         end
 %         if (~isfield(s.data,'segments'))
 %             if (size(data.image,3)==1) % grayscale image is treated as colored
@@ -134,7 +135,7 @@ for ifr = 1:nfr
 %             SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
 %             [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
 %             data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
-%         end
+%         end %just comment
         %data.saliencyGBVS = data.saliency;
         clear s;
         frs{ifr} = data;
@@ -157,7 +158,7 @@ for ifr = 1:nfr
     end
     
     %Objectness
-    data.objectness=computeObjectnessmap(data.image);         
+    data.objectness=computeObjectnessmap(data.image,NUMWINDOBJ);         
     
 %     %SLIC
 %     if (size(data.image,3)==1) % grayscale image is treated as colored
@@ -223,7 +224,7 @@ for ifr = 1:nfr
     %data.saliencyGBVS = data.saliency;
     
     % fusion Saliency map
-    data.Fused_Saliency=data.saliencyMotionPCA*data.saliencyPCA;
+    data.Fused_Saliency=data.saliencyMotionPCA.*data.saliencyPCA;
     
     % save
     frs{ifr} = data;
