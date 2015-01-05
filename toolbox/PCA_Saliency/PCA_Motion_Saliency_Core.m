@@ -47,6 +47,8 @@ for pInd=1:numOfLevels
     stDistinc(:,:,pInd) = imresize(ST,orgSize,'bicubic');
     %clDistinc(:,:,pInd) = imresize(CL,orgSize,'bicubic');
     Pyramid = impyramid(Pyramid, 'reduce');
+    a = impyramid(a, 'reduce');
+    rad = impyramid(rad, 'reduce');
 end
 
 stDistinc(stDistinc<0)=0;
