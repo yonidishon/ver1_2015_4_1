@@ -133,8 +133,7 @@ for ifr = 1:nfr
             save(cacheFile, 'data');
         end
         
-        %if ~isfield(s.data,'saliencyDIMA') && predflag ; %CommentYD
-        if predflag
+        if ~isfield(s.data,'saliencyDIMA') && predflag ;
             data.saliencyDIMA=DIMAPredmat.predMaps(:,:,find(DIMAPredmat.frames(1,:)==ind));
             save(cacheFile, 'data');
         end

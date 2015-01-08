@@ -22,14 +22,14 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v0\';
+finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v2\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
 measures = {'chisq', 'auc'};
-methods = {'PCA','self','center','Dima','GBVS','PQFT'};
+methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -160,7 +160,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             sim = zeros(length(methods), length(measures), length(indFr));
             for ifr = 1:length(indFr)
                 fr = preprocessFrames(param.videoReader, jumpFrames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
-                predMaps(:,:,ifr)=fr.Fused_Saliency;
+                %predMaps(:,:,ifr)=fr.Fused_Saliency;
+                predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCA);
                 gazeData.index = jumpFrames(indFr(ifr));
                 %%%%%%%%%%%%%%%%%%%%%%%%% YONATAN 28/12/2014%%%%%%%%%%%%%%%%%%%%%
                 % Dimtry's results aren't obtain for the video visualization but
@@ -172,7 +173,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                     struct('method', 'center', 'cov', [(n/16)^2, 0; 0, (n/16)^2]), ...
                     struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA), ...
                     struct('method', 'saliency_GBVS', 'map', fr.saliencyGBVS), ...
-                    struct('method', 'saliency_PQFT', 'map', fr.saliencyPqft));
+                    struct('method', 'saliency_PCAM', 'map', fr.saliencyMotionPCA));
                 %             [sim{i}(:,:,ifr), outMaps, extra] = similarityFrame2(predMaps(:,:,indFr(ifr)), gazeParam.gazeData{frames(indFr(ifr))}, gazeParam.gazeData(frames(indFr([1:indFr(ifr)-1, indFr(ifr)+1:end]))), measures, ...
                 %                 'self', ...
                 %                 struct('method', 'center', 'cov', [(n/16)^2, 0; 0, (n/16)^2]), ...
@@ -200,7 +201,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         vidnameonly=strsplit(vr.name,'.');vidnameonly=vidnameonly{1};
         movieIdx=iv;
         save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx');
-        
+        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'jumpFrames', 'indFr', 'predMaps');
         % Finish processing saving and moving on
         dosave(lockfile,'success',1,'compname',getComputerName());
         video_count=video_count+1;
