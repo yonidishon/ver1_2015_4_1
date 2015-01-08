@@ -33,6 +33,25 @@ function frs = preprocessFrames(vr, frIdx, gbvsParam, ofParam, poseletModel, cac
 %       .index              frame index in video
 %       .videoName          video file name
 
+% TO RETRIVE INFORMATION FROM THE DIMTRY CACHE YD %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+if ~strcmp('cgm41',getComputerName())
+    DIMAResultFolder='\\CGM41\Users\gleifman\Documents\DimaCode\DIEM\cache';
+    DIMAPredictFolder='\\CGM10\Users\ydishon\Documents\Video_Saliency\DimaResults\jump_test_v7';  
+else
+    DIMAResultFolder='C:\Users\gleifman\Documents\DimaCode\DIEM\cache';
+    DIMAPredictFolder='\\CGM10\Users\ydishon\Documents\Video_Saliency\DimaResults\jump_test_v7';
+end
+onlyname=strsplit(vr.Name,'.');
+onlyname=onlyname{1};
+DIMEPredvfile=fullfile(DIMAPredictFolder,sprintf('%s.mat',onlyname));
+predflag=0;
+if exist(DIMEPredvfile,'file')
+    DIMAPredmat=matfile(fullfile(DIMAPredictFolder,sprintf('%s.mat',onlyname)));
+    predflag=1;
+else
+    predflag=0;
+end
+% TO RETRIVE INFORMATION FROM THE DIMTRY CACHE YD %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 if (exist('cache', 'var'))
     cacheDir = fullfile(fullfile(cache.frameRoot, vr.Name));
     if (~exist(cacheDir, 'dir'))
@@ -43,7 +62,9 @@ else
 end
 
 nfr = length(frIdx);
-frs = cell(nfr, 1);
+if nargout~=0
+    frs = cell(nfr, 1);
+end
 NUMWINDOBJ=1000;
 
 for ifr = 1:nfr
@@ -70,28 +91,41 @@ for ifr = 1:nfr
                 save(cacheFile, 'data');
             end
         end
-    
-%         if (~isfield(s.data, 'saliencyPqft')) % there is no PQFT data add it
-%             if (ind > 3)
-%                 img_3 = read(vr, ind - 3);
-%                 [~, ~, saliencyMap] = PQFT_2(data.image, img_3, 'gaussian', 64, 'color');
-%                 data.saliencyPqft = saliencyMap;
-%             else
-%                 data.saliencyPqft = zeros(data.height, data.width);
-%             end
-%             save(cacheFile, 'data');
-%         end
-%         if (~isfield(s.data, 'saliencyHou')) % there is no Hou saliency add it
-%             data.saliencyHou = saliencyHouNips(data.image, gbvsParam.HouNips.W);
-%             save(cacheFile, 'data');
-%         end
+        DimaCacheFile=fullfile(DIMAResultFolder,vr.name,sprintf('frame_%06d.mat', ind));
+        DimaFlag=0;
+        if exist(DimaCacheFile,'file')
+            Dima_data=load(DimaCacheFile);
+            DimaFlag=1;
+        else
+            DimaFlag=0;
+        end
+        if (~isfield(s.data, 'saliencyPqft')) % there is no PQFT data add it
+            if DimaFlag && isfield(Dima_data.data,'saliencyPqft')
+                data.saliencyPqft = Dima_data.data.saliencyPqft;
+            elseif (ind > 3)
+                img_3 = read(vr, ind - 3);
+                [~, ~, saliencyMap] = PQFT_2(data.image, img_3, 'gaussian', 64, 'color');
+                data.saliencyPqft = saliencyMap;
+            else
+                data.saliencyPqft = zeros(data.height, data.width);
+            end
+            save(cacheFile, 'data');
+        end
+        if (~isfield(s.data, 'saliencyHou')) % there is no Hou saliency add it
+            if DimaFlag && isfield(Dima_data.data,'saliencyHou')
+                data.saliencyHou =Dima_data.data.saliencyHou;
+            else
+                data.saliencyHou = saliencyHouNips(data.image, gbvsParam.HouNips.W);
+            end
+            save(cacheFile, 'data');
+        end
         if (~isfield(s.data, 'index')) % add frame index
-            data.index = frIdx;
+            data.index = ind;
             data.videoName = vr.name;
             save(cacheFile, 'data');
         end
         if (~isfield(s.data, 'saliencyPCA')) % there is no PCA saliency data - add it
-            data.saliencyPCA = PCA_Saliency(data.image);
+            data.saliencyPCA = PCA_Saliency(data.image); 
             save(cacheFile, 'data');
         end
         if (~isfield(s.data, 'saliencyMotionPCA')) % there is no Motion PCA saliency data - add it
@@ -99,23 +133,34 @@ for ifr = 1:nfr
             save(cacheFile, 'data');
         end
         
+        %if ~isfield(s.data,'saliencyDIMA') && predflag ; %CommentYD
+        if predflag
+            data.saliencyDIMA=DIMAPredmat.predMaps(:,:,find(DIMAPredmat.frames(1,:)==ind));
+            save(cacheFile, 'data');
+        end
         if (~isfield(s.data, 'saliencyGBVS')) % there is no PCA saliency data - add it
-            fg = rgb2gray(data.image);
-            if ((max(fg(:)) - min(fg(:))) < 40 || sum(imhist(fg) == 0) > 200) % not contrast enough
-                data.saliencyGBVS = zeros(data.height, data.width);
+            if DimaFlag && isfield(Dima_data.data,'saliencyGBVS') 
+                data.saliencyGBVS =Dima_data.data.saliencyGBVS;
+            elseif DimaFlag && isfield(Dima_data.data,'saliency') % apperantly the same
+                data.saliencyGBVS =Dima_data.data.saliency;
             else
-                if (data.height < 128)
-                    scale = 2;
-                    ff = imresize(f, scale);
+                fg = rgb2gray(data.image);
+                if ((max(fg(:)) - min(fg(:))) < 40 || sum(imhist(fg) == 0) > 200) % not contrast enough
+                    data.saliencyGBVS = zeros(data.height, data.width);
                 else
-                    scale = 1;
-                    ff = data.image;
+                    if (data.height < 128)
+                        scale = 2;
+                        ff = imresize(f, scale);
+                    else
+                        scale = 1;
+                        ff = data.image;
+                    end
+                    salOut = gbvs(ff, gbvsParam);
+                    if (scale > 1)
+                        salOut.master_map_resized = imresize(salOut.master_map_resized, 1/scale);
+                    end
+                    data.saliencyGBVS = salOut.master_map_resized;
                 end
-                salOut = gbvs(ff, gbvsParam);
-                if (scale > 1)
-                    salOut.master_map_resized = imresize(salOut.master_map_resized, 1/scale);
-                end
-                data.saliencyGBVS = salOut.master_map_resized;
             end
             save(cacheFile, 'data');
         end
@@ -125,20 +170,22 @@ for ifr = 1:nfr
         if (~isfield(s.data,'Fused_Saliency'))
             data.Fused_Saliency=data.saliencyMotionPCA.*data.saliencyPCA;
         end
-%         if (~isfield(s.data,'segments'))
-%             if (size(data.image,3)==1) % grayscale image is treated as colored
-%                 I_RGB=repmat(data.image,[1 1 3]);
-%                 I_LAB = single(rgb2lab(I_RGB));
-%             else
-%                 I_LAB = single(rgb2lab(data.image));
-%             end
-%             SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
-%             [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
-%             data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
-%         end %just comment
-        %data.saliencyGBVS = data.saliency;
+        
+        %         if (~isfield(s.data,'segments'))
+        %             if (size(data.image,3)==1) % grayscale image is treated as colored
+        %                 I_RGB=repmat(data.image,[1 1 3]);
+        %                 I_LAB = single(rgb2lab(I_RGB));
+        %             else
+        %                 I_LAB = single(rgb2lab(data.image));
+        %             end
+        %             SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
+        %             [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
+        %             data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
+        %         end
         clear s;
-        frs{ifr} = data;
+        if nargout~=0
+            frs{ifr} = data;
+        end
         continue;
     end
     
@@ -150,7 +197,7 @@ for ifr = 1:nfr
     
     % motion
     % 1st or second frame no data on optical flow
-    if ind==1 || ind==2 
+    if ind==1 || ind==2
         [data.ofx, data.ofy]=deal(zeros(size(f,1),size(f,2)));
     else
         fp = read(vr, ind - 2);
@@ -158,19 +205,21 @@ for ifr = 1:nfr
     end
     
     %Objectness
-    data.objectness=computeObjectnessmap(data.image,NUMWINDOBJ);         
+    data.objectness=computeObjectnessmap(data.image,NUMWINDOBJ);
     
-%     %SLIC
-%     if (size(data.image,3)==1) % grayscale image is treated as colored
-%         I_RGB=repmat(data.image,[1 1 3]);
-%         I_LAB = single(rgb2lab(I_RGB));
-%     else
-%         I_LAB = single(rgb2lab(data.image));
-%     end
-%     SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
-%     [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
-%     data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
-    
+    %     %SLIC
+    %     if (size(data.image,3)==1) % grayscale image is treated as colored
+    %         I_RGB=repmat(data.image,[1 1 3]);
+    %         I_LAB = single(rgb2lab(I_RGB));
+    %     else
+    %         I_LAB = single(rgb2lab(data.image));
+    %     end
+    %     SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
+    %     [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
+    %     data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
+    if  predflag
+        data.saliencyDIMA=DIMAPredmat.predMaps(:,:,find(DIMAPredmat.frames(1,:)==ind));
+    end
     %%%%% static saliency %%%%%%
     
     % PCA saliency
@@ -179,39 +228,60 @@ for ifr = 1:nfr
     %%%%% Motion saliency %%%%%%
     data.saliencyMotionPCA = PCA_Motion_Saliency(data.ofx,data.ofy,data.image);
     
-%%%%%%%%% OTHER SALIENCY METHODS (ALREADY COMPUTED BY DIMA ON DIEM)%%%%%%%%
-%     % GBVS saliency
-%     fg = rgb2gray(f);
-%     if ((max(fg(:)) - min(fg(:))) < 40 || sum(imhist(fg) == 0) > 200) % not contrast enough
-%         data.saliencyGBVS = zeros(data.height, data.width);
-%     else
-%         if (data.height < 128)
-%             scale = 2;
-%             ff = imresize(f, scale);
-%         else
-%             scale = 1;
-%             ff = f;
-%         end
-%         
-%         salOut = gbvs(ff, gbvsParam);
-%         if (scale > 1)
-%             salOut.master_map_resized = imresize(salOut.master_map_resized, 1/scale);
-%         end
-%         data.saliencyGBVS = salOut.master_map_resized;
-%     end
-%     
-%     % PQFT saliency
-%     if (ind > 3)
-%         img_3 = read(vr, ind - 3);
-%         [~, ~, saliencyMap] = PQFT_2(data.image, img_3, 'gaussian', 64, 'color');
-%         data.saliencyPqft = saliencyMap;
-%     else
-%         data.saliencyPqft = zeros(data.height, data.width);
-%     end
-% 
-%     % Hou, 2008 saliency
-%     data.saliencyHou = saliencyHouNips(data.image, gbvsParam.HouNips.W); 
-   
+    %%%%%%%%% OTHER SALIENCY METHODS (ALREADY COMPUTED BY DIMA ON DIEM)%%%%%%%%
+    DimaCacheFile=fullfile(DIMAResultFolder,vr.name,sprintf('frame_%06d.mat', ind));
+    DimaFlag=0;
+    if exist(DimaCacheFile,'file')
+        Dima_data=load(DimaCacheFile);
+        DimaFlag=1;
+    else
+        DimaFlag=0;
+    end
+    % GBVS saliency
+    if DimaFlag && isfield(Dima_data.data,'saliencyGBVS')
+        data.saliencyGBVS =Dima_data.data.saliencyGBVS;
+    elseif DimaFlag && isfield(Dima_data.data,'saliency')
+        data.saliencyGBVS =Dima_data.data.saliency;
+    else
+        fg = rgb2gray(f);
+        if ((max(fg(:)) - min(fg(:))) < 40 || sum(imhist(fg) == 0) > 200) % not contrast enough
+            data.saliencyGBVS = zeros(data.height, data.width);
+        else
+            if (data.height < 128)
+                scale = 2;
+                ff = imresize(f, scale);
+            else
+                scale = 1;
+                ff = f;
+            end
+            
+            salOut = gbvs(ff, gbvsParam);
+            if (scale > 1)
+                salOut.master_map_resized = imresize(salOut.master_map_resized, 1/scale);
+            end
+            data.saliencyGBVS = salOut.master_map_resized;
+        end
+    end
+        % PQFT saliency
+        if DimaFlag && isfield(Dima_data.data,'saliencyPqft')
+            data.saliencyPqft =Dima_data.data.saliencyPqft;
+        else
+            if (ind > 3)
+                img_3 = read(vr, ind - 3);
+                [~, ~, saliencyMap] = PQFT_2(data.image, img_3, 'gaussian', 64, 'color');
+                data.saliencyPqft = saliencyMap;
+            else
+                data.saliencyPqft = zeros(data.height, data.width);
+            end
+        end
+        
+        % Hou, 2008 saliency
+        if DimaFlag && isfield(Dima_data.data,'saliencyHou')
+            data.saliencyHou =Dima_data.data.saliencyHou;
+        else
+            data.saliencyHou = saliencyHouNips(data.image, gbvsParam.HouNips.W);
+        end
+    
     % faces
     data.faces = findfaces(f);
     
@@ -219,20 +289,22 @@ for ifr = 1:nfr
     [data.poselet_hit, ~, ~] = detect_objects_in_image(f, poseletModel);
     
     % video data
-    data.index = frIdx;
+    data.index = ind;
     data.videoName = vr.name;
     %data.saliencyGBVS = data.saliency;
     
     % fusion Saliency map
     data.Fused_Saliency=data.saliencyMotionPCA.*data.saliencyPCA;
     
+    if nargout~=0
+        frs{ifr} = data;
+    end
     % save
-    frs{ifr} = data;
     if (exist('cache', 'var'))
         save(cacheFile, 'data');
     end
 end
 
 if (nfr == 1)
-    frs = frs{1};
+    frs = data;
 end

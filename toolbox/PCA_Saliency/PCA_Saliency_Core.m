@@ -1,5 +1,5 @@
 function [result resultD] = PCA_Saliency_Core(I_RGB)
-
+% Yonatan - Modified 08/01/2015 - enforce Gaussian if image is black
 resultD = globalDistinctness(I_RGB);
 C = zeros(11,2);
 Cw = zeros(11,1);
@@ -25,6 +25,9 @@ Cw(11) = 5;
 W = reshape(pdf(gmdistribution(C,[10000 10000],Cw), [X(:) Y(:)]),size(resultD));
 W = W./max(W(:));
 result = stableNormalize(resultD.*W);
+if max(result(:))==0 %black image input
+    result=W;
+end
 resultD = stableNormalize(resultD);
 end
 
