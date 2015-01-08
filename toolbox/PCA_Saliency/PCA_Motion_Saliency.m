@@ -14,4 +14,5 @@ addpath(genpath(fullfile([pwd,'\Saliency\','\EXT\']))) ;
 if (size(I_RGB,3)==1) % grayscale image is treated as colored
     I_RGB=repmat(I_RGB,[1 1 3]);
 end
-result = PCA_Motion_Saliency_Core(fx,fy,I_RGB);
+%result = PCA_Motion_Saliency_Core(fx,fy,I_RGB);
+result = PCA_Motion_Saliency_Core_v1(fx,fy,I_RGB);
