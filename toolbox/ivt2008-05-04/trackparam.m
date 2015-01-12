@@ -65,7 +65,7 @@
 % to be written out as .png images in the subdirectory ./dump/.  Make
 % sure this directory has already been created.
 title = 'dudek';
-dump_frames = true;%false;
+dump_frames = false;%true;%
 
 switch (title)
 case 'dudek';  p = [188,192,110,130,-0.08];
@@ -118,17 +118,22 @@ if (~exist('datatitle') || ~strcmp(title,datatitle))
   %load([title '.mat'],'data','datatitle','truepts');
 % Assumes you're in a directory containing the .pgm files.
 % Saves the images in a uint8 array called 'data'.
-filenames = dir('dog1\*.pgm');
+%filenames = dir('dog1\*.pgm');
+mypath='\\CGM38\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0\cache\ami_ib4010_closeup_720x576.avi\';
+filenames=dir([mypath,'*.mat']);
 filenames = sort({filenames.name});
 
 % read the first to see how large it should be
-im = imread(['dog1\',filenames{1}]);
-data = repmat(uint8(0),[size(im,1) size(im,2) length(filenames)]);
-for ii = 1:length(filenames)
-        data(:,:,ii) = imread(['dog1\',filenames{ii}]);
+%im = imread(['dog1\',filenames{1}]);
+im = load([mypath,filenames{1}]);
+data = repmat(uint8(0),[size(im.data.image,1) size(im.data.image,2) length(filenames)-60]);
+for ii = 1:length(filenames)-60
+        tmp = load([mypath,filenames{ii+29}]);
+        data(:,:,ii) = rgb2gray(tmp.data.image);
 end
 end
-p = [165 150 50 70 0];%dog
+%p = [165 150 50 70 0];%dog
+p = [78 44 121-78 81-44 0];%dog
 param0 = [p(1), p(2), p(3)/32, p(5), p(4)/p(3), 0];
 param0 = affparam2mat(param0);
 

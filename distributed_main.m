@@ -22,7 +22,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v6\';
+finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v1\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -169,7 +169,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
                 %predMaps(:,:,ifr)=fr.Fused_Saliency;
                 %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCA);
-                predMaps(:,:,ifr)=mat2gray(fr.Fused_Saliency);
+                predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCAPolar);
                 gazeData.index = frames(indFr(ifr));
                 %%%%%%%%%%%%%%%%%%%%%%%%% YONATAN 28/12/2014%%%%%%%%%%%%%%%%%%%%%
                 % Dimtry's results aren't obtain for the video visualization but
