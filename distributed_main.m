@@ -22,7 +22,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v3\';
+finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v4\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -145,7 +145,10 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         gazeData = s.data;
         clear s;
         gazeParam.gazeData = gazeData.points;
-        
+        % 11/1/2015 - YD CHECK IF my selfsimilarity is doing alright
+        if isfield(gazeData,'selfSimilarity')
+            gazeData = rmfield(gazeData,'selfSimilarity');
+        end
         % visualize
         videoFile = fullfile(visRoot, sprintf('%s.avi', videos{iv}));
         saveVideo = visVideo && (~exist(videoFile, 'file'));
@@ -155,20 +158,24 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         end
         
         try
-            indFr=1:length(jumpFrames);
+            % compare
+            frames = jumpFrames + after;
+            indFr = find(frames <= videoLen);
+            %indFr=1:length(jumpFrames);
             predMaps=zeros(m,n,length(indFr));
             sim = zeros(length(methods), length(measures), length(indFr));
             for ifr = 1:length(indFr)
-                fr = preprocessFrames(param.videoReader, jumpFrames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
+                fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
                 %predMaps(:,:,ifr)=fr.Fused_Saliency;
-                predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCA);
-                gazeData.index = jumpFrames(indFr(ifr));
+                %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCA);
+                predMaps(:,:,ifr)=mat2gray(fr.Fused_Saliency);
+                gazeData.index = frames(indFr(ifr));
                 %%%%%%%%%%%%%%%%%%%%%%%%% YONATAN 28/12/2014%%%%%%%%%%%%%%%%%%%%%
                 % Dimtry's results aren't obtain for the video visualization but
                 % are obtained for the graphes!
                 % NEED TO ADD HERE MY RESULTS + DIMTRY RESULTS
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-                [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,ifr), gazeData, measures, ...
+                [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
                     struct('method', 'center', 'cov', [(n/16)^2, 0; 0, (n/16)^2]), ...
                     struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA), ...
@@ -201,7 +208,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         vidnameonly=strsplit(vr.name,'.');vidnameonly=vidnameonly{1};
         movieIdx=iv;
         save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx');
-        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'jumpFrames', 'indFr', 'predMaps');
+        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps');
         % Finish processing saving and moving on
         dosave(lockfile,'success',1,'compname',getComputerName());
         video_count=video_count+1;
