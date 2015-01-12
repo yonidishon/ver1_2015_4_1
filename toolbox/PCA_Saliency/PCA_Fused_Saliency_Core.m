@@ -72,7 +72,8 @@ st1Result = sum(weights.*st1Distinc,3);
 clResult = sum(weights.*clDistinc,3);
 out = imfill(stResult);
 out1 = imfill(st1Result);
-result = stableNormalize(clResult.*out.*out1);
+result = stableNormalize(stableNormalize(clResult.*out).*stableNormalize(out1));
+%result = stableNormalize(clResult.*out.*out1);
 %result = stableNormalize(out);
 end
 
