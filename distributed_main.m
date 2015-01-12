@@ -22,14 +22,15 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v4\';
+finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v6\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
 measures = {'chisq', 'auc'};
-methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
+%methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
+methods = {'PCA M+S','self','PCA S','Dima','GBVS','PCA M'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -177,7 +178,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
-                    struct('method', 'center', 'cov', [(n/16)^2, 0; 0, (n/16)^2]), ...
+                    struct('method', 'saliency_PCA', 'map', fr.saliencyPCA), ...
                     struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA), ...
                     struct('method', 'saliency_GBVS', 'map', fr.saliencyGBVS), ...
                     struct('method', 'saliency_PCAM', 'map', fr.saliencyMotionPCA));
