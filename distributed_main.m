@@ -231,8 +231,8 @@ telapse=toc(tstart);
 diary off;
 fclose(fileID);
 subject=['MATLAB: Your Exp on: ',getComputerName(),'  -  has finished'];
-massege=['Time for the Exp to run on: ',getComputerName(),num2str(telapse),'[sec]',...
+massege=['Time for the Exp to run on ',getComputerName(),' is: ',num2str(telapse),'[sec]',...
     '\n','Number of Videos processed is:',num2str(video_count)];
-disp(subject);disp(massege);
+fprintf(subject);fprintf(massege);
 % [mail,ss]=myGmail('fuck you');
 % SendmeEmail(mail,ss,subject,massege);

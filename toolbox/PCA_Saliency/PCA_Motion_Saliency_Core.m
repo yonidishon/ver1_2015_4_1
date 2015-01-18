@@ -29,7 +29,8 @@ end
 C(11,:) = round([size(resultD,2)/2 size(resultD,1)/2]);
 Cw(11) = 5;
 [X Y] = meshgrid(1:size(resultD,2),1:size(resultD,1));
-W = reshape(pdf(gmdistribution(C,[10000 10000],Cw), [X(:) Y(:)]),size(resultD));
+%W = reshape(pdf(gmdistribution(C,[10000 10000],Cw), [X(:) Y(:)]),size(resultD));
+W = reshape(pdf(gmdistribution(C,[300 300],Cw), [X(:) Y(:)]),size(resultD));
 W = W./max(W(:));
 result = stableNormalize(resultD.*W);
 if max(result(:))==0
