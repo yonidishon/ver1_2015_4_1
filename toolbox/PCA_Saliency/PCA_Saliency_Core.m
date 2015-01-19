@@ -1,5 +1,6 @@
 function [result resultD] = PCA_Saliency_Core(I_RGB)
-% Yonatan - Modified 08/01/2015 - enforce Gaussian if image is black
+% Yonatan Modified 08/01/2015 - enforce Gaussian if image is black
+% Yonatan Modified 19/01/2015 - return only the Gaussians
 resultD = globalDistinctness(I_RGB);
 C = zeros(11,2);
 Cw = zeros(11,1);

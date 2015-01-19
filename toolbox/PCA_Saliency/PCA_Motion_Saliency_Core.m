@@ -1,6 +1,8 @@
 function [result, resultD] = PCA_Motion_Saliency_Core(fx,fy,I_RGB)
 % Yonatan Modified 08/01/2015 - if no motion - > fx,fy == 0 then return
-% matrix of ones
+%                               matrix of ones
+% Yonatan Modified 19/01/2015 - return only the Gaussians
+
 UNKNOWN_FLOW_THRESH=1e9;
 idxUnknown = (abs(fx)> UNKNOWN_FLOW_THRESH) | (abs(fy)> UNKNOWN_FLOW_THRESH) ;
 fx(idxUnknown) = 0;
@@ -32,7 +34,8 @@ Cw(11) = 5;
 %W = reshape(pdf(gmdistribution(C,[10000 10000],Cw), [X(:) Y(:)]),size(resultD));
 W = reshape(pdf(gmdistribution(C,[300 300],Cw), [X(:) Y(:)]),size(resultD));
 W = W./max(W(:));
-result = stableNormalize(resultD.*W);
+%result = stableNormalize(resultD.*W);
+result = stableNormalize(W);
 if max(result(:))==0
     result=ones(size(result));
 end

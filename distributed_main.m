@@ -22,7 +22,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v2\';
+finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v3_new\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -42,7 +42,7 @@ cache.renew = false;%true; %true; % use in case the preprocessing mechanism upda
 % cache.renewJumps = true; % recalculate the final result
 
 % Gaze settings
-gazeParam.pointSigma = 10;
+% gazeParam.pointSigma = 10;
 
 %% Training and testing settings
 videos = videoListLoad(DataRoot, 'DIEM');
@@ -145,11 +145,11 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         s = load(fullfile(gazeDataRoot, sprintf('%s.mat', videos{iv}))); %george
         gazeData = s.data;
         clear s;
-        gazeParam.gazeData = gazeData.points;
+        %gazeParam.gazeData = gazeData.points;
         % 11/1/2015 - YD CHECK IF my selfsimilarity is doing alright
-        if isfield(gazeData,'selfSimilarity')
-            gazeData = rmfield(gazeData,'selfSimilarity');
-        end
+%         if isfield(gazeData,'selfSimilarity')
+%             gazeData = rmfield(gazeData,'selfSimilarity');
+%         end
         % visualize
         videoFile = fullfile(visRoot, sprintf('%s.avi', videos{iv}));
         saveVideo = visVideo && (~exist(videoFile, 'file'));
@@ -232,7 +232,7 @@ diary off;
 fclose(fileID);
 subject=['MATLAB: Your Exp on: ',getComputerName(),'  -  has finished'];
 massege=['Time for the Exp to run on ',getComputerName(),' is: ',num2str(telapse),'[sec]',...
-    '\n','Number of Videos processed is:',num2str(video_count)];
+    '\n','Number of Videos processed is:',num2str(video_count),'\n'];
 fprintf(subject);fprintf(massege);
 % [mail,ss]=myGmail('fuck you');
 % SendmeEmail(mail,ss,subject,massege);

@@ -127,5 +127,5 @@ for f = 1:size(data,3)
   tic;
 end
 duration = duration + toc;
-fprintf('%d frames took %.3f seconds : %.3fps\n',f,duration,f/duration);
+fprintf('%d frames took %.3f[sec] : %.3f[fps]\n',f,duration,f/duration);
 

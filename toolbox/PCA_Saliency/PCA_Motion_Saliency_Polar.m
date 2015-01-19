@@ -1,4 +1,4 @@
-function result = PCA_Motion_Saliency(fx,fy,I_RGB)
+function result = PCA_Motion_Saliency_Polar(fx,fy,I_RGB)
 
 % if (~exist('vl_slic.m','file'))
 %     fprintf('\nConfiguring vl_slic & IM2COLSTEP\n');
