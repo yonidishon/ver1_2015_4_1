@@ -124,18 +124,18 @@ for ifr = 1:nfr
             data.videoName = vr.name;
             save(cacheFile, 'data');
         end
-        %if (~isfield(s.data, 'saliencyPCA')) % there is no PCA saliency data - add it
+        if (~isfield(s.data, 'saliencyPCA')) % there is no PCA saliency data - add it
             data.saliencyPCA = PCA_Saliency(data.image); 
             save(cacheFile, 'data');
-        %end
+        end
         if (~isfield(s.data, 'saliencyMotionPCA')) % there is no Motion PCA saliency data - add it
             data.saliencyMotionPCA = PCA_Motion_Saliency(data.ofx,data.ofy,data.image);
             save(cacheFile, 'data');
         end
-        %if (~isfield(s.data, 'saliencyMotionPCAPolar')) % there is no Motion PCA saliency data - add it
+        if (~isfield(s.data, 'saliencyMotionPCAPolar')) % there is no Motion PCA saliency data - add it
             data.saliencyMotionPCAPolar = PCA_Motion_Saliency_Polar(data.ofx,data.ofy,data.image);
             save(cacheFile, 'data');
-        %end
+        end
         
         if ~isfield(s.data,'saliencyDIMA') && predflag ;
             data.saliencyDIMA=DIMAPredmat.predMaps(:,:,find(DIMAPredmat.frames(1,:)==ind));

@@ -24,7 +24,7 @@ cuts=load('\\CGM10\Users\ydishon\Documents\Video_Saliency\data\00_cuts.mat','cut
 cuts=cuts.cuts;
 
 % visualizations results
-finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\Track_v0\';
+finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\Track_v1\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -213,11 +213,19 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             for ifr = 1:length(indFr)
                 tmp1=affparam2geom(BBfortracker.est);
                 BBforsave(ifr,:)=[tmp1(1),tmp1(2),tmp1(3)*32,tmp1(5)*tmp1(3)*32];
+                % center of BB is outside the frame -> object is outside of
+                % frame -> reset object to center
+                if (BBforsave(ifr,1)+BBforsave(ifr,3))>n || (BBforsave(ifr,1)+BBforsave(ifr,3))<1 ...
+                        || (BBforsave(ifr,2)+BBforsave(ifr,4))>m || (BBforsave(ifr,2)+BBforsave(ifr,4))<1
+                   BBforsave(ifr,:)=[round(n/2),round(m/2),100,100];
+                   tmp1=[BBforsave(ifr,1),BBforsave(ifr,2),BBforsave(ifr,3)/32,0,BBforsave(ifr,3)/BBforsave(ifr,4),0];
+                   BBfortracker.est=affparam2mat(tmp1);
+                end
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
                 framefortrack = double(rgb2gray(fr.image))/256;
 
-                % if scene cut then initialize everything
-                if ~isempty(cutFrames) && cut_ind<length(cutFrames) && frames(indFr(ifr))==cutFrames(cut_ind)
+                % if scenecut+15 then initialize everything
+                if ~isempty(cutFrames) && cut_ind<length(cutFrames) && frames(indFr(ifr))==cutFrames(cut_ind)+15
                     initialBB = gazedataToBoundingBox(gazeData.points{frames(indFr(ifr))},gazeData.height,gazeData.width);
                     % from [top_left_x,top_left_y,w,h] to  [center_x,center_y,w,h,rot]
                     p = [initialBB(1)+round(initialBB(3)/2),initialBB(2)+round(initialBB(4)/2),initialBB(3:4),0];
