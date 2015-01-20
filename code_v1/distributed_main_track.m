@@ -24,7 +24,7 @@ cuts=load('\\CGM10\Users\ydishon\Documents\Video_Saliency\data\00_cuts.mat','cut
 cuts=cuts.cuts;
 
 % visualizations results
-finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\Track_v1\';
+finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\Track_v1_1\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -213,6 +213,22 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             for ifr = 1:length(indFr)
                 tmp1=affparam2geom(BBfortracker.est);
                 BBforsave(ifr,:)=[tmp1(1),tmp1(2),tmp1(3)*32,tmp1(5)*tmp1(3)*32];
+                % Too small BB (under 75*75 pixels)
+                if BBforsave(ifr,3)*BBforsave(ifr,4)<75^2
+                    scalesq=sqrt(75^2/BBforsave(ifr,3)*BBforsave(ifr,4));
+                    BBforsave(ifr,:)=[BBforsave(ifr,1),BBforsave(ifr,2),scalesq*BBforsave(ifr,3),scalesq*BBforsave(ifr,4)];
+                    tmp1=[BBforsave(ifr,1),BBforsave(ifr,2),BBforsave(ifr,3)/32,0,BBforsave(ifr,3)/BBforsave(ifr,4),0];
+                    BBfortracker.est=affparam2mat(tmp1);
+                    tmpl.mean = warpimg(framefortrack, BBfortracker.est, opt.tmplsize);
+                    tmpl.basis = [];
+                    tmpl.eigval = [];
+                    tmpl.numsample = 0;
+                    tmpl.reseig = 0;
+                    sz = size(tmpl.mean);  N = sz(1)*sz(2);
+                    BBfortracker = [];
+                    BBfortracker.wimg = tmpl.mean;
+                    wimgs=[];
+                end
                 % center of BB is outside the frame -> object is outside of
                 % frame -> reset object to center
                 if (BBforsave(ifr,1)+BBforsave(ifr,3))>n || (BBforsave(ifr,1)+BBforsave(ifr,3))<1 ...
@@ -220,7 +236,18 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                    BBforsave(ifr,:)=[round(n/2),round(m/2),100,100];
                    tmp1=[BBforsave(ifr,1),BBforsave(ifr,2),BBforsave(ifr,3)/32,0,BBforsave(ifr,3)/BBforsave(ifr,4),0];
                    BBfortracker.est=affparam2mat(tmp1);
+                   tmpl.mean = warpimg(framefortrack, BBfortracker.est, opt.tmplsize);
+                    tmpl.basis = [];
+                    tmpl.eigval = [];
+                    tmpl.numsample = 0;
+                    tmpl.reseig = 0;
+                    sz = size(tmpl.mean);  N = sz(1)*sz(2);
+                    BBfortracker = [];
+                    BBfortracker.wimg = tmpl.mean;
+                    wimgs=[];
                 end
+
+
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
                 framefortrack = double(rgb2gray(fr.image))/256;
 
@@ -306,9 +333,11 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
-                    struct('method', 'saliency_PCA', 'map', fr.saliencyPCA), ...
-                    struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA), ...
-                    struct('method', 'saliency_GBVS', 'map', fr.saliencyGBVS), ...
+                    struct('method', 'PCAS', 'map', fr.saliencyPCA), ...
+                    struct('method', 'PCAMPolar', 'map', fr.saliencyMotionPCAPolar), ...
+                    %struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA), ...
+                    struct('method', 'PCAF_old', 'map', fr.Fused_Saliency), ...
+                    %struct('method', 'saliency_GBVS', 'map', fr.saliencyGBVS), ...
                     struct('method', 'saliency_PCAM', 'map', fr.saliencyMotionPCA));
                 %             [sim{i}(:,:,ifr), outMaps, extra] = similarityFrame2(predMaps(:,:,indFr(ifr)), gazeParam.gazeData{frames(indFr(ifr))}, gazeParam.gazeData(frames(indFr([1:indFr(ifr)-1, indFr(ifr)+1:end]))), measures, ...
                 %                 'self', ...
