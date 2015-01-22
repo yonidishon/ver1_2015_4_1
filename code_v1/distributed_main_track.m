@@ -191,7 +191,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             f = read(vr, frames(indFr(1)));
             framefortrack = double(rgb2gray(f))/256;
             cutFrames = movieScenecuts(videos{iv},videoListLoad(DataRoot, 'DIEM'),cuts);
-            initialBB = gazedataToBoundingBox(gazeData.points{indFr(1)},gazeData.height,gazeData.width);
+            initialBB = gazedataToBoundingBox(gazeData.points{frames(indFr(1))},gazeData.height,gazeData.width);
             % from [top_left_x,top_left_y,w,h] to  [center_x,center_y,w,h,rot]
             p = [initialBB(1)+round(initialBB(3)/2),initialBB(2)+round(initialBB(4)/2),initialBB(3:4),0];
             initialBBfortracker = [p(1), p(2), p(3)/32, p(5), p(4)/p(3), 0];
@@ -208,7 +208,10 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             wimgs = [];
             if (exist('dispstr','var'))  dispstr='';  end
             cut_ind=1;
-            while(frames(indFr(cut_ind))>cutFrames(cut_ind)) cut_ind=cut_ind+1;end
+            % This is to bring cutFrames to the by synced with frames
+            if numel(cutFrames)~=0
+                while(frames(indFr(1))>cutFrames(cut_ind)) cut_ind=cut_ind+1;end
+            end
             % Main loop for each frame
             BBforsave=zeros(length(indFr),4);
             for ifr = 1:length(indFr)
@@ -218,7 +221,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 BBforsave(ifr,:)=[tmp1(1),tmp1(2),tmp1(3)*32,tmp1(5)*tmp1(3)*32];
                 % Too small BB (under 75*75 pixels)
                 if BBforsave(ifr,3)*BBforsave(ifr,4)<30^2
-                    scalesq=sqrt(30^2/BBforsave(ifr,3)*BBforsave(ifr,4));
+                    scalesq=sqrt(30^2/(BBforsave(ifr,3)*BBforsave(ifr,4)));
                     BBforsave(ifr,:)=[BBforsave(ifr,1),BBforsave(ifr,2),scalesq*BBforsave(ifr,3),scalesq*BBforsave(ifr,4)];
                     tmp1=[BBforsave(ifr,1),BBforsave(ifr,2),BBforsave(ifr,3)/32,0,BBforsave(ifr,3)/BBforsave(ifr,4),0];
                     tmpl.mean = warpimg(framefortrack, affparam2mat(tmp1), opt.tmplsize);
@@ -234,8 +237,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 end
                 % center of BB is outside the frame -> object is outside of
                 % frame -> reset object to center
-                if (BBforsave(ifr,1)+BBforsave(ifr,3))>n || (BBforsave(ifr,1)+BBforsave(ifr,3))<1 ...
-                        || (BBforsave(ifr,2)+BBforsave(ifr,4))>m || (BBforsave(ifr,2)+BBforsave(ifr,4))<1
+                if (BBforsave(ifr,1)+BBforsave(ifr,3)/2)>n || (BBforsave(ifr,1)+BBforsave(ifr,3)/2)<1 ...
+                        || (BBforsave(ifr,2)+BBforsave(ifr,4)/2)>m || (BBforsave(ifr,2)+BBforsave(ifr,4)/2)<1
                    BBforsave(ifr,:)=[round(n/2),round(m/2),100,100];
                    tmp1=[BBforsave(ifr,1),BBforsave(ifr,2),BBforsave(ifr,3)/32,0,BBforsave(ifr,3)/BBforsave(ifr,4),0];
                    tmpl.mean = warpimg(framefortrack, affparam2mat(tmp1), opt.tmplsize);
