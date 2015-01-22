@@ -3,10 +3,17 @@ function [result, resultD] = PCA_Motion_Saliency_Core_v1(fx,fy,I_RGB)
 % Yonatan Modified 08/01/2014 - no polar representation,variance according
 % to motion and not color,and removing the mean of each patch
 % matrix of ones
+% Yonatan Modified 22/01/2014 - 1.Thershold for flow
+%                               2.Only Guassians weight 300 instead of
+%                               10000
+%                               3.Center prior reduced to 2 (from 5)
 UNKNOWN_FLOW_THRESH=1e9;
 idxUnknown = (abs(fx)> UNKNOWN_FLOW_THRESH) | (abs(fy)> UNKNOWN_FLOW_THRESH) ;
 fx(idxUnknown) = 0;
 fy(idxUnknown) = 0;
+r=sqrt(fx.^2+fy.^2);
+fy(r<0.2) = 0;
+fx(r<0.2) = 0;
 resultD = globalDistinctness(fx,fy,I_RGB);
 C = zeros(11,2);
 Cw = zeros(11,1);
@@ -27,11 +34,13 @@ for th=1:-0.1:0.1
 end
 
 C(11,:) = round([size(resultD,2)/2 size(resultD,1)/2]);
-Cw(11) = 5;
+Cw(11) = 2;%Cw(11) = 5;
 [X Y] = meshgrid(1:size(resultD,2),1:size(resultD,1));
-W = reshape(pdf(gmdistribution(C,[10000 10000],Cw), [X(:) Y(:)]),size(resultD));
+%W = reshape(pdf(gmdistribution(C,[10000 10000],Cw), [X(:) Y(:)]),size(resultD));
+W = reshape(pdf(gmdistribution(C,[300 300],Cw), [X(:) Y(:)]),size(resultD));
 W = W./max(W(:));
-result = stableNormalize(resultD.*W);
+%result = stableNormalize(resultD.*W);
+result = stableNormalize(W);
 if max(result(:))==0
     result=ones(size(result));
 end

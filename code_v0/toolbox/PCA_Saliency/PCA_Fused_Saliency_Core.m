@@ -1,12 +1,17 @@
-function [result, resultD] = PCA_Motion_Saliency_Core_v1(fx,fy,I_RGB)
-% Yonatan Modified 08/01/2015 - if no motion - > fx,fy == 0 then return
-% Yonatan Modified 08/01/2014 - no polar representation,variance according
-% to motion and not color,and removing the mean of each patch
-% matrix of ones
+function [result, resultD] = PCA_Fused_Saliency_Core(fx,fy,I_RGB)
+% Yonatan Modified 22/01/2015 - 1.added Threshold for fx and fy (0.2); 
+%                               2.change gaussian to 300 from 10000 and
+%                               from stregh of 5 in the middle to 2
+%                               3.Do only gaussian without Saliency maps
+%                               4. changed to PCA_S*PCA_M
 UNKNOWN_FLOW_THRESH=1e9;
 idxUnknown = (abs(fx)> UNKNOWN_FLOW_THRESH) | (abs(fy)> UNKNOWN_FLOW_THRESH) ;
 fx(idxUnknown) = 0;
 fy(idxUnknown) = 0;
+r=sqrt(fx.^2+fy.^2);
+fy(r<0.2) = 0;
+fx(r<0.2) = 0;
+
 resultD = globalDistinctness(fx,fy,I_RGB);
 C = zeros(11,2);
 Cw = zeros(11,1);
@@ -27,11 +32,13 @@ for th=1:-0.1:0.1
 end
 
 C(11,:) = round([size(resultD,2)/2 size(resultD,1)/2]);
-Cw(11) = 5;
+Cw(11) = 2;%Cw(11) = 5;
 [X Y] = meshgrid(1:size(resultD,2),1:size(resultD,1));
-W = reshape(pdf(gmdistribution(C,[10000 10000],Cw), [X(:) Y(:)]),size(resultD));
+%W = reshape(pdf(gmdistribution(C,[10000 10000],Cw), [X(:) Y(:)]),size(resultD));
+W = reshape(pdf(gmdistribution(C,[300 300],Cw), [X(:) Y(:)]),size(resultD));
 W = W./max(W(:));
-result = stableNormalize(resultD.*W);
+% result = stableNormalize(resultD.*W);
+result = stableNormalize(W);
 if max(result(:))==0
     result=ones(size(result));
 end
@@ -72,8 +79,8 @@ st1Result = sum(weights.*st1Distinc,3);
 clResult = sum(weights.*clDistinc,3);
 out = imfill(stResult);
 out1 = imfill(st1Result);
-result = (1/3)*stableNormalize(stableNormalize(clResult.*out)+(2/3)*stableNormalize(out1));
-%result = stableNormalize(stableNormalize(clResult.*out).*stableNormalize(out1));
+%result = (1/3)*stableNormalize(stableNormalize(clResult.*out)+(2/3)*stableNormalize(out1));
+result = stableNormalize(stableNormalize(clResult.*out).*stableNormalize(out1));
 %result = stableNormalize(clResult.*out.*out1);
 %result = stableNormalize(out);
 end

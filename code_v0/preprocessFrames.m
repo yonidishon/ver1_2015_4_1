@@ -128,10 +128,10 @@ for ifr = 1:nfr
             data.saliencyPCA = PCA_Saliency(data.image); 
             save(cacheFile, 'data');
         %end
-        if (~isfield(s.data, 'saliencyMotionPCA')) % there is no Motion PCA saliency data - add it
+        %if (~isfield(s.data, 'saliencyMotionPCA')) % there is no Motion PCA saliency data - add it
             data.saliencyMotionPCA = PCA_Motion_Saliency(data.ofx,data.ofy,data.image);
             save(cacheFile, 'data');
-        end
+        %end
         %if (~isfield(s.data, 'saliencyMotionPCAPolar')) % there is no Motion PCA saliency data - add it
             data.saliencyMotionPCAPolar = PCA_Motion_Saliency_Polar(data.ofx,data.ofy,data.image);
             save(cacheFile, 'data');
@@ -171,11 +171,11 @@ for ifr = 1:nfr
             data.objectness=computeObjectnessmap(data.image,NUMWINDOBJ);
             save(cacheFile, 'data');
         end
-        if (~isfield(s.data,'Fused_Saliency'))
+        %if (~isfield(s.data,'Fused_Saliency'))
             %data.Fused_Saliency=data.saliencyMotionPCA.*data.saliencyPCA;
             data.Fused_Saliency=PCA_Fused_Saliency(data.ofx,data.ofy,data.image);
             save(cacheFile, 'data');
-        end
+        %end
         
         %         if (~isfield(s.data,'segments'))
         %             if (size(data.image,3)==1) % grayscale image is treated as colored

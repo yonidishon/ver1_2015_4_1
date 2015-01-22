@@ -2,13 +2,17 @@ function [result, resultD] = PCA_Motion_Saliency_Core(fx,fy,I_RGB)
 % Yonatan Modified 08/01/2015 - if no motion - > fx,fy == 0 then return
 %                               matrix of ones
 % Yonatan Modified 19/01/2015 - return only the Gaussians
+% Yonatan Modified 22/01/2015 - Thershold for rad and alpha , Strength of
+%                               Prior reduced to 2 (from 5)
 
 UNKNOWN_FLOW_THRESH=1e9;
 idxUnknown = (abs(fx)> UNKNOWN_FLOW_THRESH) | (abs(fy)> UNKNOWN_FLOW_THRESH) ;
 fx(idxUnknown) = 0;
 fy(idxUnknown) = 0;
 rad = sqrt(fx.^2+fy.^2); 
-alpha = atan2(-fx, -fy)/pi;
+alpha = atan2(fy,fx)/pi;
+rad(rad<0.2)=0;
+alpha(rad<0.2)=0;
 resultD = globalDistinctness(alpha,rad,I_RGB);
 C = zeros(11,2);
 Cw = zeros(11,1);
@@ -29,7 +33,7 @@ for th=1:-0.1:0.1
 end
 
 C(11,:) = round([size(resultD,2)/2 size(resultD,1)/2]);
-Cw(11) = 5;
+Cw(11) = 2;%Cw(11) = 5;
 [X Y] = meshgrid(1:size(resultD,2),1:size(resultD,1));
 %W = reshape(pdf(gmdistribution(C,[10000 10000],Cw), [X(:) Y(:)]),size(resultD));
 W = reshape(pdf(gmdistribution(C,[300 300],Cw), [X(:) Y(:)]),size(resultD));

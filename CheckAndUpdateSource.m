@@ -13,12 +13,12 @@ hosts = {'CGM-AYELLET-1',...
          'CGM47'};
 %hosts = {'CGM16','CGM22','CGM41','CGM46','CGM47'};     
 %'CGM44'% - Uri uses it,...
-%Source_server_folder='C:\Users\ydishon\Documents\Video_Saliency\code_v0';
-Source_server_folder='C:\Users\ydishon\Documents\Video_Saliency\code_v1';
+Source_server_folder='C:\Users\ydishon\Documents\Video_Saliency\code_v0';
+%Source_server_folder='C:\Users\ydishon\Documents\Video_Saliency\code_v1';
 Source_perent_folder='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
 dima_server='C:\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\';
-%Source_dist_folder='\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0';
-Source_dist_folder='\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v1';
+Source_dist_folder='\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0';
+%Source_dist_folder='\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v1';
 dima_dist_host='\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency';
 serv_code=dir(Source_server_folder);serv_code(1:3)=[];% remove the '.','..', and '.git' folder
 serv_code_names={serv_code.name};% 1xn str representation
