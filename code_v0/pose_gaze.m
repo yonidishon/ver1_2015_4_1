@@ -23,8 +23,11 @@ map=zeros(im_size);
 bb_g=[(cropped_box(:,1)+cropped_box(:,3))/2,(cropped_box(:,2)+cropped_box(:,4))/2,...
     abs((cropped_box(:,1)-cropped_box(:,3))),abs((cropped_box(:,2)-cropped_box(:,4)))];
 for ii=1:size(cropped_box,1)
-    if bb_g(3)*bb_g(4)<20^2 % face is too small ->false positive
+    if bb_g(ii,3)*bb_g(ii,4)<20^2 % face is too small ->false positive
         continue;
+    elseif bb_g(ii,3)*bb_g(ii,4)<50^2
+        rat=sqrt(50^2/bb_g(ii,3)*bb_g(ii,4));
+        bb_g(ii,3)=rat*bb_g(ii,3);bb_g(ii,4)=rat*bb_g(ii,4);
     end
     map=map+nmsconf(ii).*exp(-((X - bb_g(ii,1)).^2/2/(bb_g(ii,3)/6)^2 + (Y - bb_g(ii,2)).^2/2/(bb_g(ii,4)/6)^2));
 end
