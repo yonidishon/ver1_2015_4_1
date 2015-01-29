@@ -1,0 +1,21 @@
+pChns.shrink              = [1]     ;	% integer downsampling amount for channels
+pChns.pColor.enabled      = [1]     ;	% if true enable color channels
+pChns.pColor.smooth       = [1]     ;	% radius for image smoothing (using convTri)
+pChns.pColor.colorSpace   = ['luv'] ;	% choices are: 'gray', 'rgb', 'hsv', 'orig'
+pChns.pGradMag.enabled    = [1] 	;	% if true enable gradient magnitude channel
+pChns.pGradMag.colorChn   = [0] 	;	% if>0 color channel to use for grad computation
+pChns.pGradMag.normRad    = [5] 	;	% normalization radius for gradient
+pChns.pGradMag.pGradMagnormConst   = [.005] ;	% normalization constant for gradient
+pChns.pGradMag.full       = [0] 	;	% if true compute angles in [0,2*pi) else in [0,pi)
+pChns.pGradHist.enabled   = [1] 	;	% if true enable gradient histogram channels
+pChns.pGradHist.binSize   = [1] 	;	% spatial bin size (defaults to shrink)
+pChns.pGradHist.nOrients  = [8] 	;	% number of orientation channels
+pChns.pGradHist.softBin   = [0] 	;	% if true use "soft" bilinear spatial binning
+pChns.pGradHist.useHog    = [0] 	;	% if true perform 4-way hog normalization/clipping
+pChns.pGradHist.clipHog   = [.2] 	;	% value at which to clip hog histogram bins
+pChns.pCustom.enabled     = [0] 	;	% if true enable custom channel type
+pChns.pCustom.name        = ['REQ'] ;	% custom channel type name
+pChns.pCustom.hFunc       = ['REQ'] ;	% function handle for computing custom channels
+pChns.pCustom.pFunc       = [{}] 	;	% additional params for chns=hFunc(I,pFunc{:})
+pChns.pCustom.padWith     = [0] 	;	% how channel should be padded (e pChns.g pChns. 0,'replicate')
+pChns.pCustom.complete    = [] 		;	% if true does not check/set default vals in pChns
