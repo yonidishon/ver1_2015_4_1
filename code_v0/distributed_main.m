@@ -22,7 +22,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v7_2\';
+finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -30,7 +30,7 @@ sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {'PCA M+S','self','PCA S','Dima','PCA MP','PCA M'};
+methods = {'PCAF+F+P','self','PCA S','Dima','PCA MP','PCA M*S'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -167,7 +167,23 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             sim = zeros(length(methods), length(measures), length(indFr));
             for ifr = 1:length(indFr)
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
-                predMaps(:,:,ifr)=fr.Fused_Saliency;
+                if ~isempty(fr.faces) && ~isempty(fr.poselet_hit)
+                    gauss_face=face_gaze(fr.faces,[fr.height,fr.width]);
+                    gauss_poselets=pose_gaze(fr.poselet_hit,[fr.height,fr.width]);
+                    tmpmap=(1/3)*gauss_face+(2/9)*gauss_face.*gauss_poselets+...
+                                      (1/3)*gauss_face.*gauss_poselets.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
+                    predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));              
+                elseif ~isempty(fr.faces)
+                    gauss_face=face_gaze(fr.faces,[fr.height,fr.width]);
+                    tmpmap=(5/9)*gauss_face+(1/3)*gauss_face.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
+                    predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));
+                elseif ~isempty(fr.poselet_hit)
+                    gauss_poselets=pose_gaze(fr.poselet_hit,[fr.height,fr.width]);
+                    tmpmap=(5/9)*gauss_poselets+(1/3)*gauss_poselets.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
+                    predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));
+                else
+                    predMaps(:,:,ifr)=fr.Fused_Saliency;
+                end
                 %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCA);
                 %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCAPolar);
                 gazeData.index = frames(indFr(ifr));
@@ -176,12 +192,14 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 % are obtained for the graphes!
                 % NEED TO ADD HERE MY RESULTS + DIMTRY RESULTS
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+                MOSP=fr.saliencyMotionPCAPolar.*fr.saliencyPCA;
+                MOSP=MOSP./max(MOSP(:));
                 [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
                     struct('method', 'saliency_PCA_Sp', 'map', fr.saliencyPCA), ...
                     struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA), ...
                     struct('method', 'saliency_PCA_MoP', 'map', fr.saliencyMotionPCAPolar), ...
-                    struct('method', 'saliency_PCA_Mo', 'map', fr.saliencyMotionPCAPolar));
+                    struct('method', 'saliency_PCA_Mo*Sp', 'map', MOSP));
                 %             [sim{i}(:,:,ifr), outMaps, extra] = similarityFrame2(predMaps(:,:,indFr(ifr)), gazeParam.gazeData{frames(indFr(ifr))}, gazeParam.gazeData(frames(indFr([1:indFr(ifr)-1, indFr(ifr)+1:end]))), measures, ...
                 %                 'self', ...
                 %                 struct('method', 'center', 'cov', [(n/16)^2, 0; 0, (n/16)^2]), ...
@@ -236,3 +254,4 @@ massege=['Time for the Exp to run on ',getComputerName(),' is: ',num2str(telapse
 fprintf(subject);fprintf(massege);
 % [mail,ss]=myGmail('fuck you');
 % SendmeEmail(mail,ss,subject,massege);
+exit();
