@@ -31,6 +31,6 @@ for ii=1:size(cropped_box,1)
     end
     map=map+nmsconf(ii).*exp(-((X - bb_g(ii,1)).^2/2/(bb_g(ii,3)/6)^2 + (Y - bb_g(ii,2)).^2/2/(bb_g(ii,4)/6)^2));
 end
-map=map./max(map(:));
+map=map./(max(map(:))+eps);
 end
 
