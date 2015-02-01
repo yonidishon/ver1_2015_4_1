@@ -22,7 +22,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8\';
+finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8_1\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -172,7 +172,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                     gauss_poselets=pose_gaze(fr.poselet_hit,[fr.height,fr.width]);
                     tmpmap=(1/3)*gauss_face+(2/9)*gauss_face.*gauss_poselets+...
                                       (1/3)*gauss_face.*gauss_poselets.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
-                    predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));              
+                    predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));           
                 elseif ~isempty(fr.faces)
                     gauss_face=face_gaze(fr.faces,[fr.height,fr.width]);
                     tmpmap=(5/9)*gauss_face+(1/3)*gauss_face.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;

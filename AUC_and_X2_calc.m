@@ -13,14 +13,13 @@ diemDataRoot = '\\CGM41\Users\gleifman\Documents\DimaCode\DIEM';%'Z:\RGB-D\DimaC
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v1\';
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v2\';
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v3_new\';
-<<<<<<< HEAD
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v7\';
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v7_1\';
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v7_2\';
-resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8\';
-=======
-resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\Track_v1\';
->>>>>>> tracker_branch_v0
+%resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\Track_v1\';
+%resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8\';
+resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8_1\';
+
 DataRoot = diemDataRoot;
 %videos = videoListLoad(DataRoot, 'DIEM');
 videos=importdata(fullfile(DataRoot, 'list.txt'));
@@ -55,11 +54,11 @@ for im = 1:length(measures)
     % add dummy if there is only one test
     if (size(meanChiSq, 1) == 1), meanChiSq = [meanChiSq; zeros(1, length(methods))]; end;
     
-    figure, bar(meanChiSq);
+    figure, bar(meanChiSq);set(gca,'Xlim',[0 size(meanChiSq,1)+6.5]);
     imLabel(lbl, 'bottom', -90, {'FontSize',8, 'Interpreter', 'None'});
     ylabel(measures{im});
     title(sprintf('Mean %s', mat2str(meanMeas, 2)));
-    legend(methods);
+    legend(methods,'Location','northeast');
     
     print('-dpng', fullfile(resFolder, sprintf('overall_%s.png', measures{im})));
 end
