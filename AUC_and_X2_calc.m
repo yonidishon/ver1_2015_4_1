@@ -18,7 +18,8 @@ diemDataRoot = '\\CGM41\Users\gleifman\Documents\DimaCode\DIEM';%'Z:\RGB-D\DimaC
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v7_2\';
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\Track_v1\';
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8\';
-resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8_1\';
+%resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8_1\';
+resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2\';
 
 DataRoot = diemDataRoot;
 %videos = videoListLoad(DataRoot, 'DIEM');
