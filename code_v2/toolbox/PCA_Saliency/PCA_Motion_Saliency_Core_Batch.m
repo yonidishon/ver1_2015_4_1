@@ -1,8 +1,13 @@
-function [result resultD] = PCA_Saliency_Core_Batch(I_RGB)
-% Yonatan Created 06/02/2015 - going to batch mode for scene PCA
-tic
-resultD = globalDistinctness(I_RGB);
-toc
+function [result resultD] = PCA_Motion_Saliency_Core_Batch(fx,fy,I_RGB)
+% Yonatan Created 09/02/2015 - going to batch mode for scene PCA
+UNKNOWN_FLOW_THRESH=1e9;
+idxUnknown = (abs(fx)> UNKNOWN_FLOW_THRESH) | (abs(fy)> UNKNOWN_FLOW_THRESH) ;
+fx(idxUnknown) = 0;
+fy(idxUnknown) = 0;
+r=sqrt(fx.^2+fy.^2);
+fy(r<0.2) = 0;
+fx(r<0.2) = 0;
+resultD = globalDistinctness(fx,fy,I_RGB);
 result=zeros(size(resultD));
 for ii=1:size(resultD,3)
     C = zeros(11,2);
@@ -38,24 +43,21 @@ for ii=1:size(resultD,3)
 end
 end
 
-function [result] = globalDistinctness(I_RGB)
+function [result] = globalDistinctness(fx,fy,I_RGB)
 
 orgSize=size(I_RGB);
 orgSize=orgSize(1:2);
 numOfLevels=3;
 stDistinc = zeros(orgSize(1),orgSize(2),numOfLevels*size(I_RGB,4));
-clDistinc = stDistinc;
 Pyramid = I_RGB;
 
 for pInd=1:numOfLevels
-    [ST CL]  = globalDiff(Pyramid);
+    ST  = globalDiff(fx,fy,Pyramid);
     stDistinc(:,:,1+(pInd-1)*size(I_RGB,4):(pInd)*size(I_RGB,4)) = imresize(ST,orgSize,'bicubic');
-    clDistinc(:,:,1+(pInd-1)*size(I_RGB,4):(pInd)*size(I_RGB,4)) = imresize(CL,orgSize,'bicubic');
     Pyramid = impyramid(Pyramid, 'reduce');
 end
 
 stDistinc(stDistinc<0)=0;
-clDistinc(clDistinc<0)=0;
 
 baseWeight= (numOfLevels:-1:1);
 
@@ -64,69 +66,49 @@ baseWeight=baseWeight./sum(baseWeight);
 % Differences
 weights=reshape(repmat(baseWeight,orgSize(1)*orgSize(2)*size(I_RGB,4),1),[orgSize(1) orgSize(2) numOfLevels*size(I_RGB,4)]);
 sttmp=weights.*stDistinc;
-cltmp=weights.*clDistinc;
-clear clDistinc stDistinc
+clear stDistinc
 result=zeros(orgSize(1),orgSize(2),size(I_RGB,4));
 for ii=1:size(I_RGB,4)
     stResult = sum(reshape([sttmp(:,:,ii),sttmp(:,:,ii+size(I_RGB,4)),sttmp(:,:,ii+2*size(I_RGB,4))],orgSize(1),orgSize(2),numOfLevels),3);
-    clResult = sum(reshape([cltmp(:,:,ii),cltmp(:,:,ii+size(I_RGB,4)),cltmp(:,:,ii+2*size(I_RGB,4))],orgSize(1),orgSize(2),numOfLevels),3);
     out = imfill(stResult);
-    result(:,:,ii) = stableNormalize(clResult.*out);
-    %result(:,:,ii) = stableNormalize(out);
+    result(:,:,ii) = stableNormalize(out);
 end
 end
 
-function [sDiffMap cDiffMap] = globalDiff(I_RGB)
+function [sDiffMap] = globalDiff(fx,fy,I_RGB)
 I_LAB = single(rgb2lab(I_RGB));
 imSize = size(I_LAB);
 imSize=imSize(1:2);
 SEGMENTS=zeros(imSize(1),imSize(2),size(I_LAB,4));
 STATS2 = cell(size(I_LAB,4),1);
 STATSA = cell(size(I_LAB,4),1);
-STATSB = cell(size(I_LAB,4),1);
 L_SPM = cell(size(I_LAB,4),1);
 A_SPM = cell(size(I_LAB,4),1);
-B_SPM = cell(size(I_LAB,4),1);
-cDiffMap = zeros(imSize(1),imSize(2),size(I_LAB,4));
+
 for ii=1:size(I_LAB,4)
     SEGMENTS(:,:,ii) = vl_slic(I_LAB(:,:,:,ii), 16, 300,'MinRegionSize',16);
     [~, ~, n] = unique(SEGMENTS(:,:,ii)); %Ensure no missing index
     SEGMENTS(:,:,ii) = reshape(n,size(SEGMENTS(:,:,ii))); %Ensure no missing index
     % This is the same as PCA_Saliency_Core -> segAvg here does the same
     % regionprops MeanIntensity thing.
-    STATS2{ii} = segAvg(SEGMENTS(:,:,ii),I_LAB(:,:,1,ii).^2)';
-    
+    STATS2{ii} = segAvg(SEGMENTS(:,:,ii),fx(:,:,ii).^2)';
+    STATSA{ii} = segAvg(SEGMENTS(:,:,ii),fy(:,:,ii).^2)';
     L_SPM{ii} = segAvg(SEGMENTS(:,:,ii),I_LAB(:,:,1,ii))';
-    A_SPM{ii}  = segAvg(SEGMENTS(:,:,ii),I_LAB(:,:,2,ii));
-    A_SPM{ii} = A_SPM{ii}';
+    A_SPM{ii}  = segAvg(SEGMENTS(:,:,ii),I_LAB(:,:,2,ii))';
+
     
-    B_SPM{ii}  = segAvg(SEGMENTS(:,:,ii),I_LAB(:,:,3,ii));
-    B_SPM{ii} = B_SPM{ii}';
-    
-    spm = [L_SPM{ii} A_SPM{ii} B_SPM{ii}];
-    STATSA{ii} = segAvg(SEGMENTS(:,:,ii),I_LAB(:,:,2,ii))';
-    STATSB{ii} = segAvg(SEGMENTS(:,:,ii),I_LAB(:,:,3,ii))';
-    dd = squareform(pdist(spm));
-    T = mean(abs(dd));
-    numOfSegments = max(max(SEGMENTS(:,:,ii)));
-    tmp=zeros(imSize);
-    for seg=1:numOfSegments
-        subs=ismember(SEGMENTS(:,:,ii),seg);
-        tmp(subs)=T(seg);
-    end
-    cDiffMap(:,:,ii) = tmp;
+
 end 
 
 numOfSegments = squeeze(max(max(SEGMENTS,[],1),[],2));
-centeredtmp=squeeze(I_LAB(:,:,1,:))-repmat(reshape(mean(reshape(squeeze(I_LAB(:,:,1,:)),imSize(1)*imSize(2),size(I_LAB,4))),1,1,size(I_LAB,4)),imSize(1),imSize(2),1);
-sErrorL = discardEdges(stableNormalize(structDifference(centeredtmp,L_SPM,STATS2,SEGMENTS,numOfSegments,size(SEGMENTS))));
-centeredtmp=squeeze(I_LAB(:,:,2,:))-repmat(reshape(mean(reshape(squeeze(I_LAB(:,:,2,:)),imSize(1)*imSize(2),size(I_LAB,4))),1,1,size(I_LAB,4)),imSize(1),imSize(2),1);
-sErrorA = discardEdges(stableNormalize(structDifference(centeredtmp,A_SPM,STATSA,SEGMENTS,numOfSegments,size(SEGMENTS))));
-centeredtmp=squeeze(I_LAB(:,:,3,:))-repmat(reshape(mean(reshape(squeeze(I_LAB(:,:,3,:)),imSize(1)*imSize(2),size(I_LAB,4))),1,1,size(I_LAB,4)),imSize(1),imSize(2),1);
-sErrorB = discardEdges(stableNormalize(structDifference(centeredtmp,B_SPM,STATSB,SEGMENTS,numOfSegments,size(SEGMENTS))));
+centeredtmp=fx-repmat(reshape(mean(reshape(fx,imSize(1)*imSize(2),size(I_LAB,4))),1,1,size(I_LAB,4)),imSize(1),imSize(2),1);
+sErrorfx = discardEdges(stableNormalize(structDifference(centeredtmp,L_SPM,STATS2,SEGMENTS,numOfSegments,size(SEGMENTS))));
+centeredtmp=fy-repmat(reshape(mean(reshape(fy,imSize(1)*imSize(2),size(I_LAB,4))),1,1,size(I_LAB,4)),imSize(1),imSize(2),1);
+sErrorfy = discardEdges(stableNormalize(structDifference(centeredtmp,A_SPM,STATSA,SEGMENTS,numOfSegments,size(SEGMENTS))));
 
-clear centeredtmp STATSA STATSB;
-reconError = sErrorL+sErrorA+sErrorB;
+
+clear centeredtmp STATSA STATS2;
+reconError = sErrorfx+sErrorfy;
 rErrorMap=zeros(size(reconError));
 for ii=1:size(reconError,3)
     tmp=reconError(:,:,ii);

@@ -1,4 +1,7 @@
 function [result, resultD] = PCA_Motion_Saliency_Core(fx,fy,I_RGB)
+% v1 is different from base version that I'm choosing the PCA according to
+% the motion charecteristics of the patches and not the visual
+% charectaristics
 % Yonatan Modified 08/01/2015 - if no motion - > fx,fy == 0 then return
 %                               matrix of ones
 % Yonatan Modified 19/01/2015 - return only the Gaussians
