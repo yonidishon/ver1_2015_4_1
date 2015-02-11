@@ -55,6 +55,8 @@ for pInd=1:numOfLevels
     ST  = globalDiff(fx,fy,Pyramid);
     stDistinc(:,:,1+(pInd-1)*size(I_RGB,4):(pInd)*size(I_RGB,4)) = imresize(ST,orgSize,'bicubic');
     Pyramid = impyramid(Pyramid, 'reduce');
+    fx = impyramid(fx, 'reduce');
+    fy = impyramid(fy, 'reduce');
 end
 
 stDistinc(stDistinc<0)=0;

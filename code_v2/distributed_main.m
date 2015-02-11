@@ -23,15 +23,17 @@ gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
 %finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8_2\';
-finalResultRoot ='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2\';
+finalResultRoot ='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Motion_Batch_v0\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
+cuts=load('\\CGM10\Users\ydishon\Documents\Video_Saliency\data\00_cuts.mat','cuts');
+cuts=cuts.cuts;
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {'PCAF+F+P','self','PCA S','Dima','PCA MP','PCA M*S'};
+methods = {'PCAMBatch','self','PCA S','Dima','PCA MP','PCA M*S'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -166,27 +168,80 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             %indFr=1:length(jumpFrames);
             predMaps=zeros(m,n,length(indFr));
             sim = zeros(length(methods), length(measures), length(indFr));
-            for ifr = 1:length(indFr)
-                fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
-                if ~isempty(fr.faces) && ~isempty(fr.poselet_hit)
-                    gauss_face=face_gaze(fr.faces,[fr.height,fr.width]);
-                    gauss_poselets=pose_gaze(fr.poselet_hit,[fr.height,fr.width]);
-                    tmpmap=(1/3)*gauss_face+(2/9)*gauss_face.*gauss_poselets+...
-                                      (1/3)*gauss_face.*gauss_poselets.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
-                    predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));           
-                elseif ~isempty(fr.faces)
-                    gauss_face=face_gaze(fr.faces,[fr.height,fr.width]);
-                    tmpmap=(5/9)*gauss_face+(1/3)*gauss_face.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
-                    predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));
-                elseif ~isempty(fr.poselet_hit)
-                    gauss_poselets=pose_gaze(fr.poselet_hit,[fr.height,fr.width]);
-                    tmpmap=(5/9)*gauss_poselets+(1/3)*gauss_poselets.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
-                    predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));
-                else
-                    predMaps(:,:,ifr)=fr.Fused_Saliency;
+            cutFrames = movieScenecuts(videos{iv},videoListLoad(DataRoot, 'DIEM'),cuts);
+            cut_ind=1;
+            MAXSCELEN=200;
+            if numel(cutFrames)~=0
+                while(frames(indFr(1))>=cutFrames(cut_ind)); cut_ind=cut_ind+1;end
+                cutFrames=[frames(indFr(1))-1;cutFrames(cut_ind:end)];
+                cut_ind=length(cutFrames);
+                while(frames(indFr(end))<=cutFrames(cut_ind)); cut_ind=cut_ind-1;end
+                cutFrames=[cutFrames(1:cut_ind);frames(indFr(end))];
+                scenelengths=diff(cutFrames);
+                if max(scenelengths)>MAXSCELEN %200
+                    oversize=find(scenelengths>MAXSCELEN); % scenes that are above MAXSCELEN
+                    to_div=floor(scenelengths/MAXSCELEN); % length of partial scenes
+                    newindx=(1:length(cutFrames))'+cumsum([0;to_div]);
+                    temp=zeros(sum(to_div)+length(cutFrames),1);
+                    temp(newindx) = cutFrames;
+                    to_div(~to_div)=[];
+                    ins=zeros(1,sum(to_div));
+                    ins(cumsum([1 to_div(1:end-1)]))=1;
+                    ins=cumsum(ins);
+                    % How many MAXSCELEN to add -> we know that we don't
+                    % add to i==1
+                    length_to_add = zeros(size(temp));
+                    for i=2:length(temp)
+                        if(temp(i-1)==0 && temp(i)==0)
+                            length_to_add(i) = 1 + length_to_add(i-1);
+                        elseif temp(i)==0
+                            length_to_add(i)=1;
+                        else
+                            continue;
+                        end
+                    end
+                    temp(~temp) =cutFrames(oversize(ins)) +MAXSCELEN*(length_to_add(length_to_add>0));
+                    cutFrames = temp;
                 end
-                %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCA);
-                %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCAPolar);
+            else
+                last_scene=mod(length(indFr),MAXSCELEN);
+                cutFrames=[frames(indFr(1))-1:MAXSCELEN:frames(indFr(end))-last_scene,frames(indFr(end))]';
+            end
+            low_val=1;up_val=cutFrames(2)-cutFrames(1);
+            fprintf('Scenecuts in movie are: %s\n',strjoin(cellstr(num2str(cutFrames))'));
+            for icf = 1:length(cutFrames)-1
+                fprintf('Scene#: %i/%i frs to be processed in scene: %i lval=%i hval=%i\n',icf,length(cutFrames),length(cutFrames(icf)+1:cutFrames(icf+1)),low_val,up_val);
+                frs = preprocessFrames(param.videoReader, cutFrames(icf)+1:cutFrames(icf+1), gbvsParam, ofParam, poseletModel, cache);
+                if isa(frs,'cell')
+                    ims=cellfun(@(x)x.image,frs,'UniformOutput',false);ims=cat(4,ims{:});
+                    fx = cellfun(@(x)x.ofx,frs,'UniformOutput',false);fx=cat(3,fx{:});
+                    fy = cellfun(@(x)x.ofy,frs,'UniformOutput',false);fy=cat(3,fy{:});
+                    clear frs;
+                else % frs is just a single frame
+                    ims=frs.image;fx=frs.ofx;fy=frs.ofy;
+                end
+                predMaps(:,:,low_val:up_val)=PCA_Motion_Saliency_Batch(fx,fy,ims);
+                for ifr = low_val:up_val
+                fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
+%%%%%%%%%%%%%%%%%%%%%%%%%%% Using Poselets and face
+%                 if ~isempty(fr.faces) && ~isempty(fr.poselet_hit)
+%                     gauss_face=face_gaze(fr.faces,[fr.height,fr.width]);
+%                     gauss_poselets=pose_gaze(fr.poselet_hit,[fr.height,fr.width]);
+%                     tmpmap=(1/3)*gauss_face+(2/9)*gauss_face.*gauss_poselets+...
+%                                       (1/3)*gauss_face.*gauss_poselets.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
+%                     predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));           
+%                 elseif ~isempty(fr.faces)
+%                     gauss_face=face_gaze(fr.faces,[fr.height,fr.width]);
+%                     tmpmap=(5/9)*gauss_face+(1/3)*gauss_face.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
+%                     predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));
+%                 elseif ~isempty(fr.poselet_hit)
+%                     gauss_poselets=pose_gaze(fr.poselet_hit,[fr.height,fr.width]);
+%                     tmpmap=(5/9)*gauss_poselets+(1/3)*gauss_poselets.*fr.Fused_Saliency+(1/9)*fr.Fused_Saliency;
+%                     predMaps(:,:,ifr)=tmpmap./max(tmpmap(:));
+%                 else
+%                     predMaps(:,:,ifr)=fr.Fused_Saliency;
+%                 end
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 gazeData.index = frames(indFr(ifr));
                 %%%%%%%%%%%%%%%%%%%%%%%%% YONATAN 28/12/2014%%%%%%%%%%%%%%%%%%%%%
                 % Dimtry's results aren't obtain for the video visualization but
@@ -211,6 +266,11 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                     %methodnms={'PCA','Self','Center','DIMA','GBVS','PQFT'};
                     outfr = renderSideBySide(fr.image, outMaps, colors, cmap, sim(:,:,ifr),methods);
                     writeVideo(vw, outfr);
+                end
+                end
+                if icf<length(cutFrames)-1
+                    low_val=up_val+1;
+                    up_val=low_val+cutFrames(icf+2)-cutFrames(icf+1)-1;
                 end
             end
         catch me

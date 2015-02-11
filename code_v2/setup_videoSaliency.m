@@ -18,13 +18,16 @@ saveRoot = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0';
 %crcnsMtvRoot = fullfile(crcnsRoot, 'Dima_MTV');
 
 %---------------change these lines when moving to other versions----------%
-proj_dir0='C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0';
-proj_dir1='C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v1';
+proj_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v2';
+
+% proj_dir0='C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0';
+% proj_dir1='C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v1';
 saliency_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
 result_dir = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0\cache';
 
 % Finish up cache files on host and collect results in CGM10 
-lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_02';
+lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_09';
+%lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_02';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_01';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_01_29';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_01_22';
@@ -41,9 +44,6 @@ lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_02
 %-------------------------------------------------------------------------%
 
 % Local Folders creation
-if ~exist(proj_dir,'dir')
-    mkdir(proj_dir);
-end
 if ~exist(result_dir,'dir')
     mkdir(result_dir);
 end
@@ -61,12 +61,12 @@ addpath(proj_dir);
 addpath(genpath(fullfile(gdrive, 'Software', 'dollar_261')));
 
 %% toolboxes
-addpath(genpath(fullfile(proj_dir0,'toolbox', 'objectness'))); % objectness
-addpath(genpath(fullfile(proj_dir0,'toolbox','PCA_Saliency'))); % PCA saliency
+addpath(genpath(fullfile(proj_dir,'toolbox', 'objectness'))); % objectness
+addpath(genpath(fullfile(proj_dir,'toolbox','PCA_Saliency'))); % PCA saliency
 addpath(fullfile(gdrive, 'Software', 'OpticalFlow')); % optical flow
 addpath(fullfile(gdrive, 'Software', 'OpticalFlow\mex'));
-addpath(genpath(fullfile(proj_dir0,'toolbox', 'NMS_BB')));% Non-Maximal Suppression Bounding Boxes
-addpath(genpath(fullfile(proj_dir1,'toolbox', 'ELK_source')));% ELK Tracker
+% addpath(genpath(fullfile(proj_dir0,'toolbox', 'NMS_BB')));% Non-Maximal Suppression Bounding Boxes
+% addpath(genpath(fullfile(proj_dir1,'toolbox', 'ELK_source')));% ELK Tracker
 % addpath(fullfile(gdrive, 'Software', 'randomforest-matlab', 'RF_Class_C')); % random forests
 % addpath(fullfile(gdrive, 'Software', 'randomforest-matlab', 'RF_Reg_C'));
 % addpath('C:\Users\dmitryr\Dropbox\Research\Dima Adobe - Code - License\MATLAB\toolbox\');
