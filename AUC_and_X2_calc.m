@@ -19,7 +19,10 @@ diemDataRoot = '\\CGM41\Users\gleifman\Documents\DimaCode\DIEM';%'Z:\RGB-D\DimaC
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\Track_v1\';
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8\';
 %resFolder='C:\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8_1\';
-resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2\';
+%resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2\';
+%resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Motion_Batch_v0\';
+%resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Spatial_Batch_v1\';
+resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fused_Batch_v0\';
 
 DataRoot = diemDataRoot;
 %videos = videoListLoad(DataRoot, 'DIEM');
@@ -30,7 +33,9 @@ measures = {'chisq', 'auc'};
 %methods = {'PCA_M+S','self', 'PCA_S','Dimtry', 'PCA_MP', 'PCA_M'};
 %methods = {'Track_v0','self', 'PCA_S','Dimtry', 'GBVS', 'PCA_M'};
 %methods = {'Track_v1','self','PCA S','PCAMPolar','PCAF_old','PCA M'};
-methods = {'PCAF+F+P','self','PCA S','Dima','PCA MP','PCA M*S'};
+%methods = {'PCASpBatch','self','PCAF+F+P','Dima','PCAMBatch','PCA M*S'};
+methods = {'PCA_F_Batch','self','PCAF+F+P','Dima','PCAMBatch','PCA M*S'};
+
 testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84];
 testSubset = 1:length(testIdx);
 nt = length(testSubset);
@@ -39,8 +44,12 @@ for im = 1:length(measures)
     meanChiSq = nan(nt, length(methods));
     sim=cell(nt,1);
     for i = 1:nt
-        tmp=matfile([resFolder,videos{testIdx(i)},'_similarity.mat']);    
-        sim{i}=tmp.sim;
+        if exist([resFolder,videos{testIdx(i)},'_similarity.mat'],'file')
+            tmp=matfile([resFolder,videos{testIdx(i)},'_similarity.mat']);    
+            sim{i}=tmp.sim;
+        else
+            sim{i}=NaN(length(methods),length(measures));
+        end
         for j = 1:length(methods)
             chiSq = sim{i}(j,im,:);
             meanChiSq(i, j) = mean(chiSq(~isnan(chiSq)));

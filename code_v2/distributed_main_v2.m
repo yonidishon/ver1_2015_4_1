@@ -23,17 +23,18 @@ gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
 %finalResultRoot = '\\CGM10\Users\ydishon\Documents\Video_Saliency\FinalResults\PCA_Fusion_v8_2\';
-finalResultRoot ='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Motion_Batch_v0\';
+finalResultRoot ='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fused_Batch_v0\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 cuts=load('\\CGM10\Users\ydishon\Documents\Video_Saliency\data\00_cuts.mat','cuts');
 cuts=cuts.cuts;
-
+PredMatDirPCAMBatch='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Motion_Batch_v0';
+PredMatDirPCAFbest='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2';
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {'PCAMBatch','self','PCA S','Dima','PCA MP','PCA M*S'};
+methods = {'PCA_F_Batch','self','PCAF+F+P','Dima','PCAMBatch','PCA M*S'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -186,7 +187,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                     temp(newindx) = cutFrames;
                     to_div(~to_div)=[];
                     ins=zeros(1,sum(to_div));
-                    ins(cumsum([1 to_div(1:end-1)]'))=1;
+                    ins(cumsum([1 to_div(1:end-1)']))=1;
                     ins=cumsum(ins);
                     % How many MAXSCELEN to add -> we know that we don't
                     % add to i==1
@@ -209,6 +210,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             end
             low_val=1;up_val=cutFrames(2)-cutFrames(1);
             fprintf('Scenecuts in movie are: %s\n',strjoin(cellstr(num2str(cutFrames))'));
+            predMapPCAMBatch=load(fullfile(PredMatDirPCAMBatch,[videos{iv},'.mat']),'predMaps');
+            predMapPCAFbest=load(fullfile(PredMatDirPCAFbest,[videos{iv},'.mat']),'predMaps');
             for icf = 1:length(cutFrames)-1
                 fprintf('Scene#: %i/%i frs to be processed in scene: %i lval=%i hval=%i\n',icf,length(cutFrames)-1,length(cutFrames(icf)+1:cutFrames(icf+1)),low_val,up_val);
                 frs = preprocessFrames(param.videoReader, cutFrames(icf)+1:cutFrames(icf+1), gbvsParam, ofParam, poseletModel, cache);
@@ -219,8 +222,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                     clear frs;
                 else % frs is just a single frame
                     ims=frs.image;fx=frs.ofx;fy=frs.ofy;
-                end
-                predMaps(:,:,low_val:up_val)=PCA_Motion_Saliency_Batch(fx,fy,ims);
+                end;
+                predMaps(:,:,low_val:up_val)=PCA_Fused_Saliency_Batch(fx,fy,ims);
                 for ifr = low_val:up_val
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
 %%%%%%%%%%%%%%%%%%%%%%%%%%% Using Poselets and face
@@ -252,9 +255,9 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 MOSP=MOSP./max(MOSP(:));
                 [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
-                    struct('method', 'saliency_PCA_Sp', 'map', fr.saliencyPCA), ...
+                    struct('method', 'saliency_PCAF+F+P', 'map', predMapPCAFbest.predMaps(:,:,indFr(ifr))), ...
                     struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA), ...
-                    struct('method', 'saliency_PCA_MoP', 'map', fr.saliencyMotionPCAPolar), ...
+                    struct('method', 'saliency_PCA_MoPBatch', 'map', predMapPCAMBatch.predMaps(:,:,indFr(ifr))), ...
                     struct('method', 'saliency_PCA_Mo*Sp', 'map', MOSP));
                 %             [sim{i}(:,:,ifr), outMaps, extra] = similarityFrame2(predMaps(:,:,indFr(ifr)), gazeParam.gazeData{frames(indFr(ifr))}, gazeParam.gazeData(frames(indFr([1:indFr(ifr)-1, indFr(ifr)+1:end]))), measures, ...
                 %                 'self', ...
@@ -287,8 +290,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         fprintf('%f sec\n', toc);
         vidnameonly=strsplit(vr.name,'.');vidnameonly=vidnameonly{1};
         movieIdx=iv;
-        save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx');
-        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps');
+        save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx','-v7.3');
+        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps','-v7.3');
         % Finish processing saving and moving on
         dosave(lockfile,'success',1,'compname',getComputerName());
         video_count=video_count+1;

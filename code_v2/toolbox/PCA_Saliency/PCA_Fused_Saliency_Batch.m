@@ -1,4 +1,4 @@
-function result = PCA_Motion_Saliency(fx,fy,I_RGB)
+function result = PCA_Fused_Saliency_Batch(fx,fy,I_RGB)
 
 % if (~exist('vl_slic.m','file'))
 %     fprintf('\nConfiguring vl_slic & IM2COLSTEP\n');
@@ -14,5 +14,4 @@ addpath(genpath(fullfile([pwd,'\Saliency\','\EXT\']))) ;
 if (size(I_RGB,3)==1) % grayscale image is treated as colored
     I_RGB=repmat(I_RGB,[1 1 3]);
 end
-%result = PCA_Motion_Saliency_Core(fx,fy,I_RGB);
-result = PCA_Fused_Saliency_Core(fx,fy,I_RGB);
+result = PCA_Fused_Saliency_Batch_Core(fx,fy,I_RGB);

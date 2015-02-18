@@ -97,9 +97,6 @@ for ii=1:size(I_LAB,4)
     STATSA{ii} = segAvg(SEGMENTS(:,:,ii),fy(:,:,ii).^2)';
     L_SPM{ii} = segAvg(SEGMENTS(:,:,ii),I_LAB(:,:,1,ii))';
     A_SPM{ii}  = segAvg(SEGMENTS(:,:,ii),I_LAB(:,:,2,ii))';
-
-    
-
 end 
 
 numOfSegments = squeeze(max(max(SEGMENTS,[],1),[],2));
@@ -190,7 +187,7 @@ for ii=1:size(valueMap,3)
     tmp=valueMap(:,:,ii);
     stmp = sort(tmp(:),'descend');
     stmp(isnan(stmp))=[];
-    
+ 
     if max(stmp) == 0 && min(stmp)==0
         valueMap(:,:,ii)=zeros(size(tmp));
         continue
