@@ -58,7 +58,7 @@ for pInd=1:numOfLevels
     [ST1 CL]  = globalDiff1(Pyramid);
     stDistinc(:,:,1+(pInd-1)*size(I_RGB,4):(pInd)*size(I_RGB,4)) = imresize(ST,orgSize,'bicubic');
     st1Distinc(:,:,1+(pInd-1)*size(I_RGB,4):(pInd)*size(I_RGB,4)) = imresize(ST1,orgSize,'bicubic');
-    clDistinc(:,:,1+(pInd-1)*size(I_RGB,4):(pInd)*size(I_RGB,4)) = imresize(CL,orgSize,'bicubic');
+    %clDistinc(:,:,1+(pInd-1)*size(I_RGB,4):(pInd)*size(I_RGB,4)) = imresize(CL,orgSize,'bicubic');
     Pyramid = impyramid(Pyramid, 'reduce');
     a = impyramid(a, 'reduce');
     rad = impyramid(rad, 'reduce');
@@ -66,7 +66,7 @@ end
 
 stDistinc(stDistinc<0)=0;
 st1Distinc(stDistinc<0)=0;
-clDistinc(clDistinc<0)=0;
+%clDistinc(clDistinc<0)=0;
 
 baseWeight= (numOfLevels:-1:1);
 
@@ -74,16 +74,17 @@ baseWeight=baseWeight./sum(baseWeight);
 weights=reshape(repmat(baseWeight,orgSize(1)*orgSize(2)*size(I_RGB,4),1),[orgSize(1) orgSize(2) numOfLevels*size(I_RGB,4)]);
 sttmp=weights.*stDistinc;
 st1tmp=weights.*st1Distinc;
-cltmp=weights.*clDistinc;
+%cltmp=weights.*clDistinc;
 clear stDistinc st1Distinc clDistinc
 result=zeros(orgSize(1),orgSize(2),size(I_RGB,4));
 for ii=1:size(I_RGB,4)
     stResult = sum(reshape([sttmp(:,:,ii),sttmp(:,:,ii+size(I_RGB,4)),sttmp(:,:,ii+2*size(I_RGB,4))],orgSize(1),orgSize(2),numOfLevels),3);
     st1Result = sum(reshape([st1tmp(:,:,ii),st1tmp(:,:,ii+size(I_RGB,4)),st1tmp(:,:,ii+2*size(I_RGB,4))],orgSize(1),orgSize(2),numOfLevels),3);
-    clResult = sum(reshape([cltmp(:,:,ii),cltmp(:,:,ii+size(I_RGB,4)),cltmp(:,:,ii+2*size(I_RGB,4))],orgSize(1),orgSize(2),numOfLevels),3);
+    %clResult = sum(reshape([cltmp(:,:,ii),cltmp(:,:,ii+size(I_RGB,4)),cltmp(:,:,ii+2*size(I_RGB,4))],orgSize(1),orgSize(2),numOfLevels),3);
     out = imfill(stResult);
     out1 = imfill(st1Result);
-    result(:,:,ii) = stableNormalize(stableNormalize(clResult.*out).*stableNormalize(out1));
+    %result(:,:,ii) = stableNormalize(stableNormalize(clResult.*out).*stableNormalize(out1));
+    result(:,:,ii) = stableNormalize(stableNormalize(out).*stableNormalize(out1));
 end
 end
 
