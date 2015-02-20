@@ -22,7 +22,8 @@ diemDataRoot = '\\CGM41\Users\gleifman\Documents\DimaCode\DIEM';%'Z:\RGB-D\DimaC
 %resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2\';
 %resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Motion_Batch_v0\';
 %resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Spatial_Batch_v1\';
-resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fused_Batch_v0\';
+%resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fused_Batch_v0\';
+resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fused_Batch_v1\';
 
 DataRoot = diemDataRoot;
 %videos = videoListLoad(DataRoot, 'DIEM');
@@ -49,6 +50,7 @@ for im = 1:length(measures)
             sim{i}=tmp.sim;
         else
             sim{i}=NaN(length(methods),length(measures));
+            fprintf(['Video:',videos{testIdx(i)},' has no Similarity.mat file\n']);
         end
         for j = 1:length(methods)
             chiSq = sim{i}(j,im,:);
