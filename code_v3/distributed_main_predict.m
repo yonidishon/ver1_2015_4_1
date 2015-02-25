@@ -22,15 +22,17 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\D\Video_Saliency_features_for_learner\';
-%visRoot = fullfileCreate(finalResultRoot,'vis');
+finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v0\';
+visRoot = fullfileCreate(finalResultRoot,'vis');
+PredMatDirPCAFbest='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2';
+
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
-% measures = {'chisq', 'auc'};
+measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-%methods = {'PCAF+F+P','self','PCA S','Dima','PCA MP','PCA M*S'};
+methods = {'PCAF+F+P','self','PCA S','Dima','PCA MP','PCA M*S'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -96,6 +98,12 @@ verNum = str2double(vers(1:4));
 tstart=tic;%start_clock
 warnNum=0;
 video_count=0;
+tree=load('\\CGM10\D\Learned_Trees\fulltree_25_02_2015.mat');
+tree=tree.fulltree;
+trainset={'BBC_life_in_cold_blood_1278x710'
+    'advert_iphone_1272x720'
+    'nightlife_in_mozambique_1280x580'};
+data_folder='\\CGM10\D\Video_Saliency_features_for_learner';
 for ii=1:length(testIdx) % run for the length of the defined exp.
     lockfile = [lockfiles_folder,'\',videos{testIdx(ii)},'_lockfile','.mat'];
     if exist(lockfile,'file') % somebody already working on this file go to next one.
@@ -128,55 +136,56 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         
         % load jump frames (FOR MY IMP. LOAD 'all')
         %[jumpFrames, before, after] = jumpFramesLoad(DataRoot, iv, jumpType, 50, 30, videoLen - 30);
-        % Going on all videos frames from 1 to VideoLen (Dmitry went from 30 to
+        % Going on all videos frames from 30 to VideoLen-30 (Dmitry went from 30 to
         % VideoLen-30)
-        [jumpFrames, before, after] = jumpFramesLoad(DataRoot, iv, jumpType, 50, 30, videoLen-30);
-        
-        % calculate the saliency maps from scrath
-        %frIdx=1:vr.NumberOfFrames;
-        %frIdx=30:(vr.NumberOfFrames-30);
-        
-        % JUST PROCESSFRAMES VER
-        %preprocessFrames(param.videoReader, jumpFrames(frIdx), gbvsParam, ofParam, poseletModel, cache);
-        
+        [jumpFrames, before, after] = jumpFramesLoad(DataRoot, iv, jumpType, 50, 30, videoLen-30);       
         % PROCESS FRARMES AND CALCULATE SIMILARITY TO GAZE VER
         % load gaze data
         s = load(fullfile(gazeDataRoot, sprintf('%s.mat', videos{iv}))); %george
         gazeData = s.data;
         clear s;
-        %gazeParam.gazeData = gazeData.points;
-        % 11/1/2015 - YD CHECK IF my selfsimilarity is doing alright
-%         if isfield(gazeData,'selfSimilarity')
-%             gazeData = rmfield(gazeData,'selfSimilarity');
-%         end
-%         % visualize
-%         videoFile = fullfile(visRoot, sprintf('%s.avi', videos{iv}));
-%         saveVideo = visVideo && (~exist(videoFile, 'file'));
-%         if (saveVideo && verNum >= 2012)
-%             vw = VideoWriter(videoFile, 'Motion JPEG AVI'); % 'Motion JPEG AVI' or 'Uncompressed AVI' or 'MPEG-4' on 2012a.
-%             open(vw);
-%         end
+        
+        % VISUALIZATION CONFIG
+        videoFile = fullfile(visRoot, sprintf('%s.avi', videos{iv}));
+        saveVideo = visVideo && (~exist(videoFile, 'file'));
+        if (saveVideo && verNum >= 2012)
+            vw = VideoWriter(videoFile, 'Motion JPEG AVI'); % 'Motion JPEG AVI' or 'Uncompressed AVI' or 'MPEG-4' on 2012a.
+            open(vw);
+        end
         
         try
-            % compare
             frames = jumpFrames + after;
             indFr = find(frames <= videoLen);
-            %indFr=1:length(jumpFrames);
-            for ifr = 1:length(indFr)
-                fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
-                gazeData.index = frames(indFr(ifr));
-                [Cmap,Smap,Mmap]=PCA_Saliency_all(fr.ifx,fr.ify,fr.image);
-                [x_dist,y_dist]=distance_map(m,n);
-                [responeses,data]=process_data_for_learner(Cmap,Smap,Mmap,x_dist,y_dist,gazeData);
-                save(fullfile(finalResultRoot,videos{iv},sprintf('frame_%06d.mat',frames(indFr(ifr)))),'responeses','data');
+            [~,pred_maps]=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
+            predMapPCAFbest=load(fullfile(PredMatDirPCAFbest,[videos{iv},'.mat']),'predMaps');
+
+            for ifr=1:length(indFr)
+             fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);   
+             gazeData.index = frames(indFr(ifr));
+             [sim(:,:,ifr), outMaps] = similarityFrame3(pred_maps(:,:,indFr(ifr)), gazeData, measures, ...
+                    'self', ...
+                    struct('method', 'saliency_PCAF+F+P', 'map', predMapPCAFbest.predMaps(:,:,indFr(ifr))), ...
+                    struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA));
+                if (saveVideo && verNum >= 2012)
+                    outfr = renderSideBySide(fr.image, outMaps, colors, cmap, sim(:,:,ifr),methods);
+                    writeVideo(vw, outfr);
+                end
             end
         catch me
-            rethrow(me);
-        end       
+            if (saveVideo && verNum >= 2012)
+                close(vw);
+            end
+            if strcmp(me,'Movie belong to the training set!')
+                fprintf('%s %s\nSkipping....\n',videos{iv},me);
+            else
+                rethrow(me);
+            end
+        end   
+        if (saveVideo && verNum >= 2012)
+            close(vw);
+        end
+        
         fprintf('%f sec\n', toc);
-        vidnameonly=strsplit(vr.name,'.');vidnameonly=vidnameonly{1};
-        movieIdx=iv;
-        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps');
         % Finish processing saving and moving on
         dosave(lockfile,'success',1,'compname',getComputerName());
         video_count=video_count+1;
@@ -191,6 +200,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             fclose(fileID);
             error('Run failed on 3 files aborting run on comp %s',getComputerName());
         end
+        rethrow(me);
     end
 end
 % FINISHED RUN wrap things up

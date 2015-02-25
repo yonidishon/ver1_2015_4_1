@@ -1,5 +1,5 @@
 function [responses,data_mat]=process_data_for_learner(c_map,sp_map,mo_map,x_map,y_map,gaze_gt_strct)
-% Function to arrange the data and responses to the learner
+% Function to arrange the data and responses to the learner. Created 20/2/2015 Yonatan Dishon.
 % Inputs:
 % - c_map - (mxn) Color importantcy map - output of PCA_Saliency
 % - sp_map - (mxn) Spatial improtantcy map - output of PCA_Saliency
