@@ -156,13 +156,13 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         try
             frames = jumpFrames + after;
             indFr = find(frames <= videoLen);
-            [~,pred_maps]=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
+            [~,predMaps]=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
             predMapPCAFbest=load(fullfile(PredMatDirPCAFbest,[videos{iv},'.mat']),'predMaps');
 
             for ifr=1:length(indFr)
              fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);   
              gazeData.index = frames(indFr(ifr));
-             [sim(:,:,ifr), outMaps] = similarityFrame3(pred_maps(:,:,indFr(ifr)), gazeData, measures, ...
+             [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
                     struct('method', 'saliency_PCAF+F+P', 'map', predMapPCAFbest.predMaps(:,:,indFr(ifr))), ...
                     struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA));
@@ -175,8 +175,9 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             if (saveVideo && verNum >= 2012)
                 close(vw);
             end
-            if strcmp(me,'Movie belong to the training set!')
-                fprintf('%s %s\nSkipping....\n',videos{iv},me);
+            if strcmp(me.message,'Movie belong to the training set!')
+                fprintf('%s %s\nSkipping....\n',videos{iv},me.message);
+                delete(videoFile);
             else
                 rethrow(me);
             end
@@ -184,12 +185,15 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         if (saveVideo && verNum >= 2012)
             close(vw);
         end
-        
         fprintf('%f sec\n', toc);
+        vidnameonly=strsplit(vr.name,'.');vidnameonly=vidnameonly{1};
+        movieIdx=iv;
+        save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx','-v7.3');
+        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps','-v7.3');
         % Finish processing saving and moving on
         dosave(lockfile,'success',1,'compname',getComputerName());
         video_count=video_count+1;
-        
+       
         % ERROR handling
     catch me
         dosave(lockfile,'success',0,'compname',getComputerName(),'theerror',me.getReport());
