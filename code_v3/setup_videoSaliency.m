@@ -26,7 +26,8 @@ saliency_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
 result_dir = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0\cache';
 
 % Finish up cache files on host and collect results in CGM10 
-lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_20';
+lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_03_03';
+%lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_20';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_14';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_13';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_09';
