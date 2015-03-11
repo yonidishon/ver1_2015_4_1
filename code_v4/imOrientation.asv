@@ -1,0 +1,16 @@
+function W = imOrientation(sal)
+imSize = size(sal);
+padSize = rem(3-rem(imSize(1:2),3),3);
+pSal = padarray(sal,padSize,'replicate','post');
+imSize=size(pSal);
+tSize = imSize(1:2)/3;
+pVec = im2col(pSal,tSize,'distinct')';
+d = mean(pVec);
+v = reshape(var(pVecL,1,2)+var(pVecA,1,2)+var(pVecB,1,2),[3 3]);
+v=v./max(v(:));
+figure;imagesc(v);
+% figure;imagesc(d.*v);
+W = imresize(d.*v,orgSize(1:2),'bicubic');
+W = W./max(W(:));
+% figure;imagesc(W);axis image;
+end

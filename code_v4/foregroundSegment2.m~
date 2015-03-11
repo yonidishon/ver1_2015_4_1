@@ -1,0 +1,105 @@
+function fSeg = foregroundSegment2(localCueMap,regPOImap,I_LAB,lMap,leMap,neighborColorDiff)
+eMap = zeros(size(regPOImap,1),size(regPOImap,2),1);
+eThs = 0.05:0.05:0.9;
+eWeights = linspace(1,4,numel(eThs));
+eWeights = eWeights./sum(eWeights);
+for eIdx=1:numel(eThs)
+ eTmp = edge(I_LAB(:,:,1),'canny',eThs(eIdx));
+ eMap = eMap + eWeights(eIdx)*eTmp;
+end
+
+figure;imagesc(eMap);axis image;colormap(hot);
+figure;imagesc(leMap);axis image;colormap(rand(max(leMap(:)),3));
+thValues = unique(regPOImap(:))';
+% figure;imagesc(I_LAB(:,:,3));axis image;colormap(hot);
+I_LAB = double(lab2uint16(I_LAB));
+LABvec = reshape(I_LAB,[numel(localCueMap) 3]);
+% figure;plot(thValues);
+
+thValues(1)=[];
+% if numel(thValues)>30
+%     thValues = thValues(round(linspace(1,numel(thValues),30)));
+%     fprintf('\nQuantizing thresholds\n');
+% end
+figure;imagesc(lMap);axis image;colormap(rand(max(lMap(:)),3));
+se = strel('disk',5);
+
+[thA thCC thED thN thEC] = deal(zeros(numel(thValues),1));
+for thIdx = 1:numel(thValues)
+    th = thValues((thIdx));
+    fgLabel = bwlabel(regPOImap>=th);
+    numOfFGObjects = max(fgLabel(:));
+%                 figure;imagesc(fgLabel);axis image;
+    
+    ObjPx = regionprops(fgLabel,'PixelIdxList');
+    objCC = zeros(numOfFGObjects,1);
+    [objED objA objEC] = deal(zeros(numOfFGObjects,1));
+    for indx=1:numOfFGObjects
+        objMap = fgLabel==indx;
+        objSurround = imdilate(objMap,se) - objMap;
+        objOutline = imdilate(bwmorph(objMap,'remove'),se);
+        objEdgeD = bwmorph(objOutline & (eMap>0),'clean');
+        
+        objSegments = unique(lMap(objMap));
+        surroundSegments = unique(lMap(objOutline));
+        %Remove interior segments
+        overlappingSegIndx = ismember(surroundSegments,objSegments);
+        surroundSegments(overlappingSegIndx)=[];
+        
+        plaussibleSegs = false(size(neighborColorDiff));
+        plaussibleSegs(:,surroundSegments) = true;
+        plaussibleSegs(objSegments,:) = true;
+        plaussibleSegs(isnan(neighborColorDiff))=false;
+        
+        surroundDist = min
+  
+%                 figure;imagesc(objOutline);axis image;colormap(hot);
+        %         figure;imagesc(objSurround);axis image;colormap(hot);
+%                 figure;imagesc(objMap);axis image;colormap(hot);
+        
+        %         objOLsum = sum(objOutline(:));
+        objEdgeD = double(objEdgeD).*eMap;
+
+%                 figure;imagesc(objEdgeDR);axis image;colormap(hot);
+        objED(indx) = mean(objEdgeD(logical(objOutline)));
+        
+        pxIdx = ObjPx(indx).PixelIdxList;
+        surrIdx = find(objSurround);
+        objColor = mean(LABvec(pxIdx,:));
+        surrColor = mean(LABvec(surrIdx,:));
+        objCC(indx) = sum((surrColor-objColor).^2 ./ (surrColor+objColor));
+        objA(indx) = numel(pxIdx);
+        
+    end
+    thED(thIdx) = min(objED);
+    thCC(thIdx) = min(objCC);
+    thA(thIdx) = mean(objA);
+    thN(thIdx) = numOfFGObjects;
+    
+end
+
+figure;plot(1:numel(thValues),thED);title('Edge Density');
+figure;plot(1:numel(thValues),thCC);title('Color Contrast');
+
+
+figure;plot(1:numel(thValues),thA);title('Area');
+figure;plot(1:numel(thValues),thN);title('Number of objects');
+
+thVal = thValues(36)
+fSeg = regPOImap>=thVal;
+figure;imagesc(fSeg);axis image;colormap(hot);
+end
+
+function [hitRate , falseAlarm] = hitRates(testMap,gtMap)
+neg_gtMap = ~gtMap;
+neg_testMap = ~testMap;
+
+hitCount = sum(sum(testMap.*gtMap));
+trueAvoidCount = sum(sum(neg_testMap.*neg_gtMap));
+missCount = sum(sum(testMap.*neg_gtMap));
+falseAvoidCount = sum(sum(neg_testMap.*gtMap));
+
+falseAlarm = 1 - trueAvoidCount / (trueAvoidCount + missCount);
+
+hitRate = hitCount / (hitCount + falseAvoidCount);
+end

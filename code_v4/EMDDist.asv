@@ -1,0 +1,15 @@
+function result = EMDDist(h1,h2)
+result = zeros(size(h2,1));
+L = h1(1:16);
+A = h1(17:32);
+B = h1(33:end);
+load('simMat.mat');
+
+for indx=1:size(h2,1)
+    
+    result(indx) = calculateEMD(h1',h2(indx,:)',D);
+    
+    
+end
+
+end

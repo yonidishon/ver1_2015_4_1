@@ -1,0 +1,75 @@
+function fSeg = foregroundSegment3(regPOImap,I_LAB)
+thValues = unique(regPOImap(:))';
+I_LAB = imfilter(I_LAB,fspecial('gaussian',5,2));
+I_LAB = double(lab2uint8(I_LAB));
+
+LABvec = reshape(I_LAB,[numel(regPOImap) 3]);
+thValues(1)=[];
+
+pArea = sum(regPOImap(:))*0.8;
+% figure;imshow(regPOImap);
+
+[thE thHIT thMISS thA] = deal(zeros(numel(thValues),1));
+hedges = [linspace(0,255,25) inf];
+
+for thIdx = 1:numel(thValues)
+    th = thValues((thIdx));
+    thSegmentF = regPOImap>=th;
+    thA(thIdx) = sum(thSegmentF(:));
+%     figure;imshow(thSegmentF);
+    thSegmentB = ~thSegmentF;
+    fColors = LABvec(thSegmentF(:),:);
+    bColors = LABvec(thSegmentB(:),:);
+    [fH fBin] = histc(fColors,hedges,1);
+    fBin(:,2) = fBin(:,2)+size(fH,1);
+    fBin(:,3) = fBin(:,3)+2*size(fH,1);
+    [bH bBin] = histc(bColors,hedges,1);
+    bBin(:,2) = bBin(:,2)+size(bH,1);
+    bBin(:,3) = bBin(:,3)+2*size(bH,1);
+
+    fH=fH./sum(fH(:,1),1);
+    bH=bH./sum(bH(:,1),1);
+    fHIT = prod(fH(fBin),2);
+    %     fHIT = fHIT./sum(fHIT);
+    fMISS = prod(fH(bBin),2);
+%     fMISS = fMISS./sum(fMISS);
+%     fPDF = sum(log(fHIT))./sum(log(fMISS));
+    
+    bHIT = prod(bH(bBin),2);
+%     bHIT = bHIT./sum(bHIT);
+    bMISS = prod(bH(fBin),2);
+%     bMISS = bMISS./sum(bMISS);
+    epsVect = [bMISS; fMISS; bHIT; fHIT];
+    
+    epsilon = min (epsVect(epsVect >0));
+
+    thHIT(thIdx) = abs(sum(log(bHIT+epsilon))+sum(log(fHIT+epsilon)));
+    thMISS(thIdx) = abs(sum(log(bMISS+epsilon))+sum(log(fMISS+epsilon)));
+    thE(thIdx) =thMISS(thIdx)./thHIT(thIdx);
+end
+x = 1:numel(thA);
+% figure;plot(thE);hold on;plot(x(thA>=pArea),thE(thA>=pArea),'r');hold off;title('thE');
+% figure;plot(thHIT);hold on;plot(x(thA>=pArea),thHIT(thA>=pArea),'r');hold off;title('thHIT');
+% figure;plot(thMISS);hold on;plot(x(thA>=pArea),thMISS(thA>=pArea),'r');hold off;title('thMISS');
+% 
+% figure;plot(thA);hold on;plot(x(thA>=pArea),thA(thA>=pArea),'r');hold off;title('thA');
+
+[v,c] = max(thE(thA>=pArea));
+[vlys,locsLow] = findpeaks(1./thE);
+if (isempty(locsLow))
+    locsLow = 0;
+end
+areaTh = find(thA>=pArea,1,'last');
+legalRange = 1:max(areaTh,locsLow(end));
+[pks,locs] = findpeaks(thE(legalRange),'SORTSTR','descend');
+
+% [~,c] = max(thHIT);
+
+thVal = thValues(locs(1));
+thVal = thValues(11);
+
+fSeg = regPOImap>=thVal;
+figure;imagesc(fSeg);axis image;colormap(hot);
+figure;imagesc(I_LAB(:,:,1));axis image;colormap(hot);
+% close all;
+end

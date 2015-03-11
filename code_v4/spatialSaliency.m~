@@ -1,0 +1,25 @@
+function [sOut] = spatialSaliency(I_LAB,I_RGB)
+lResult = localFeatures(I_LAB);
+
+%Normalize localFeatures for global feature use
+lResultNorm=stableNormalize(lResult);
+
+lMap = segmentImage(lResultNorm,I_LAB);
+figure;imagesc(lMap);axis image;colormap(rand(max(lMap(:))+1,3));
+figure;imagesc(lResultNorm);axis image;colormap(hot);
+gResult = globalDistinctness(I_LAB,lResultNorm);
+% figure;imagesc(gResult);axis image;colormap(hot);
+
+%Combine local and global saliency
+% frameSaliencyMap = gResult.*lResultNorm;
+frameSaliencyMap = gResult;
+frameSaliencyMap = stableNormalize(imfill(frameSaliencyMap,'holes'));
+% figure;imagesc(frameSaliencyMap);axis image;colormap(hot);
+
+sOut = sal2Regions(frameSaliencyMap,lMap,I_LAB);
+end
+
+
+
+
+

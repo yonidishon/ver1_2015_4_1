@@ -1,0 +1,58 @@
+function sOut = sal2Regions(sMap,lMap,I_LAB)
+[rSalMap cSalMap] = deal(zeros(size(sMap)));
+sal = regionprops(lMap,sMap,'MeanIntensity');
+
+for regionIdx = 1:numel(sal)
+    rSalMap(lMap==regionIdx)= sal(regionIdx).MeanIntensity;
+end
+
+L = regionprops(lMap,I_LAB(:,:,1),'MeanIntensity','Area');
+A = regionprops(lMap,I_LAB(:,:,2),'MeanIntensity');
+B = regionprops(lMap,I_LAB(:,:,3),'MeanIntensity');
+color = [[L.MeanIntensity];[A.MeanIntensity];[B.MeanIntensity]]';
+distLAB = squareform(pdist(color));
+a = [L.Area]';
+cDist = distLAB*a/sum(a);
+for ind = 1:max(lMap(:))
+    cSalMap(lMap==ind) = cDist(ind);
+end
+figure;imagesc(I_LAB(:,:,1));axis image;colormap(hot);
+figure;imagesc(I_LAB(:,:,2));axis image;colormap(hot);
+figure;imagesc(I_LAB(:,:,3));axis image;colormap(hot);
+
+
+cSalMap = stableNormalize(cSalMap);
+tmp = stableZero(cSalMap+imfill(rSalMap,'holes'));
+figure;imagesc(cSalMap);axis image;colormap(hot);
+sMap = stableNormalize(tmp);
+% figure;imagesc(sMap);axis image;colormap(hot);
+area =  getRegionArea(lMap);
+[areaSR orgR] = sort(area,'descend');
+areaR = 100*area/areaSR(2);areaR(areaR>100)=100;
+% figure;bar(areaR);
+
+m = find(areaR>20);
+backR = lMap(1,1);
+m(m==backR)=[];
+sReg = regionprops(lMap,sMap,'MeanIntensity');
+sReg = [sReg.MeanIntensity];
+s = sReg(m);
+m(s<0.45) = [];
+
+sMap(lMap==backR) = 0;
+figure;imagesc(sMap);axis image;colormap(hot);
+
+for rInd=m(:)'
+    sMap(lMap==rInd) = sMap(lMap==rInd)*2;
+end
+sOut=stableNormalize(sMap);
+
+
+
+end
+
+
+function area = getRegionArea(lMap)
+tmp = regionprops(lMap,'Area');
+area = [tmp.Area];clear tmp;
+end

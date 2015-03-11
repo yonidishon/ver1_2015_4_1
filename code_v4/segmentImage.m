@@ -1,0 +1,230 @@
+function [lMap segIm conductLUT neighborColorDiff neighborEdgeDiff] = segmentImage(lResult,I_LAB,I_RGB)
+imSize = size(I_LAB);
+[~,leMap] = edison_wrapper(I_LAB, I_LAB);
+mShiftLines = false(size(leMap));
+for indx=1:max(leMap(:))
+    mShiftLines = mShiftLines | bwmorph(leMap==indx,'remove');
+end
+tmp = lResult;
+tmp(tmp>0.3) = tmp(tmp>0.3) + 0.5*mShiftLines(tmp>0.3).*tmp(tmp>0.3);
+tmp(tmp>1)=1;
+lResult=tmp; clear tmp;
+
+LABsmooth = imfilter(I_LAB,fspecial('gaussian',5,2));
+LABvec = reshape(LABsmooth,[],3);
+se = strel('disk', max(round(sqrt(min(imSize(1:2)))/4),1));
+lobr = imerode(lResult, se);
+lobr = imreconstruct(lobr, lResult);
+
+lobrcbr = imdilate(lobr,se);
+lobrcbr = imreconstruct(imcomplement(lobrcbr),imcomplement(lobr));
+lobrcbr = imcomplement(lobrcbr);
+
+lResultMin = imimposemin(lResult,imregionalmin(lobrcbr));
+
+
+lMap = watershed(lResultMin);
+[~,ind] = bwdist(lMap>0);
+lMap = lMap(ind);
+
+cm = jet(max(lMap(:)));
+[~,rpInd] = sort(rand(size(cm,1),1));
+cm(rpInd,:) = cm;
+% lRGBMap = label2rgb(lMap,rand(max(lMap(:))+1,3));
+lRGBMap = label2rgb(lMap,cm);
+% figure;imagesc(lMap);axis image;colormap(cm);
+segIm = 0.5*(repmat(I_LAB(:,:,1)/100,[1 1 3])+im2double(lRGBMap));
+% figure;imshow(segIm)
+
+% distLAB = stableNormalize(distLAB);
+
+% figure;imagesc(lResult);axis image;colormap(hot);
+[distLAB neighborColorDiff numOfSegments segA segB] =  segDistLAB(lMap,LABsmooth);
+conductLUT  = (ones(size(distLAB )));
+neighborEdgeDiff = nan(size(distLAB));
+
+for segI = 1:numel(segA)
+    cSegA = segA(segI);
+    cSegB = segB(segI);
+    if (cSegA==numOfSegments || cSegB==numOfSegments)
+        [conductLUT(cSegA,cSegB),conductLUT(cSegB,cSegA)] = deal(0);
+        [neighborEdgeDiff(cSegA,cSegB),neighborEdgeDiff(cSegB,cSegA)] = deal(0);
+
+    else
+        regA = lMap == cSegA;
+        regB = lMap == cSegB;
+        aMap = bwmorph(regA,'dilate');
+        bMap = bwmorph(regB,'dilate');
+        cMap = logical(aMap.*bMap);
+        aEdge = cMap.*regA;
+        bEdge = cMap.*regB;
+        %match between edges
+        [~,L] = bwdist(bEdge);
+        bMatch = L(logical(aEdge));
+        %Extract colors
+        aColor = LABvec(logical(aEdge(:)),:);
+        bColor = LABvec(bMatch,:);
+        dColor = max(mean(abs(aColor-bColor),1),[],2);
+        [neighborEdgeDiff(cSegA,cSegB),neighborEdgeDiff(cSegB,cSegA)] = deal(dColor);
+
+        edgeConductivity = stableMax(lResult(cMap));
+        colorConductivityCode = distLAB(cSegA,cSegB);
+        switch colorConductivityCode
+            case 0
+                conductValue = edgeConductivity/2;
+            case 1
+                conductValue = min(edgeConductivity*2,1);
+            otherwise
+                conductValue = edgeConductivity;
+        end
+        [conductLUT(cSegA,cSegB),conductLUT(cSegB,cSegA)] = deal(conductValue);
+    end
+end
+conductLUT(conductLUT==1 - diag(ones(length(conductLUT),1)) )=inf;
+for segI=1:max(lMap(:))
+    cSeg=find(lMap==segI);
+    cColor = LABvec(cSeg,:);
+    neighborEdgeDiff(segI,segI) = max(std(cColor,1));
+end
+% lMap = reNumberSegMap(lMap+1000.*leMap);
+% numOfSegments = max(lMap(:));
+% figure;imagesc(lMap);axis image;colormap(rand(numOfSegments,3));
+% [~,overColorDiff,numOfSegments, segA, segB] =  segDistLAB(lMap,LABsmooth,true);
+
+
+
+end
+
+
+function maxValue = stableMax(x)
+sortX = sort(x(:),'descend');
+maxValue = mean(sortX(1:max(round(numel(sortX)*.1),1)));
+end
+
+function [cDist cDistR cDistM allDist] = regNeighbDistance(lMap,LABsmooth,cDistM)
+segRep = regionRep(lMap,LABsmooth);
+
+numOfSegments = max(lMap(:));
+[offSet(:,1) offSet(:,2)] = find(ones(3));
+offSet=offSet-2;
+
+glcm = any(graycomatrix(lMap,'GrayLimits',[1 numOfSegments],'NumLevels',numOfSegments,'Offset',offSet),3)-triu(inf*ones(numOfSegments));
+glcm(glcm<0)=0;
+cDist = squareform(pdist(segRep));
+allDist = cDist;
+cDist(~glcm) = inf;
+if(~exist('cDistM','var'))
+    cDistM = mean(cDist(logical(glcm)));
+end
+cDistR = cDist./cDistM;
+
+end
+
+
+
+function lMap = reSegDisconnectedRegs(I)
+lMap = (zeros(size(I)));
+minSize = ceil(numel(I)/10000);
+currIdx = 1;
+for ind = 1:max(I(:))
+    Ilabel = bwlabel(bwareaopen(I==ind, minSize, 8),4);
+    
+    for ind2 = 1:max(Ilabel(:))
+        lMap(Ilabel==ind2)= currIdx;
+        currIdx=currIdx+1;
+    end
+end
+nonReg = ~(lMap==0);
+[~,L] = bwdist(nonReg);
+lMap(~nonReg) = lMap(L(~nonReg));
+end
+
+function area = getRegionArea(lMap)
+tmp = regionprops(lMap,'Area');
+area = [tmp.Area];clear tmp;
+end
+
+function reSegMap = reNumberSegMap(segMap)
+[~,~,IreNum ] = unique(segMap(:));
+reSegMap=reshape(IreNum,size(segMap));
+end
+
+function segReg = regionRep(lMap,eColor)
+L = regionprops(lMap,eColor(:,:,1),'MeanIntensity');
+A = regionprops(lMap,eColor(:,:,2),'MeanIntensity');
+B = regionprops(lMap,eColor(:,:,3),'MeanIntensity');
+segReg = [ [L.MeanIntensity]; [A.MeanIntensity]; [B.MeanIntensity]]';
+end
+
+function resolvedM = resolveMap(mapVector)
+%Resolve mapping
+mapVector = unique(sort(mapVector,2),'rows');
+currentV = min(mapVector(:));
+while currentV
+    mask = any(mapVector==currentV,2);
+    done=false;
+    
+    while ~done
+        for indx=find(mask)'
+            row = mapVector(indx,:);
+            mapVal = row(row~=currentV);
+            if (isempty(mapVal) || mapVal<currentV)
+                continue;
+            end
+            mapVector(mapVector==mapVal)=currentV;
+            mapVector(indx,:) = row;
+            
+        end
+        newMask = any(mapVector==currentV,2);
+        if (all(newMask==mask))
+            done = true;
+        else
+            mask = newMask;
+        end
+    end
+    delRows = mapVector(:,1)==mapVector(:,2);
+    mapVector(delRows,:)=[];
+    mapVector = unique(sort(mapVector,2),'rows');
+    s= unique(mapVector(:));
+    s(s<=currentV)=[];
+    currentV = min(s);
+end
+resolvedM=mapVector;
+end
+
+function [distLAB neighborColorDiff numOfSegments segA segB] =  segDistLAB(lMap,LABsmooth,noSTAB)
+if (~exist('noSTAB','var'))
+    noSTAB = false;
+end
+numOfSegments = max(lMap(:))+1;
+[offSet(:,1) offSet(:,2)] = find(ones(3));
+offSet=offSet-2;
+
+% figure;imagesc(lResult);axis image;colormap(hot);
+lBordMap = padarray(lMap,[1 1],numOfSegments);
+glcm = any(graycomatrix(lBordMap,'GrayLimits',[1 numOfSegments],'NumLevels',numOfSegments,'Offset',offSet),3)-triu(inf*ones(numOfSegments));
+glcm(glcm<0)=0;
+[segA segB] = find(glcm);
+
+
+L = regionprops(lMap,LABsmooth(:,:,1),'MeanIntensity');
+A = regionprops(lMap,LABsmooth(:,:,2),'MeanIntensity');
+B = regionprops(lMap,LABsmooth(:,:,3),'MeanIntensity');
+regColor = [[L.MeanIntensity];[A.MeanIntensity];[B.MeanIntensity]]';
+distLAB = zeros(size(glcm));
+distLAB(1:end-1,1:end-1) = squareform(pdist(regColor,'chebychev'));
+distLAB(~logical(glcm)) = NaN;
+if (noSTAB)
+    neighborColorDiff = distLAB;
+else
+neighborColorDiff = stableNormalize(distLAB);
+end
+tNCD = neighborColorDiff';
+mirrorIdx = ~isnan(tNCD);
+neighborColorDiff(mirrorIdx) = tNCD(mirrorIdx);
+distLAB(distLAB<10) = 0;
+distLAB(distLAB>40) = 1;
+distLAB(distLAB~=0 & distLAB~=1) = 2;
+
+
+end
