@@ -22,7 +22,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v0\';
+finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v2_smooth\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 PredMatDirPCAFbest='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2';
 
@@ -32,7 +32,7 @@ sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {'PCAF+F+P','self','PCA S','Dima','PCA MP','PCA M*S'};
+methods = {'Ens_v1smoth','self','PCA F+F+P','Dima'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -52,9 +52,10 @@ nv = length(videos);
 
 % testIdx = 1:nv;
 % testSubset = 1:length(testIdx);
-testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % used by Borji
+%testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % used by Borji
+testIdx = [8,10,11,12,15,16,34,42,44,48,53,55,59,70,74,83,84];
 testSubset = 1:length(testIdx);
-
+test_videos=videos(testIdx);
 % testSubset = 11:length(testIdx);
 % testSubset = 9;
 % jumpFromType = 'prev-int'; % 'center', 'gaze', 'prev-cand', 'prev-int'
@@ -70,7 +71,10 @@ for k=1:length(lockfiles)
     if strcmp(runData.compname,getComputerName())
         str1=strsplit(lockfiles(k).name,'_lockfile');
         str1=str1(1);%strcat(str1(1),'.avi');
-        videos=[videos;str1];
+        in_testset=cellfun(@(y)strcmp(str1,y),test_videos);
+        if sum(in_testset)>0
+            videos=[videos;str1];
+        end
     end
 end
 testIdx=1:length(videos);
@@ -98,11 +102,11 @@ verNum = str2double(vers(1:4));
 tstart=tic;%start_clock
 warnNum=0;
 video_count=0;
-tree=load('\\CGM10\D\Learned_Trees\fulltree_25_02_2015.mat');
+tree=load('\\CGM10\D\Learned_Trees\fulltree_nnv1_04_03_2015.mat');
 tree=tree.fulltree;
 trainset={'BBC_life_in_cold_blood_1278x710'
     'advert_iphone_1272x720'
-    'nightlife_in_mozambique_1280x580'};
+    'one_show_1280x712'};
 data_folder='\\CGM10\D\Video_Saliency_features_for_learner';
 for ii=1:length(testIdx) % run for the length of the defined exp.
     lockfile = [lockfiles_folder,'\',videos{testIdx(ii)},'_lockfile','.mat'];
@@ -125,9 +129,6 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             else
                 vr = VideoReader(fullfile(uncVideoRoot, sprintf('%s.avi', videos{iv})));
             end
-        end
-        if (~exist(fullfile(finalResultRoot,videos{iv}), 'dir'))
-            mkdir(fullfile(finalResultRoot,videos{iv}));
         end
         m = vr.Height;
         n = vr.Width;
@@ -157,6 +158,19 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             frames = jumpFrames + after;
             indFr = find(frames <= videoLen);
             [~,predMaps]=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
+            predMaps=imfilter(predMaps,fspecial('gaussian',10,1));
+            for ipred=1:length(predMaps)
+                valueMap=predMaps(:,:,ipred);
+                sortVMap = sort(valueMap(:),'descend');
+                sortVMap(isnan(sortVMap))=[];
+                if max(sortVMap) == 0 && min(sortVMap)==0
+                    valueMap=zeros(size(valueMap));
+                else
+                    valueMap = valueMap./mean(sortVMap(1:max(round(numel(sortVMap)*.01),1)));
+                    valueMap(valueMap>1)=1;
+                end
+                predMaps(:,:,ipred)=valueMap;
+            end
             predMapPCAFbest=load(fullfile(PredMatDirPCAFbest,[videos{iv},'.mat']),'predMaps');
 
             for ifr=1:length(indFr)

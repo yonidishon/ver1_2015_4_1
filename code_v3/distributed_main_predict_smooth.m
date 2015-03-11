@@ -46,18 +46,18 @@ cache.renew = false;%true; %true; % use in case the preprocessing mechanism upda
 % gazeParam.pointSigma = 10;
 
 %% Training and testing settings
-videos = videoListLoad(DataRoot, 'DIEM');
-nv = length(videos);
+videos_DIEM = videoListLoad(DataRoot, 'DIEM');
+nv = length(videos_DIEM);
 
 % testIdx = 1:nv;
 % testSubset = 1:length(testIdx);
 testIdx = [8,10,11,12,15,16,34,42,44,48,54,55,59,70,74,83,84]; % used by Borji
 testSubset = 1:length(testIdx);
-
+test_videos=videos_DIEM(testIdx);
 % testSubset = 11:length(testIdx);
 % testSubset = 9;
 % jumpFromType = 'prev-int'; % 'center', 'gaze', 'prev-cand', 'prev-int'
-visVideo = true;
+visVideo = false;%true;
 candScale = 2; % Guassian scale index for candidate2map func.
 
 % JUST FOR TO COMPLETE THE RUN OF THE 08/01/2015%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -69,7 +69,10 @@ for k=1:length(lockfiles)
     if strcmp(runData.compname,getComputerName())
         str1=strsplit(lockfiles(k).name,'_lockfile');
         str1=str1(1);%strcat(str1(1),'.avi');
-        videos=[videos;str1];
+        in_testset=cellfun(@(y)strcmp(str1,y),test_videos);
+            if sum(in_testset)>0
+                videos=[videos;str1];
+            end
     end
 end
 testIdx=1:length(videos);
@@ -150,6 +153,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             indFr = find(frames <= videoLen);
             predMaps=load(fullfile(results_to_smooth_folder,[videos{iv},'.mat']),'predMaps');
             predMaps=predMaps.predMaps;
+ 
+            predMaps=imfilter(predMaps,fspecial('gaussian',10,1));
             for ipred=1:length(predMaps)
                 valueMap=predMaps(:,:,ipred);
                 sortVMap = sort(valueMap(:),'descend');
@@ -162,8 +167,6 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 end
                 predMaps(:,:,ipred)=valueMap;
             end
-            predMaps=imfilter(predMaps,fspecial('gaussian',10,1));
-            
             predMapPCAFbest=load(fullfile(PredMatDirPCAFbest,[videos{iv},'.mat']),'predMaps');
             
             for ifr=1:length(indFr)
