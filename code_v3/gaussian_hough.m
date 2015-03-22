@@ -1,4 +1,4 @@
-function [loc_of_gau]=gaussian_hough(predmap,sigma)
+function [loc_of_gau]=gaussian_hough(predmap,sigma,vote_prec)
 % Function for finding the gaussian sources out of the prediction maps of
 % the NN trees.
 %% For debug 
@@ -23,10 +23,15 @@ function [loc_of_gau]=gaussian_hough(predmap,sigma)
 % %  im_g=y1;
 % figure();imshow(im_g,[]);%pause();
 %%
-tic;
+if nargin<3
+    vote_prec=0.1;
+end
+%tic;
 ind = find(predmap);
 maxR=zeros(size(predmap));
-maxR(ind)=round(sqrt(2*sigma^2*abs(log(1/sigma/sqrt(2*pi)./predmap(ind)))));
+%maxR(ind)=round(sqrt(2*sigma^2*abs(log(1/sigma/sqrt(2*pi)./predmap(ind)))));
+% In the correct learner we learned the Gausssian normilized to 1
+maxR(ind)=round(sqrt(2*sigma^2*abs(log(1./predmap(ind)))));
 maxR(maxR>5*sigma)=0;
 ind=find(maxR);
 maxR2=2*maxR;
@@ -54,8 +59,13 @@ for ii = 1:length(ind)
 %         imshow(hough,[]);drawnow; pause(0.5);
 %     end
 end
-thrsh=pi*maxmaxR^2/10;
-toc;
+% 10% of the pixels in the area say's that's were the center is
+% DIDN'T WORK
+%thrsh=(pi*maxmaxR^2)*vote_prec;
+thrsh=sort(hough,'descend');
+% taking only the values in the top 10% precentage
+thrsh=min(thrsh(1:round(length(thrsh)/10)));
+%toc;
 %hough1=hough;
 hough(hough<thrsh) = 0;
 

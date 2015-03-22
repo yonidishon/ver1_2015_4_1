@@ -18,7 +18,7 @@ saveRoot = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0';
 %crcnsMtvRoot = fullfile(crcnsRoot, 'Dima_MTV');
 
 %---------------change these lines when moving to other versions----------%
-proj_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0';
+proj_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v4';
 saliency_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
 result_dir = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0\cache';
 
@@ -60,11 +60,12 @@ addpath(proj_dir);
 addpath(genpath(fullfile(gdrive, 'Software', 'dollar_261')));
 
 %% toolboxes
-addpath(genpath(fullfile(proj_dir,'toolbox', 'objectness'))); % objectness
-addpath(genpath(fullfile(proj_dir,'toolbox','PCA_Saliency'))); % PCA saliency
-addpath(fullfile(gdrive, 'Software', 'OpticalFlow')); % optical flow
-addpath(fullfile(gdrive, 'Software', 'OpticalFlow\mex'));
-addpath(genpath(fullfile(proj_dir,'toolbox', 'NMS_BB')));% Non-Maximal Suppression Bounding Boxes
+addpath(genpath(fullfile(proj_dir,'toolbox', 'EXT'))); % objectness
+%addpath(genpath(fullfile(proj_dir,'toolbox', 'objectness'))); % objectness
+%addpath(genpath(fullfile(proj_dir,'toolbox','PCA_Saliency'))); % PCA saliency
+%addpath(fullfile(gdrive, 'Software', 'OpticalFlow')); % optical flow
+%addpath(fullfile(gdrive, 'Software', 'OpticalFlow\mex'));
+%addpath(genpath(fullfile(proj_dir,'toolbox', 'NMS_BB')));% Non-Maximal Suppression Bounding Boxes
 % addpath(fullfile(gdrive, 'Software', 'randomforest-matlab', 'RF_Class_C')); % random forests
 % addpath(fullfile(gdrive, 'Software', 'randomforest-matlab', 'RF_Reg_C'));
 % addpath('C:\Users\dmitryr\Dropbox\Research\Dima Adobe - Code - License\MATLAB\toolbox\');

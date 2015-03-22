@@ -26,7 +26,8 @@ saliency_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
 result_dir = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0\cache';
 
 % Finish up cache files on host and collect results in CGM10 
-lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_03_03_v1';
+lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_03_11';
+%lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_03_03_v1';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_20';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_14';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_02_13';
@@ -69,7 +70,7 @@ addpath(genpath(fullfile(proj_dir,'toolbox', 'objectness'))); % objectness
 addpath(genpath(fullfile(proj_dir,'toolbox','PCA_Saliency'))); % PCA saliency
 addpath(fullfile(gdrive, 'Software', 'OpticalFlow')); % optical flow
 addpath(fullfile(gdrive, 'Software', 'OpticalFlow\mex'));
-% addpath(genpath(fullfile(proj_dir0,'toolbox', 'NMS_BB')));% Non-Maximal Suppression Bounding Boxes
+addpath(genpath(fullfile(proj_dir,'toolbox', 'NMS_BB')));% Non-Maximal Suppression Bounding Boxes
 % addpath(genpath(fullfile(proj_dir1,'toolbox', 'ELK_source')));% ELK Tracker
 % addpath(fullfile(gdrive, 'Software', 'randomforest-matlab', 'RF_Class_C')); % random forests
 % addpath(fullfile(gdrive, 'Software', 'randomforest-matlab', 'RF_Reg_C'));

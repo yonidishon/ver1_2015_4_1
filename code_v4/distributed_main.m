@@ -167,9 +167,23 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             sim = zeros(length(methods), length(measures), length(indFr));
             for ifr = 1:length(indFr)
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
-                spatsal=spatialSaliency(fr.image,true);
-                motsal=temporalSal(cat(3,single(fr.ofy),single(fr.ofx)),spatsal);
-                predMaps(:,:,ifr)=stableNormalize(spatsal.*motsal);
+                calcCFrame=true;
+                if (max(fr.image(:))<0.1)
+                    frameSaliencyMap = fspecial('gaussian',[maxHeight maxWidth],50);
+                    frameSaliencyMap = frameSaliencyMap./max(frameSaliencyMap(:));
+                    calcCFrame  = false;
+                end
+                if (calcCFrame == true) 
+                    Glvl = false;
+                    if (size(fr.image,3)==1)
+                        Glvl = true;
+                    end
+                    spatsal=spatialSaliency(fr.image,Glvl);
+                    motsal=temporalSal(cat(3,single(fr.ofy),single(fr.ofx)),spatsal);
+                    predMaps(:,:,ifr)=stableNormalize(spatsal.*motsal);
+                else
+                    predMaps(:,:,ifr)=frameSaliencyMap;
+                end
                 %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCA);
                 %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCAPolar);
                 gazeData.index = frames(indFr(ifr));

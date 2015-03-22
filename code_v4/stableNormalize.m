@@ -12,6 +12,11 @@ function valueMap = stableNormalize(valueMap)
 % end
     sortVMap = sort(valueMap(:),'descend');
     sortVMap(isnan(sortVMap))=[];
+    % Yonatan Handeling of black images
+    if max(sortVMap) == 0 && min(sortVMap)==0
+        valueMap=zeros(size(valueMap));
+        return
+    end
     valueMap = valueMap./mean(sortVMap(1:max(round(numel(sortVMap)*.01),1)));
     valueMap(valueMap>1)=1;
 % end

@@ -27,11 +27,13 @@ diemDataRoot = '\\CGM41\Users\gleifman\Documents\DimaCode\DIEM';%'Z:\RGB-D\DimaC
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v0\';
 %resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_v0Ran\';
 %resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_v1slic\';
-resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v0\';
+%resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v0\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v0_smooth\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v0_smooth1\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v1_smooth\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v2_smooth\';
+%resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough\';
+resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_RanOrig\';
 
 DataRoot = diemDataRoot;
 %videos = videoListLoad(DataRoot, 'DIEM');
