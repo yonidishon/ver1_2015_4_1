@@ -3,6 +3,8 @@
 % If I want a longer add files function to add all nessary files.
 %  addincludes;
 % clear all;close all;clc
+% CHANGE AGAIN similarity Calc on
+% Ayellet,CGM7,CGM16,CGM22,CGM41,CGM45,CGM47
 
 %% Setup file to rule them all
 setup_videoSaliency;
@@ -20,9 +22,10 @@ clc; diary(log_filename);
 DataRoot = diemDataRoot; % DIEM dataset is the data
 uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
-
+Ran_results_fold='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v2_mahalRan\';
 % visualizations results
-finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_RanOrig\';
+%finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_RanOrig\';
+finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v2_mahalRan\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -30,7 +33,8 @@ sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {'PCA_F_ran_orig','self','PCA ranM','Dima','PCA ranS'};
+%methods = {'PCA_F_ran_orig','self','center','PCAF+F+P','Dima','GBVS','PQFT','Hou'};
+methods = {'PCA_F_ranMahal','self','PCA_F_ran_orig','PCAF+F+P','Dima'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -126,7 +130,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         n = vr.Width;
         videoLen = vr.numberOfFrames;
         param = struct('videoReader', vr);
-        
+        predmap_folder=fullfile(Ran_results_fold,videos{iv});
         % load jump frames (FOR MY IMP. LOAD 'all')
         %[jumpFrames, before, after] = jumpFramesLoad(DataRoot, iv, jumpType, 50, 30, videoLen - 30);
         % Going on all videos frames from 1 to VideoLen (Dmitry went from 30 to
@@ -165,27 +169,14 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             %indFr=1:length(jumpFrames);
             predMaps=zeros(m,n,length(indFr));
             sim = zeros(length(methods), length(measures), length(indFr));
+            PredMatDirPCAFbest='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2';
+            predMapPCAFbest=load(fullfile(PredMatDirPCAFbest,[videos{iv},'.mat']),'predMaps');
+            PredMatDirPCAFRan='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_RanOrig_v1';
+            PredMatPCAFRan=load(fullfile(PredMatDirPCAFRan,[videos{iv},'.mat']),'predMaps');
             for ifr = 1:length(indFr)
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
-                calcCFrame=true;
-                if (max(fr.image(:))<0.1)
-                    frameSaliencyMap = fspecial('gaussian',[maxHeight maxWidth],50);
-                    frameSaliencyMap = frameSaliencyMap./max(frameSaliencyMap(:));
-                    calcCFrame  = false;
-                end
-                if (calcCFrame == true) 
-                    Glvl = false;
-                    if (size(fr.image,3)==1)
-                        Glvl = true;
-                    end
-                    spatsal=spatialSaliency(fr.image,Glvl);
-                    motsal=temporalSal(cat(3,single(fr.ofy),single(fr.ofx)),spatsal);
-                    predMaps(:,:,ifr)=stableNormalize(spatsal.*motsal);
-                else
-                    predMaps(:,:,ifr)=frameSaliencyMap;
-                end
-                %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCA);
-                %predMaps(:,:,ifr)=mat2gray(fr.saliencyPCA.*fr.saliencyMotionPCAPolar);
+                predMaps(:,:,indFr(ifr))=im2double(imread(fullfile(...
+                    predmap_folder,sprintf('frame_%i.png',frames(indFr(ifr))))));
                 gazeData.index = frames(indFr(ifr));
                 %%%%%%%%%%%%%%%%%%%%%%%%% YONATAN 28/12/2014%%%%%%%%%%%%%%%%%%%%%
                 % Dimtry's results aren't obtain for the video visualization but
@@ -193,12 +184,20 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 % NEED TO ADD HERE MY RESULTS + DIMTRY RESULTS
                 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
                 [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
-                    'self', ...
-                    struct('method', 'saliency_PCA_ranM', 'map',motsal ), ...
-                    struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA), ...
-                    struct('method', 'saliency_PCA_ranS', 'map', spatsal));
+                    'self',...
+                    struct('method', 'saliency_PCAFRAN', 'map', PredMatPCAFRan.predMaps(:,:,indFr(ifr))), ...
+                    struct('method', 'saliency_PCAF+F+P', 'map', predMapPCAFbest.predMaps(:,:,indFr(ifr))), ...
+                    struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA));
+%                 [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
+%                     'self',...
+%                     struct('method', 'center', 'cov', [(n/16)^2, 0; 0, (n/16)^2]), ...                    
+%                     struct('method', 'saliency_PCAF+F+P', 'map', predMapPCAFbest.predMaps(:,:,indFr(ifr))), ...
+%                     struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA), ...
+%                     struct('method', 'saliency_GBVS', 'map', fr.saliencyGBVS), ...
+%                     struct('method', 'saliency_PQFT', 'map', fr.saliencyPqft), ...
+%                     struct('method', 'saliency_Hou', 'map', fr.saliencyHou));
                 if (saveVideo && verNum >= 2012)
-                    outfr = renderSideBySide(fr.image, outMaps, colors, cmap, sim(:,:,ifr),methods);
+                    outfr = renderSideBySide(read(vr,frames(indFr(ifr))), outMaps, colors, cmap, sim(:,:,ifr),methods);
                     writeVideo(vw, outfr);
                 end
             end

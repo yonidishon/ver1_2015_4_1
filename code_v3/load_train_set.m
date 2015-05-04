@@ -30,6 +30,7 @@ if isa(train_set,'cell')
         files=dir(fullfile(data_folder,folders{ind},'\*.mat'));
         for jj=1:length(files)
             filedata=load(fullfile(data_folder,folders{ind},files(jj).name));
+            
             if sperim~=-1
                 rperm=randperm(length(filedata.responeses));
                 data_mat{jj}=filedata.data(rperm(1:sperim),:);

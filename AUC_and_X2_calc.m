@@ -33,7 +33,9 @@ diemDataRoot = '\\CGM41\Users\gleifman\Documents\DimaCode\DIEM';%'Z:\RGB-D\DimaC
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v1_smooth\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v2_smooth\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough\';
-resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_RanOrig\';
+%resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_RanOrig\';
+%resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_RanOrig_v1\';
+resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_v2_mahalRan\';
 
 DataRoot = diemDataRoot;
 %videos = videoListLoad(DataRoot, 'DIEM');
@@ -49,9 +51,13 @@ measures = {'chisq', 'auc'};
 %methods = {'Tree_D5_v0','self','PCAF+F+P','Dima'};
 %methods = {'PCA_F_ran','self','PCA F','Dima','PCA M','PCA M*S'};
 %methods = {'PCA F_slic','self','PCA r_M','PCA r_S','PCA rg_M','PCA rg_S'};
-methods = {'Tree EnsG','self','PCAF+F+P','Dima'};
-%testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % Used by Borji on DIEM
-testIdx = [8,10,11,12,15,16,34,42,44,48,53,55,59,70,74,83,84]; % For Tree Enamble v0
+%methods = {'Tree EnsG','self','PCAF+F+P','Dima'};
+%methods = {'PCA_F_ran_orig','self','PCA ranM','Dima','PCA ranS'};
+%methods = {'PCA_F_ran_orig','self'};
+%methods = {'PCA_F_ran_orig','self','center','PCAF+F+P','Dima','GBVS','PQFT','Hou'};
+methods = {'PCA_F_ran_mahal','self','ran_orig','PCAF+F+P','Dima'};
+testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % Used by Borji on DIEM
+%testIdx = [8,10,11,12,15,16,34,42,44,48,53,55,59,70,74,83,84]; % For Tree Enamble v0
 
 testSubset = 1:length(testIdx);
 nt = length(testSubset);

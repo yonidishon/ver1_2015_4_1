@@ -22,7 +22,8 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough\';
+%finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough\';
+finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough_and_clean\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 PredMatDirPCAFbest='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2';
 
@@ -32,7 +33,7 @@ sourceType = 'rect';
 % measures = {'chisq', 'auc', 'cc', 'nss'};
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {'Ens_v3_hough','self','PCA F+F+P','Dima'};
+methods = {'Ens_v3_hough','self','PCA F+F+P','Dima','Ens_v3_clean'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -159,10 +160,11 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             frames = jumpFrames + after;
             indFr = find(frames <= videoLen);
             % predicting the gaze map (Gaussian values max==1);
-            [~,predMaps]=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
+            [~,predMaps_tree]=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
             fprintf('Starting the Hough voting....\n');
-            for ipred=1:length(predMaps)
-                [loc_of_gau]=gaussian_hough(predMaps(:,:,ipred),...
+            predMaps=zeros(size(predMaps_tree));
+            for ipred=1:length(predMaps_tree)
+                [loc_of_gau]=gaussian_hough(predMaps_tree(:,:,ipred),...
                              gazeData.pointSigma);
                  predMaps(:,:,ipred)=points2GaussMap(fliplr(loc_of_gau)',...
                                      ones(1, size(loc_of_gau, 1)), 0, [n, m], gazeData.pointSigma);
@@ -193,7 +195,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
              [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
                     struct('method', 'saliency_PCAF+F+P', 'map', predMapPCAFbest.predMaps(:,:,indFr(ifr))), ...
-                    struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA));
+                    struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA),...
+                    struct('method', 'saliency_ens_clean', 'map', predMaps_tree(:,:,indFr(ifr))));
                 if (saveVideo && verNum >= 2012)
                     outfr = renderSideBySide(fr.image, outMaps, colors, cmap, sim(:,:,ifr),methods);
                     writeVideo(vw, outfr);
@@ -217,7 +220,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         vidnameonly=strsplit(vr.name,'.');vidnameonly=vidnameonly{1};
         movieIdx=iv;
         save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx','-v7.3');
-        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps','-v7.3');
+        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps','predMaps_tree','-v7.3');
         % Finish processing saving and moving on
         dosave(lockfile,'success',1,'compname',getComputerName());
         video_count=video_count+1;

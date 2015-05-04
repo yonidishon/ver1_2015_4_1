@@ -23,7 +23,8 @@ gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
 finalResultRoot_orig = '\\CGM10\D\Video_Saliency_features_for_learner\';
-finalResultRoot_new = '\\CGM10\D\Video_Saliency_features_for_learner_nn_v1\';
+%finalResultRoot_new = '\\CGM10\D\Video_Saliency_features_for_learner_nn_v1\';
+finalResultRoot_new = '\\CGM10\D\Video_Saliency_features_for_learner_nn_v2\';
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
@@ -148,7 +149,9 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 %gazeGmap= points2GaussMap(gazePts', ones(1, size(gazePts, 1)), 0, [n, m], gaze_gt_strct.pointSigma);
                 [IDX,D] = knnsearch([gazePts(:,2),gazePts(:,1)],[Y(:),X(:)]);
                 % Guassian weight for the corresponding distance
-                D_g=(1/gazeData.pointSigma/sqrt(2*pi)).*exp((-(D./gazeData.pointSigma).^2)./2);
+                %D_g=(1/gazeData.pointSigma/sqrt(2*pi)).*exp((-(D./gazeData.pointSigma).^2)./2);
+                D_g=exp((-(D./gazeData.pointSigma).^2)./2);
+                D_g(D_g<0.0111)=0;
                 data=feature_data.data;
                 responeses=D_g(:);
                 save(fullfile(finalResultRoot_new,videos{iv},sprintf('frame_%06d.mat',frames(indFr(ifr)))),'responeses','data');

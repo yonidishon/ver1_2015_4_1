@@ -6,7 +6,7 @@ end
 videos = videoListLoad(diemDataRoot, 'DIEM');
 
 
-vidOBJ = VideoReader([diemDataRoot '\video\' videos{videoIdx} '.avi']);
+vidOBJ = VideoReader([diemDataRoot '\video_unc\' videos{videoIdx} '.avi']);
 nFrames = vidOBJ.NumberOfFrames;
 
 if (exist([outputDir videos{videoIdx}],'dir'))
