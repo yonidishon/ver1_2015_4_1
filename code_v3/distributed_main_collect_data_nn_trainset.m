@@ -26,6 +26,7 @@ finalResultRoot_orig = '\\CGM10\D\Video_Saliency_features_for_learner\';
 %finalResultRoot_new = '\\CGM10\D\Video_Saliency_features_for_learner_nn_v1\';
 finalResultRoot_new = '\\CGM10\D\Video_Saliency_features_for_learner_nn_v2\';
 
+
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
 sourceType = 'rect';
 

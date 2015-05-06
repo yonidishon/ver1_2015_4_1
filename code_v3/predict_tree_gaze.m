@@ -20,7 +20,11 @@ function [gt_maps,pred_maps]=predict_tree_gaze(tree,trainset,data_folder,movie_n
         error('Movie belong to the training set!');
     end
     [gt_maps,data]=load_train_set(data_folder,movie_name);
-    pred_vec=predict(tree,cell2mat(data));
+    %Blockiness check - removing features x and y
+    %pred_vec=predict(tree,cell2mat(data));
+    newdata=cell2mat(data);
+    newdata=newdata(:,1:3);
+    pred_vec=predict(tree,newdata);
     pred_maps=reshape(pred_vec,[frsize,numfr]);
     gt_maps=reshape(cell2mat(gt_maps),[frsize,numfr]);
 end
