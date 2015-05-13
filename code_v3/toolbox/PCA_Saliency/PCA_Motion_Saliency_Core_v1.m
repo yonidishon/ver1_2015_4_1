@@ -94,7 +94,7 @@ A_SPM = A_SPM';
 
 sErrorL_fx=structDifference(a-mean2(a),L_SPM,STATS2,SEGMENTS,numOfSegments,imSize);
 sErrorL_fx = discardEdges(stableNormalize(sErrorL_fx));
-sErrorA_fy=structDifference(rad-mean2(a),A_SPM',STATSA,SEGMENTS,numOfSegments,imSize);
+sErrorA_fy=structDifference(rad-mean2(rad),A_SPM',STATSA,SEGMENTS,numOfSegments,imSize);
 sErrorA_fy = discardEdges(stableNormalize(sErrorA_fy));
 
 clear STATSA STATSB;

@@ -7,9 +7,9 @@ Lm = repmat(mean(poiVec,1),[size(poiVec,1) 1]);
 
 salTic = tic;
 [COEFF,junk] = princomp(poiVec-Lm);
-% reconError = sum(abs((pVec*COEFF)),2);
+reconError = sum(abs((pVec*COEFF)),2);
 % Mahal distance
-reconError = mahal(pVec*COEFF,pVec*COEFF);
+% reconError = mahal(pVec*COEFF,pVec*COEFF);
 reconError = reshape(reconError,imSize);
 salToc = toc(salTic);
 

@@ -5,6 +5,8 @@ UNKNOWN_FLOW_THRESH=1e9;
 idxUnknown = (abs(fx)> UNKNOWN_FLOW_THRESH) | (abs(fy)> UNKNOWN_FLOW_THRESH) ;
 fx(idxUnknown) = 0;
 fy(idxUnknown) = 0;
+% fx(fx<1)=0;
+% fy(fy<1)=0;
 [rColor,rSpatial,rMotion] = globalDistinctness(fx,fy,I_RGB);
 % C = zeros(11,2);
 % Cw = zeros(11,1);
@@ -58,7 +60,7 @@ for pInd=1:numOfLevels
 end
 
 stDistinc(stDistinc<0)=0;
-st1Distinc(stDistinc<0)=0;
+st1Distinc(st1Distinc<0)=0;
 clDistinc(clDistinc<0)=0;
 
 baseWeight= (numOfLevels:-1:1);
@@ -71,8 +73,8 @@ clResult = sum(weights.*clDistinc,3);
 out = imfill(stResult);
 out1 = imfill(st1Result);
 resColor = stableNormalize(clResult);
-resSpatial = stableNormalize(out);
-resMotion = stableNormalize(out1);
+resSpatial = stableNormalize(out1);
+resMotion = stableNormalize(out);
 end
 
 function [sDiffMap] = globalDiff(a,rad,I_RGB)
@@ -92,7 +94,7 @@ A_SPM = A_SPM';
 
 sErrorL_fx=structDifference(a-mean2(a),L_SPM,STATS2,SEGMENTS,numOfSegments,imSize);
 sErrorL_fx = discardEdges(stableNormalize(sErrorL_fx));
-sErrorA_fy = structDifference(rad-mean2(a),A_SPM',STATSA,SEGMENTS,numOfSegments,imSize);
+sErrorA_fy = structDifference(rad-mean2(rad),A_SPM',STATSA,SEGMENTS,numOfSegments,imSize);
 sErrorA_fy = discardEdges(stableNormalize(sErrorA_fy));
 
 clear STATSA STATSB;
