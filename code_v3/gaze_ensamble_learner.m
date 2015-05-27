@@ -16,17 +16,21 @@ poolobj=parpool('local',NCPU);
 NTREES=10;% Number of trees to grow.
 FRACDATA=1/5; % Fraction of data sampled for each tree.
 NUM_SAMPLES_PER_FRAME=1000;
-[responses,data]=load_train_set(data_folder,train_set,NUM_SAMPLES_PER_FRAME);
-% This is in order to investigate the blockiness in the prediction results
-% of the NN learner
-newdata=cell2mat(data);
-newdata=newdata(1:3);
- learned_tree = TreeBagger(NTREES,cell2mat(newdata),cell2mat(responses),'Method','regression','OOBPred','On'...
+% [responses,data]=load_train_set(data_folder,train_set,NUM_SAMPLES_PER_FRAME);
+[responses,data]=load_train_set_feat_pred1(data_folder,train_set,NUM_SAMPLES_PER_FRAME);
+% % This is in order to investigate the blockiness in the prediction results
+% % of the NN learner
+% newdata=cell2mat(data);
+% newdata=newdata(1:3);
+ learned_tree = TreeBagger(NTREES,cell2mat(data),cell2mat(responses),'Method','regression','OOBPred','On'...
        ,'FBoot',FRACDATA,'Options',statset('UseParallel',true),'OOBVarImp','On');
+
  delete(poolobj);
  %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nnv1_1_',getComputerName(),'.mat']),'learned_tree','-v7.3');
  %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v2_',getComputerName(),'.mat']),'learned_tree','-v7.3');
- save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v3_',getComputerName(),'.mat']),'learned_tree','-v7.3');
+ %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v3_',getComputerName(),'.mat']),'learned_tree','-v7.3');
+ %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v8_2_',getComputerName(),'.mat']),'learned_tree','-v7.3');
+ save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_vAll_',getComputerName(),'.mat']),'learned_tree','-v7.3');
 %  leaf = [5 10 20 50 100];
 % col = 'rbcmy';
 % figure
