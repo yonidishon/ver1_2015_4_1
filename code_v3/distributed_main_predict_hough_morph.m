@@ -25,8 +25,9 @@ gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 %finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough\';
 %finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough_and_clean\';
 %finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v4_clean_wo_x_y\';
-finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all\';
+finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all_morph\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
+prevResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all\';
 PredMatDirPCAFbest='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2';
 
 
@@ -36,7 +37,7 @@ sourceType = 'rect';
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
 %methods = {'Ens_v3_hough','self','PCA F+F+P','Dima','Ens_v3_clean'};
-methods = {'v5_clean_w_SpMo_all','self','PCA F+F+P','Dima'};
+methods = {'v5_clean_w_SpMo_all_morph','self','PCA F+F+P','v5_clean_w_SpMo_all','Dima'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -106,15 +107,15 @@ verNum = str2double(vers(1:4));
 tstart=tic;%start_clock
 warnNum=0;
 video_count=0;
-fprintf('Loading learned random forest....\n');
+%fprintf('Loading learned random forest....\n');
 %tree=load('\\CGM10\D\Learned_Trees\fulltree_nnv1_04_03_2015.mat');
 %tree=load('\\CGM10\D\Learned_Trees\fulltree_nn_v3_2015_05_04.mat');
-tree=load('\\CGM10\D\Learned_Trees\fulltree_nn_vall_2015_05_27.mat');
-tree=tree.fulltree;
-trainset={'BBC_life_in_cold_blood_1278x710'
-    'advert_iphone_1272x720'
-    'one_show_1280x712'};
-data_folder='\\CGM10\D\Video_Saliency_features_for_learner';
+%tree=load('\\CGM10\D\Learned_Trees\fulltree_nn_vall_2015_05_27.mat');
+%tree=tree.fulltree;
+% trainset={'BBC_life_in_cold_blood_1278x710'
+%     'advert_iphone_1272x720'
+%     'one_show_1280x712'};
+%data_folder='\\CGM10\D\Video_Saliency_features_for_learner';
 for ii=1:length(testIdx) % run for the length of the defined exp.
     lockfile = [lockfiles_folder,'\',videos{testIdx(ii)},'_lockfile','.mat'];
     if exist(lockfile,'file') % somebody already working on this file go to next one.
@@ -165,7 +166,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             frames = jumpFrames + after;
             indFr = find(frames <= videoLen);
             % predicting the gaze map (Gaussian values max==1);
-            [~,predMaps_tree]=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
+            %[~,predMaps_tree]=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
+            predMaps_tree=load(fullfile(finalResultRoot,[videos{iv},'.mat']),'predMaps_tree');
             % Checking just the blockiness without Hough
 %             fprintf('Starting the Hough voting....\n');
 %             predMaps=zeros(size(predMaps_tree));
@@ -194,13 +196,15 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
 %             end
 %             % End of - Normalizing the gaze map
             predMapPCAFbest=load(fullfile(PredMatDirPCAFbest,[videos{iv},'.mat']),'predMaps');
-
+            predMaptree_clean=load(fullfile(prevResultRoot,[videos{iv},'.mat']),'predMaps_tree');
             for ifr=1:length(indFr)
              fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);   
              gazeData.index = frames(indFr(ifr));
-             [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps_tree(:,:,indFr(ifr)), gazeData, measures, ...
+
+             [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps_tree.predMaps_tree(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
                     struct('method', 'saliency_PCAF+F+P', 'map', predMapPCAFbest.predMaps(:,:,indFr(ifr))), ...
+                    struct('method', 'saliency_v5_clean_w_SpMo_all', 'map', predMaptree_clean.predMaps_tree(:,:,indFr(ifr))), ...
                     struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA));
                     %struct('method', 'saliency_ens_clean', 'map', predMaps_tree(:,:,indFr(ifr))));
                 if (saveVideo && verNum >= 2012)
@@ -227,7 +231,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         movieIdx=iv;
         save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx','-v7.3');
         %save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps','predMaps_tree','-v7.3');
-        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr','predMaps_tree','-v7.3');
+        %save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr','predMaps_tree','-v7.3');
         % Finish processing saving and moving on
         dosave(lockfile,'success',1,'compname',getComputerName());
         video_count=video_count+1;

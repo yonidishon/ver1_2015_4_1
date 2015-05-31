@@ -54,6 +54,7 @@ else
     for jj=1:length(files)
         filedata=load(fullfile(data_folder,folders{ind},files(jj).name));
         fileDATAMAT=load(fullfile(STORED_SALIENCY,[folders{ind},'.avi'],files(jj).name));
+        fileDATAMAT=fileDATAMAT.data;
         [~,rSpatial,rMotion] = PCA_Saliency_all(fileDATAMAT.ofx,fileDATAMAT.ofy,fileDATAMAT.image);
         PCAS=rSpatial(:);PCAM=rMotion(:);
         if sperim~=-1
