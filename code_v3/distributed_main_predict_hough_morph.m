@@ -37,7 +37,8 @@ sourceType = 'rect';
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
 %methods = {'Ens_v3_hough','self','PCA F+F+P','Dima','Ens_v3_clean'};
-methods = {'v5_clean_w_SpMo_all_morph','self','PCA F+F+P','v5_clean_w_SpMo_all','Dima'};
+%methods = {'v5_clean_w_SpMo_all_morph','self','PCA F+F+P','v5_clean_w_SpMo_all','Dima'};
+methods = {'v5_clean_w_SpMo_all_morph','self','PCA F+F+P','v5_clean_w_SpMo_all','Dima','PCASp','PCAM'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -200,13 +201,15 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             for ifr=1:length(indFr)
              fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);   
              gazeData.index = frames(indFr(ifr));
-
+             [~,rSpatial,rMotion] = PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
              [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps_tree.predMaps_tree(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
                     struct('method', 'saliency_PCAF+F+P', 'map', predMapPCAFbest.predMaps(:,:,indFr(ifr))), ...
                     struct('method', 'saliency_v5_clean_w_SpMo_all', 'map', predMaptree_clean.predMaps_tree(:,:,indFr(ifr))), ...
-                    struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA));
-                    %struct('method', 'saliency_ens_clean', 'map', predMaps_tree(:,:,indFr(ifr))));
+                    struct('method', 'saliency_DIMA', 'map', fr.saliencyDIMA),...
+                    struct('method', 'saliency_PCASp', 'map', rSpatial),...
+                    struct('method', 'saliency_PCAM', 'map', rMotion));                 
+
                 if (saveVideo && verNum >= 2012)
                     outfr = renderSideBySide(fr.image, outMaps, colors, cmap, sim(:,:,ifr),methods);
                     writeVideo(vw, outfr);

@@ -36,12 +36,12 @@ diemDataRoot = '\\CGM41\Users\gleifman\Documents\DimaCode\DIEM';%'Z:\RGB-D\DimaC
 %resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_RanOrig\';
 %resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_RanOrig_v1\';
 %resFolder='D:\Video_Saliency_Results\FinalResults2\PCA_Fusion_v2_mahalRan\';
-%resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v4_clean_wo_x_y\';
+resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v4_clean_wo_x_y\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough_and_clean\';
 %resFolder='D:\Video_Saliency_Results\FinalResults4\PCA_M_MRF_v0\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_8_2\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all\';
-resFolder='\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all_morph\';
+%resFolder='\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all_morph\';
 DataRoot = diemDataRoot;
 %videos = videoListLoad(DataRoot, 'DIEM');
 videos=importdata(fullfile(DataRoot, 'list.txt'));
@@ -61,12 +61,14 @@ measures = {'chisq', 'auc'};
 %methods = {'PCA_F_ran_orig','self'};
 %methods = {'PCA_F_ran_orig','self','center','PCAF+F+P','Dima','GBVS','PQFT','Hou'};
 %methods = {'PCA_F_ran_mahal','self','ran_orig','PCAF+F+P','Dima'};
-%methods = {'Ens_v3_clean','self','PCA F+F+P','Dima'};
+methods = {'Ens_v3_clean','self','PCA F+F+P','Dima'};
 %methods = {'Ens_v3_hough','self','PCA F+F+P','Dima','Ens_v3_clean'};
 %methods = {'PCA_F_v8_2_MRF_v0','self','PCA_F_v8_2','Dima'};
 %methods = {'v5_clean_w_SpMo_8_2','self','PCA F+F+P','Dima'};
 %methods = {'v5_clean_w_SpMo_all','self','PCA F+F+P','Dima'};
-methods = {'v5_clean_w_SpMo_all_morph','self','PCA F+F+P','v5_clean_w_SpMo_all','Dima'};
+%methods = {'v5_clean_w_SpMo_all_morph','self','PCA F+F+P','v5_clean_w_SpMo_all','Dima'};
+%methods = {'v5_clean_w_SpMo_all_morph','self','PCA F+F+P','v5_clean_w_SpMo_all','Dima','PCASp','PCAM'};
+
 
 
 

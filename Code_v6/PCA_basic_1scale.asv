@@ -1,3 +1,0 @@
-func[vecs,ave_vec] = PCA_basic_1scale(I_RGB)
-
-end
