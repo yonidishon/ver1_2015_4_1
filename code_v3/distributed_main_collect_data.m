@@ -22,7 +22,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\D\Video_Saliency_features_for_learner\';
+finalResultRoot = '\\CGM10\D\Video_Saliency_features_for_learner_patches\';
 %visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -165,9 +165,12 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             for ifr = 1:length(indFr)
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
                 gazeData.index = frames(indFr(ifr));
-                [Cmap,Smap,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
-                [x_dist,y_dist]=distance_map(m,n);
-                [responeses,data]=process_data_for_learner(Cmap,Smap,Mmap,x_dist,y_dist,gazeData);
+                [~,Smap,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
+                %[x_dist,y_dist]=distance_map(m,n);
+                [responeses,data]=process_data_for_learner_nn_patch(Smap,Mmap,gazeData);
+                if isempty(responeses) || isempty(data) 
+                    continue;
+                end
                 save(fullfile(finalResultRoot,videos{iv},sprintf('frame_%06d.mat',frames(indFr(ifr)))),'responeses','data');
             end
         catch me

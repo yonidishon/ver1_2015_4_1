@@ -1,4 +1,4 @@
-function [gt_maps,pred_maps]=predict_tree_gaze(tree,trainset,data_folder,movie_name,frsize,numfr)
+function [pred_maps]=predict_tree_gaze(tree,trainset,data_folder,movie_name,frsize,numfr)
 % Function predict_gaze to predict the gaze in a movie based on tree learned on trainset. Created 24/2/2015 Yonatan Dishon.
 %
 % Input:
@@ -19,9 +19,15 @@ function [gt_maps,pred_maps]=predict_tree_gaze(tree,trainset,data_folder,movie_n
     if any(ismember(trainset,movie_name))
         error('Movie belong to the training set!');
     end
+    
     %[gt_maps,data]=load_train_set(data_folder,movie_name);
-    [gt_maps,data]=load_train_set_feat_pred1(data_folder,movie_name);
-    pred_vec=predict(tree,cell2mat(data));
+    %[gt_maps,data]=load_train_set_feat_pred1(data_folder,movie_name);
+    files=dir(fullfile(data_folder,movie_name,'\*.mat'));
+    pred_vec=zeros(frsize(1)*frsize(2)*numfr,1);
+    for jj=1:length(files)
+        filedata=load(fullfile(data_folder,movie_name,files(jj).name));
+        pred_vec(1+(jj-1)*frsize(1)*frsize(2),(jj)*frsize(1)*frsize(2))=predict(tree,filedata);
+    end
     pred_maps=reshape(pred_vec,[frsize,numfr]);
-    gt_maps=reshape(cell2mat(gt_maps),[frsize,numfr]);
+    %gt_maps=reshape(cell2mat(gt_maps),[frsize,numfr]);
 end

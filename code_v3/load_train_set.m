@@ -32,9 +32,17 @@ if isa(train_set,'cell')
             filedata=load(fullfile(data_folder,folders{ind},files(jj).name));
             
             if sperim~=-1
-                rperm=randperm(length(filedata.responeses));
-                data_mat{jj}=filedata.data(rperm(1:sperim),:);
-                responses_mat{jj}=filedata.responeses(rperm(1:sperim));
+                IX_zeros=find(filedata.responeses<0.3421);
+                IX_others=find(filedata.responeses>=0.3421);
+                if length(IX_others)<sperim/2
+                    sperim=2*length(IX_others);
+                end
+                rperm_zeros=randperm(length(IX_zeros));
+                rperm_others=randperm(length(IX_others));
+                tmp=filedata.responeses;
+                tmp(IX_zeros)=0;
+                data_mat{jj}=[filedata.data(IX_zeros(rperm_zeros(1:sperim/2)),:);filedata.data(IX_others(rperm_others(1:sperim/2)),:)];
+                responses_mat{jj}=[tmp(IX_zeros(rperm_zeros(1:sperim/2)));tmp(IX_others(rperm_others(1:sperim/2)))];
             else
                 data_mat{jj}=filedata.data;
                 responses_mat{jj}=filedata.responeses;
@@ -48,9 +56,17 @@ else
     for jj=1:length(files)
         filedata=load(fullfile(data_folder,folders{ind},files(jj).name));
         if sperim~=-1
-            rperm=randperm(length(filedata.responeses));
-            data_mat{jj}=filedata.data(rperm(1:sperim),:);
-            responses_mat{jj}=filedata.responeses(rperm(1:sperim));
+            IX_zeros=find(filedata.responeses<0.3421);
+            IX_others=find(filedata.responeses>=0.3421);
+            if length(IX_others)<sperim/2
+                sperim=2*length(IX_others);
+            end
+            rperm_zeros=randperm(length(IX_zeros));
+            rperm_others=randperm(length(IX_others));
+            tmp=filedata.responeses;
+            tmp(IX_zeros)=0;
+            data_mat{jj}=[filedata.data(IX_zeros(rperm_zeros(1:sperim/2)),:);filedata.data(IX_others(rperm_others(1:sperim/2)),:)];
+            responses_mat{jj}=[tmp(IX_zeros(rperm_zeros(1:sperim/2)));tmp(IX_others(rperm_others(1:sperim/2)))];
         else
             data_mat{jj}=filedata.data;
             responses_mat{jj}=filedata.responeses;

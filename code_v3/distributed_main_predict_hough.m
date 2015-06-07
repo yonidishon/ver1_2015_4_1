@@ -25,7 +25,8 @@ gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 %finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough\';
 %finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v3_hough_and_clean\';
 %finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v4_clean_wo_x_y\';
-finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all\';
+%finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all\';
+finalResultRoot = '\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_patch\';
 visRoot = fullfileCreate(finalResultRoot,'vis');
 PredMatDirPCAFbest='\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2';
 
@@ -36,7 +37,7 @@ sourceType = 'rect';
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
 %methods = {'Ens_v3_hough','self','PCA F+F+P','Dima','Ens_v3_clean'};
-methods = {'v5_clean_w_SpMo_all','self','PCA F+F+P','Dima'};
+methods = {'v5_clean_w_SpMo_patch','self','PCA F+F+P','Dima'};
 
 % cache settings
 % cache.root = fullfile(DataRoot, 'cache');
@@ -109,12 +110,12 @@ video_count=0;
 fprintf('Loading learned random forest....\n');
 %tree=load('\\CGM10\D\Learned_Trees\fulltree_nnv1_04_03_2015.mat');
 %tree=load('\\CGM10\D\Learned_Trees\fulltree_nn_v3_2015_05_04.mat');
-tree=load('\\CGM10\D\Learned_Trees\fulltree_nn_vall_2015_05_27.mat');
+tree=load('\\CGM10\D\Learned_Trees\fulltree_nn_patch_v1_2015_05_27.mat');
 tree=tree.fulltree;
 trainset={'BBC_life_in_cold_blood_1278x710'
     'advert_iphone_1272x720'
     'one_show_1280x712'};
-data_folder='\\CGM10\D\Video_Saliency_features_for_learner';
+data_folder='\\CGM10\D\Video_Saliency_features_for_learner_patches';
 for ii=1:length(testIdx) % run for the length of the defined exp.
     lockfile = [lockfiles_folder,'\',videos{testIdx(ii)},'_lockfile','.mat'];
     if exist(lockfile,'file') % somebody already working on this file go to next one.
@@ -165,7 +166,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             frames = jumpFrames + after;
             indFr = find(frames <= videoLen);
             % predicting the gaze map (Gaussian values max==1);
-            [~,predMaps_tree]=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
+            predMaps_tree=predict_tree_gaze(tree,trainset,data_folder,videos{iv},[m,n],length(indFr));
             % Checking just the blockiness without Hough
 %             fprintf('Starting the Hough voting....\n');
 %             predMaps=zeros(size(predMaps_tree));
