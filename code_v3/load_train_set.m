@@ -32,10 +32,10 @@ if isa(train_set,'cell')
             filedata=load(fullfile(data_folder,folders{ind},files(jj).name));
             
             if sperim~=-1
-                IX_zeros=find(filedata.responeses<0.3421);
-                IX_others=find(filedata.responeses>=0.3421);
-                if length(IX_others)<sperim/2
-                    sperim=2*length(IX_others);
+                IX_zeros=find(filedata.responeses<0.4);
+                IX_others=find(filedata.responeses>=0.7);
+                if length(IX_others)<sperim/2 || length(IX_zeros)<sperim/2
+                    sperim=2*min(length(IX_others),length(IX_zeros));
                 end
                 rperm_zeros=randperm(length(IX_zeros));
                 rperm_others=randperm(length(IX_others));
@@ -56,10 +56,10 @@ else
     for jj=1:length(files)
         filedata=load(fullfile(data_folder,folders{ind},files(jj).name));
         if sperim~=-1
-            IX_zeros=find(filedata.responeses<0.3421);
-            IX_others=find(filedata.responeses>=0.3421);
-            if length(IX_others)<sperim/2
-                sperim=2*length(IX_others);
+            IX_zeros=find(filedata.responeses<0.4);
+            IX_others=find(filedata.responeses>=0.7);
+            if length(IX_others)<sperim/2 || length(IX_zeros)<sperim/2
+                sperim=2*min(length(IX_others),length(IX_zeros));
             end
             rperm_zeros=randperm(length(IX_zeros));
             rperm_others=randperm(length(IX_others));

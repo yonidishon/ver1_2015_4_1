@@ -8,7 +8,7 @@ train_set={'BBC_life_in_cold_blood_1278x710'
            'one_show_1280x712'};
 %data_folder='\\CGM10\D\Video_Saliency_features_for_learner_nn_v1\';
 %data_folder='\\CGM10\D\Video_Saliency_features_for_learner_nn_v2\';
-data_folder='\\CGM10\D\Video_Saliency_features_for_learner_patches\';
+data_folder='\\CGM10\D\Video_Saliency_features_for_learner_patches_cluster\';
 
 NCPU=str2double(getenv('NUMBER_OF_PROCESSORS')); % Number of CPUs on which to run
 cobj=parcluster('local');
@@ -31,7 +31,7 @@ NUM_SAMPLES_PER_FRAME=1000;
  %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v2_',getComputerName(),'.mat']),'learned_tree','-v7.3');
  %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v3_',getComputerName(),'.mat']),'learned_tree','-v7.3');
  %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v8_2_',getComputerName(),'.mat']),'learned_tree','-v7.3');
- save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_patch_v1_',getComputerName(),'.mat']),'learned_tree','-v7.3');
+ save(fullfile('\\CGM10\D\Learned_Trees',['tree_cluster_patch_v1_',getComputerName(),'.mat']),'learned_tree','-v7.3');
 %  leaf = [5 10 20 50 100];
 % col = 'rbcmy';
 % figure

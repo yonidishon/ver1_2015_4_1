@@ -22,7 +22,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-finalResultRoot = '\\CGM10\D\Video_Saliency_features_for_learner_patches\';
+finalResultRoot = '\\CGM10\D\Video_Saliency_features_for_learner_patches_cluster\';
 %visRoot = fullfileCreate(finalResultRoot,'vis');
 
 jumpType = 'all'; % 'cut' or 'gaze_jump' or 'random' or 'all'
@@ -167,7 +167,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 gazeData.index = frames(indFr(ifr));
                 [~,Smap,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
                 %[x_dist,y_dist]=distance_map(m,n);
-                [responeses,data]=process_data_for_learner_nn_patch(Smap,Mmap,gazeData);
+                %[responeses,data]=process_data_for_learner_nn_patch(Smap,Mmap,gazeData);
+                [responeses,data]=process_data_for_learner_patch(Smap,Mmap,gazeData);
                 if isempty(responeses) || isempty(data) 
                     continue;
                 end
