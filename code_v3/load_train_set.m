@@ -33,13 +33,13 @@ if isa(train_set,'cell')
     for ii=1:length(train_set)
         ind=find(ismember(folders,train_set{ii}));
         files=dir(fullfile(data_folder,folders{ind},'\*.mat'));
-        for jj=1:DOWNSAMPLE:length(files)
-            filedata=load(fullfile(data_folder,folders{ind},files(jj).name));
+        for jj=1:length(1:DOWNSAMPLE:length(files))
+            filedata=load(fullfile(data_folder,folders{ind},files(1+(jj-1)*DOWNSAMPLE).name));
             
             if sperim~=-1
                 rperm=randperm(length(filedata.responeses));
-                data_mat{jj}=filedata.data(rperm(1:sperim),:);
-                responses_mat{jj}=filedata.responeses(rperm(1:sperim));
+                data_mat{offset+jj}=filedata.data(rperm(1:sperim),:);
+                responses_mat{offset+jj}=filedata.responeses(rperm(1:sperim));
             else
                 data_mat{offset+jj}=filedata.data;
                 responses_mat{offset+jj}=filedata.responeses;

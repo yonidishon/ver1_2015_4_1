@@ -27,8 +27,8 @@ DSFACT = 5; % sampling factor - the movie is sampled every x frames
 X = cell2mat(data);
 Y = cell2mat(responses);
 % giving a weight to lower and higher values examples
-W = 1./exp(-((Y-0.5)./sqrt(-0.5^2/2/log(0.1))).^2./2);
-learned_tree = TreeBagger(NTREES,X,Y,W,'Method','regression','OOBPred','On'...
+%W = 1./exp(-((Y-0.5)./sqrt(-0.5^2/2/log(0.1))).^2./2);
+learned_tree = TreeBagger(NTREES,X,Y,'Method','regression','OOBPred','On'...
        ,'FBoot',FRACDATA,'Options',statset('UseParallel',true),'OOBVarImp','On');
 
  delete(poolobj);

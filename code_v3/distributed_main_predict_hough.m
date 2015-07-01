@@ -197,7 +197,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
 %             % End of - Normalizing the gaze map
             predMapPCAFbest=load(fullfile(PredMatDirPCAFbest,[videos{iv},'.mat']),'predMaps');
 
-            for ifr=1:length(indFr)
+            for ifr=1:300 %length(indFr)
              fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);   
              gazeData.index = frames(indFr(ifr));
              [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps_tree(:,:,indFr(ifr)), gazeData, measures, ...
