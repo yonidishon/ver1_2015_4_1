@@ -98,11 +98,11 @@ warnNum=0;
 video_count=0;
 for ii=1:length(testIdx) % run for the length of the defined exp.
     lockfile = [lockfiles_folder,'\',videos{testIdx(ii)},'_lockfile','.mat'];
-    if exist(lockfile,'file') % somebody already working on this file go to next one.
-        continue;
-    else % nobody works on the file - lock it and work on it
-        dosave(lockfile,'compname',getComputerName());
-    end
+%     if exist(lockfile,'file') % somebody already working on this file go to next one.
+%         continue;
+%     else % nobody works on the file - lock it and work on it
+%         dosave(lockfile,'compname',getComputerName());
+%     end
     try % MAIN ROUTINE to do.
         % PREPARE DATA Routine
         iv = testIdx(testSubset(ii));
@@ -179,7 +179,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         end       
         fprintf('%f sec\n', toc);
         % Finish processing saving and moving on
-        dosave(lockfile,'success',1,'compname',getComputerName());
+%         dosave(lockfile,'success',1,'compname',getComputerName());
         video_count=video_count+1;
         
         % ERROR handling
@@ -205,4 +205,4 @@ massege=['Time for the Exp to run on ',getComputerName(),' is: ',num2str(telapse
 fprintf(subject);fprintf(massege);
 % [mail,ss]=myGmail('fuck you');
 % SendmeEmail(mail,ss,subject,massege);
-exit();
+%exit();

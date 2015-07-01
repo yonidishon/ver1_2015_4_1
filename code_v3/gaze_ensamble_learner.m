@@ -1,4 +1,4 @@
-function [ensamble]=gaze_ensamble_learner(data_folder,train_set)
+%function [ensamble]=gaze_ensamble_learner(data_folder,train_set)
 % Function to build an ensamble of weak learner to learn the fusion of the
 % verious PCA methods in order to fit a responses to the spatial color,
 % position and movement extracted from 
@@ -14,16 +14,21 @@ NCPU=str2double(getenv('NUMBER_OF_PROCESSORS')); % Number of CPUs on which to ru
 cobj=parcluster('local');
 cobj.NumWorkers = NCPU;
 poolobj=parpool('local',NCPU);
-NTREES=10;% Number of trees to grow.
-FRACDATA=1/5; % Fraction of data sampled for each tree.
-NUM_SAMPLES_PER_FRAME=1000;
- [responses,data]=load_train_set(data_folder,train_set,NUM_SAMPLES_PER_FRAME);
+NTREES = 10;% Number of trees to grow.
+FRACDATA = 1/5; % Fraction of data sampled for each tree.
+NUM_SAMPLES_PER_FRAME = 100;
+DSFACT = 5; % sampling factor - the movie is sampled every x frames
+ [responses,data] = load_train_set(data_folder,train_set,NUM_SAMPLES_PER_FRAME,DSFACT);
 %[responses,data]=load_train_set_feat_pred1(data_folder,train_set,NUM_SAMPLES_PER_FRAME);
 % % This is in order to investigate the blockiness in the prediction results
 % % of the NN learner
 % newdata=cell2mat(data);
 % newdata=newdata(1:3);
- learned_tree = TreeBagger(NTREES,cell2mat(data),cell2mat(responses),'Method','regression','OOBPred','On'...
+X = cell2mat(data);
+Y = cell2mat(responses);
+% giving a weight to lower and higher values examples
+W = 1./exp(-((Y-0.5)./sqrt(-0.5^2/2/log(0.1))).^2./2);
+learned_tree = TreeBagger(NTREES,X,Y,W,'Method','regression','OOBPred','On'...
        ,'FBoot',FRACDATA,'Options',statset('UseParallel',true),'OOBVarImp','On');
 
  delete(poolobj);
@@ -31,7 +36,7 @@ NUM_SAMPLES_PER_FRAME=1000;
  %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v2_',getComputerName(),'.mat']),'learned_tree','-v7.3');
  %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v3_',getComputerName(),'.mat']),'learned_tree','-v7.3');
  %save(fullfile('\\CGM10\D\Learned_Trees',['tree_nn_v8_2_',getComputerName(),'.mat']),'learned_tree','-v7.3');
- save(fullfile('\\CGM10\D\Learned_Trees',['tree_cluster_patch_v1_',getComputerName(),'.mat']),'learned_tree','-v7.3');
+ save(fullfile('\\CGM10\D\Learned_Trees',['tree_cluster_patch_v2_',getComputerName(),'.mat']),'learned_tree','-v7.3');
 %  leaf = [5 10 20 50 100];
 % col = 'rbcmy';
 % figure
