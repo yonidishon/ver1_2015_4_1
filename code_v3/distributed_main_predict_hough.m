@@ -107,12 +107,13 @@ verNum = str2double(vers(1:4));
 tstart=tic;%start_clock
 warnNum=0;
 video_count=0;
-fprintf('Loading learned random forest....\n');
+fprintf('Loading learned random forest....\n');tic;
 %tree=load('\\CGM10\D\Learned_Trees\fulltree_nnv1_04_03_2015.mat');
 %tree=load('\\CGM10\D\Learned_Trees\fulltree_nn_v3_2015_05_04.mat');
 %tree=load('\\CGM10\D\Learned_Trees\fulltree_tree_cluster_patch_v1_2015_05_27.mat');
 tree=load('\\CGM10\D\Learned_Trees\fulltree_tree_cluster_patch_v2_2015_06_30.mat');
 tree=tree.fulltree;
+fprintf('Finished Loading forest\n');toc;
 trainset={'BBC_life_in_cold_blood_1278x710'
     'advert_iphone_1272x720'
     'one_show_1280x712'};

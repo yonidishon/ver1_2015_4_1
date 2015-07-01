@@ -3,19 +3,20 @@
 clear all;close all;clc;
 fprintf('Start script for building full tree\n');
 
-cd(fileparts(mfilename('fullpath')));
+%cd(fileparts(mfilename('fullpath')));
+fld='\\cgm10\D\Learned_Trees';
 TREEPREFIX='tree_cluster_patch_v2';
 TREEVER='tree_cluster_patch_v2';
 DATE='2015_06_30';
-FULLTREENAME=['fulltree_',TREEVER,'_',DATE];
+FULLTREENAME=fullfile(fld,['fulltree_',TREEVER,'_',DATE]);
 
-treefiles=dir([TREEPREFIX,'*']);
-fulltree=load(treefiles(1).name);
+treefiles=dir(fullfile(fld,[TREEPREFIX,'*']));
+fulltree=load(fullfile(fld,treefiles(1).name));
 fulltree=fulltree.learned_tree;
 fulltree=fulltree.compact;
 fprintf('Finished loading tree #1\n');
 for ii=2:length(treefiles)
-    curtree=load(treefiles(ii).name);
+    curtree=load(fullfile(fld,treefiles(ii).name));
     curtree=curtree.learned_tree;
     curtree=curtree.compact;
     fulltree=combine(fulltree,curtree);

@@ -24,7 +24,7 @@ function [pred_maps]=predict_tree_gaze(tree,trainset,data_folder,movie_name,frsi
     %[gt_maps,data]=load_train_set_feat_pred1(data_folder,movie_name);
     files=dir(fullfile(data_folder,movie_name,'\*.mat'));
     pred_maps=zeros(frsize(1),frsize(2),numfr);
-    for jj=1:length(files)
+    for jj=1:numfr
         filedata=load(fullfile(data_folder,movie_name,files(jj).name));
        pred_maps(:,:,jj)=reshape(predict(tree,filedata.data),frsize(1),frsize(2));
     end
