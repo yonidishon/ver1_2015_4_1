@@ -13,7 +13,7 @@ function [pred_maps]=predict_tree_gaze(tree,trainset,data_folder,movie_name,frsi
 %       what Dmitry did in his testing [frame#30,videolen-30]
 %
 % Output:
-%   - gt_maps - the Ground Truth gaze responses from the saved results
+%   - gt_maps - the Ground Truh gaze responses from the saved results
 %   - pred_maps - the predicted gaze maps according to the features and
 %       regression function learned by the ansembled of trees.
     if any(ismember(trainset,movie_name))

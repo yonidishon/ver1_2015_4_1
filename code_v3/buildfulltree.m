@@ -5,9 +5,9 @@ fprintf('Start script for building full tree\n');
 
 %cd(fileparts(mfilename('fullpath')));
 fld='\\cgm10\D\Learned_Trees';
-TREEPREFIX='tree_cluster_patch_v2';
-TREEVER='tree_cluster_patch_v2';
-DATE='2015_06_30';
+TREEPREFIX='tree_cluster_patch_v4';
+TREEVER='tree_cluster_patch_v4';
+DATE='2015_07_01';
 FULLTREENAME=fullfile(fld,['fulltree_',TREEVER,'_',DATE]);
 
 treefiles=dir(fullfile(fld,[TREEPREFIX,'*']));

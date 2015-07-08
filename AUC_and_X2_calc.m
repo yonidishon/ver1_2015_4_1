@@ -43,7 +43,10 @@ diemDataRoot = '\\CGM41\Users\gleifman\Documents\DimaCode\DIEM';%'Z:\RGB-D\DimaC
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all\';
 %resFolder='\\CGM10\D\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_all_morph\';
 %resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_clean_w_SpMo_patch\';
-resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_w_SpMo_patch_cluster\';
+%resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_w_SpMo_patch_cluster\';
+%resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v5_1_w_SpMo_patch_cluster\';
+resFolder='D:\Video_Saliency_Results\Self_centeroid\';
+%resFolder='D:\Video_Saliency_Results\FinalResults3\TreeEnsamble_v6_w_SpMo_patch_cluster\';
 DataRoot = diemDataRoot;
 %videos = videoListLoad(DataRoot, 'DIEM');
 videos=importdata(fullfile(DataRoot, 'list.txt'));
@@ -70,13 +73,14 @@ measures = {'chisq', 'auc'};
 %methods = {'v5_clean_w_SpMo_all','self','PCA F+F+P','Dima'};
 %methods = {'v5_clean_w_SpMo_all_morph','self','PCA F+F+P','v5_clean_w_SpMo_all','Dima'};
 %methods = {'v5_clean_w_SpMo_all_morph','self','PCA F+F+P','v5_clean_w_SpMo_all','Dima','PCASp','PCAM'};
-methods = {'Ens_v5_clean_SpMo_patch','self','PCA F+F+P','Dima'};
+%methods = {'v6_PT_C_W','self','PCA F+F+P','Dima'};
+methods = {'self_centeroid','self','self_max','PCA F+F+P','Dima'};
 
 
 
 
-%testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % Used by Borji on DIEM
-testIdx = [8,10,11,12,15,16,34,42,44,48,53,55,59,70,74,83,84]; % For Tree Enamble v0
+testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % Used by Borji on DIEM
+%testIdx = [8,10,11,12,15,16,34,42,44,48,53,55,59,70,74,83,84]; % For Tree Enamble v0
 
 testSubset = 1:length(testIdx);
 nt = length(testSubset);
