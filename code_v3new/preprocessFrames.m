@@ -126,18 +126,6 @@ for ifr = 1:nfr
             data.videoName = vr.name;
             save(cacheFile, 'data');
         end
-        if (~isfield(s.data, 'saliencyPCA')) % there is no PCA saliency data - add it
-            data.saliencyPCA = PCA_Saliency(data.image); 
-            save(cacheFile, 'data');
-        end
-        if (~isfield(s.data, 'saliencyMotionPCA')) % there is no Motion PCA saliency data - add it
-            data.saliencyMotionPCA = PCA_Motion_Saliency(data.ofx,data.ofy,data.image);
-            save(cacheFile, 'data');
-        end
-        if (~isfield(s.data, 'saliencyMotionPCAPolar')) % there is no Motion PCA saliency data - add it
-            data.saliencyMotionPCAPolar = PCA_Motion_Saliency_Polar(data.ofx,data.ofy,data.image);
-            save(cacheFile, 'data');
-        end
         
         if ~isfield(s.data,'saliencyDIMA') && predflag ;
             data.saliencyDIMA=DIMAPredmat.predMaps(:,:,find(DIMAPredmat.frames(1,:)==ind));
@@ -169,27 +157,7 @@ for ifr = 1:nfr
             end
             save(cacheFile, 'data');
         end
-        if (~isfield(s.data,'objectness'))
-            data.objectness=computeObjectnessmap(data.image,NUMWINDOBJ);
-            save(cacheFile, 'data');
-        end
-        if (~isfield(s.data,'Fused_Saliency'))
-            %data.Fused_Saliency=data.saliencyMotionPCA.*data.saliencyPCA;
-            data.Fused_Saliency=PCA_Fused_Saliency(data.ofx,data.ofy,data.image);
-            save(cacheFile, 'data');
-        end
-        
-                if (~isfield(s.data,'segments'))
-                    if (size(data.image,3)==1) % grayscale image is treated as colored
-                        I_RGB=repmat(data.image,[1 1 3]);
-                        I_LAB = single(rgb2lab(I_RGB));
-                    else
-                        I_LAB = single(rgb2lab(data.image));
-                    end
-                    SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
-                    [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
-                    data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
-                end
+       
         clear s;
         if nargout~=0
             frs{ifr} = data;
@@ -212,30 +180,11 @@ for ifr = 1:nfr
         [data.ofx, data.ofy] = Coarse2FineTwoFrames(f, fp, ofParam);
     end
     
-    %Objectness
-    data.objectness=computeObjectnessmap(data.image,NUMWINDOBJ);
     
-    %     %SLIC
-    %     if (size(data.image,3)==1) % grayscale image is treated as colored
-    %         I_RGB=repmat(data.image,[1 1 3]);
-    %         I_LAB = single(rgb2lab(I_RGB));
-    %     else
-    %         I_LAB = single(rgb2lab(data.image));
-    %     end
-    %     SEGMENTS = vl_slic(I_LAB, 16, 300,'MinRegionSize',16);
-    %     [~, ~, n] = unique(SEGMENTS); %Ensure no missing index
-    %     data.segments = reshape(n,size(SEGMENTS)); %Ensure no missing index
     if  predflag
         data.saliencyDIMA=DIMAPredmat.predMaps(:,:,find(DIMAPredmat.frames(1,:)==ind));
     end
-    %%%%% static saliency %%%%%%
-    
-    % PCA saliency
-    data.saliencyPCA = PCA_Saliency(data.image);
-    
-    %%%%% Motion saliency %%%%%%
-    data.saliencyMotionPCA = PCA_Motion_Saliency(data.ofx,data.ofy,data.image);
-    
+   
     %%%%%%%%% OTHER SALIENCY METHODS (ALREADY COMPUTED BY DIMA ON DIEM)%%%%%%%%
     DimaCacheFile=fullfile(DIMAResultFolder,vr.name,sprintf('frame_%06d.mat', ind));
     DimaFlag=0;
@@ -301,9 +250,6 @@ for ifr = 1:nfr
     data.videoName = vr.name;
     %data.saliencyGBVS = data.saliency;
     
-    % Fusion Saliency map
-    %data.Fused_Saliency=data.saliencyMotionPCA.*data.saliencyPCA;
-    data.Fused_Saliency=PCA_Fused_Saliency(data.ofx,data.ofy,data.image);
     
     if nargout~=0
         frs{ifr} = data;

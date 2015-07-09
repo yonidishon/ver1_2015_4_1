@@ -3,10 +3,7 @@ DATEANDTIME=clock; % getting the current time [yr,mnt,day,h,m,sec]
 DATESTR=sprintf('%d_%d_%d',DATEANDTIME(1:3)); % get date yr_mnt_day
 
 
-%global GENERALPARAMS TREEPARAMS; 
-%   NOTE : DON'T NEED TO SET THEM AS GLOBAL
-%   because I always get them in functions and base workspace is shared
-%   across scripts
+global GENERALPARAMS TREEPARAMS; 
 
 GENERALPARAMS.PatchSz = 7; % 5/3/1
 GENERALPARAMS.GT = 'cluster'; % 'NN'
@@ -32,14 +29,13 @@ TREEPARAMS.LOWTH = 0.4;
 setup_videoSaliency;
 
 % data storage configuration
-CollectDataDst = fullfile('\\CGM10\D',['ob_res_',full_tree_ver,'_',GENERALPARAMS.features]);
+CollectDataDst = fullfile('\\CGM10\D\Data_codev3new',['ob_res_',GENERALPARAMS.full_tree_ver]);
 TreesDst = '\\CGM10\D\Learned_Trees\code_v3new';
-FinalResultRoot = ['\\CGM10\D\Video_Saliency_Results\FinalResults3new',GENERALPARAMS.full_tree_ver]; %TODOYD
-visRoot = fullfileCreate(finalResultRoot,'vis');
+FinalResultRoot = ['\\CGM10\D\Video_Saliency_Results\FinalResults3new\',GENERALPARAMS.full_tree_ver,'_results'];
+visRoot = fullfileCreate(FinalResultRoot,'vis');
 measures = {'chisq', 'auc'}; % {'chisq', 'auc', 'cc', 'nss'};
 methods = {GENERALPARAMS.full_tree_ver,'self','PCA F+P','Dima'};
-methods_paths = {'\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2',...
-                };
+methods_paths = {'\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2'};
 
 %Prepare Data for tree
 collect_data

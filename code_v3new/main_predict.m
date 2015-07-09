@@ -10,7 +10,7 @@ cache.renew = false;%true; %true; % use in case the preprocessing mechanism upda
 videos = videoListLoad(DataRoot, 'DIEM');
 testIdx = TREEPARAMS.testset;
 
-visVideo = true; % TODOYD
+visVideo = true;s
 
 %% visualization
 cmap = jet(256);
@@ -43,6 +43,9 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         continue;
     else % nobody works on the file - lock it and work on it
         dosave(lockfile,'compname',getComputerName());
+    end
+    if (~exist(fullfile(FinalResultRoot,videos{iv}), 'dir'))
+        mkdir(fullfile(FinalResultRoot,videos{iv}));
     end
     try % MAIN ROUTINE to do.
         % PREPARE DATA Routine
@@ -77,7 +80,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             predMaps_tree=predict_tree_gaze(tree,videos(TREEPARAMS.trainset),...
                 data_folder,videos{iv},[m,n],GENERALPARAMS.frame_pred_num,GENERALPARAMS.offset);
             
-            method1=load(fullfile(methods_paths{1},[videos{iv},'.mat']),'predMaps'); % TODOYD
+            method1=load(fullfile(methods_paths{1},[videos{iv},'.mat']),'predMaps');
 
             for ifr=1:length(indFr)
              fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);   

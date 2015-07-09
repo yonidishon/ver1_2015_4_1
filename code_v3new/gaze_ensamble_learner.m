@@ -3,8 +3,9 @@ NCPU=str2double(getenv('NUMBER_OF_PROCESSORS')); % Number of CPUs on which to ru
 cobj=parcluster('local');
 cobj.NumWorkers = NCPU;
 poolobj=parpool('local',NCPU);
-[responses,data] = load_train_set_sel(CollectDataDst,TREEPARAMS.trainset,...
-    TREEPARAMS.samples_per_frame,TREEPARAMS.fractions); % TODOYD
+videos = videoListLoad(DataRoot,'DIEM');
+[responses,data] = load_train_set_sel(CollectDataDst,videos(TREEPARAMS.trainset),...
+    TREEPARAMS.samples_per_frame,TREEPARAMS.fractions);
 X = cell2mat(data);
 Y = cell2mat(responses);
 % giving a weight to lower and higher values examples

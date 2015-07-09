@@ -1,5 +1,5 @@
 % SCRIPT
-% BUILD FULL TREE FROM sub-trees % TODOYD - NEED TO TO THE ENTIRE FILE
+% BUILD FULL TREE FROM sub-trees %
 % Get the version prefix for the current tree
 fprintf('Start script for building full tree\n');
 FULLTREENAME=fullfile(TreesDst,[GENERALPARAMS.full_tree_ver,'_fulltree']);

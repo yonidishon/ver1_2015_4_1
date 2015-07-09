@@ -12,7 +12,7 @@ proj_dir= 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v3new';
 saliency_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
 
 % Finish up cache files on host and collect results in CGM10 
-lockfiles_folder=['\\cgm10\Users\ydishon\Documents\Video_Saliency\lockfiles',GENERALPARAMS.lockfile_prefix];
+lockfiles_folder=fullfile('\\cgm10\Users\ydishon\Documents\Video_Saliency\lockfiles',GENERALPARAMS.lockfile_prefix);
 if ~exist(lockfiles_folder,'dir');
     mkdir(lockfiles_folder);
 end
