@@ -4,13 +4,12 @@ global dropbox;
 global gdrive;
 dropbox = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency\Dropbox';
 gdrive = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency\GDrive';
-diemDataRoot = '\\CGM10\D\DIEM';
+DataRoot = '\\CGM10\D\DIEM';
 cacheRoot = '\\CGM10\D\Video_Saliency_cache_Backup';
 
 %---------------change these lines when moving to other versions----------%
 proj_dir= 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v3new';
 saliency_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
-result_dir = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0\cache'; % TODOYD - change to something logical
 
 % Finish up cache files on host and collect results in CGM10 
 lockfiles_folder=['\\cgm10\Users\ydishon\Documents\Video_Saliency\lockfiles',GENERALPARAMS.lockfile_prefix];

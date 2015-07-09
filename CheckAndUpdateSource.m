@@ -19,11 +19,11 @@ hosts = {'CGM-AYELLET-1',...
          'CGM46',...
          'CGM47'};
 %'CGM44'% - Uri uses it,...
-Source_server_folder='C:\Users\ydishon\Documents\Video_Saliency\code_v3';
+Source_server_folder='C:\Users\ydishon\Documents\Video_Saliency\code_v3new';
 %Source_server_folder='C:\Users\ydishon\Documents\Video_Saliency\code_v1';
 Source_perent_folder='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
 dima_server='C:\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\';
-Source_dist_folder='\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v3';
+Source_dist_folder='\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v3new';
 Source_dist_perent_fold='\Users\ydishon\Documents\MATLAB\Video_Saliency';
 %Source_dist_folder='\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v1';
 dima_dist_host='\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency';
