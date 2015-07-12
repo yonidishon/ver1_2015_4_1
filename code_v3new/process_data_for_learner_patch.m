@@ -1,4 +1,5 @@
 function [responses,data_mat]=process_data_for_learner_patch(sp_map,mo_map,gaze_gt_strct,GT_FORM,PatchSz)
+global GENERALPARAMS TREEPARAMS; 
 % TODOYD - if it should be general to general number of feature maps need
 % to change this
 % Function to arrange the data and responses to the learner. Created 20/2/2015 Yonatan Dishon.
@@ -34,12 +35,15 @@ end
 if PatchSz == 1
     Mpatches = mo_map(:);
     Spatches = sp_map(:);
+    data_mat=[Spatches,Mpatches];
+    responses=gazeGmap(:);
+    return;
 else
     Mpatches = im2colstep(mo_map,[PatchSz PatchSz])';
     Spatches = im2colstep(sp_map,[PatchSz PatchSz])';
+    data_mat=[Spatches,Mpatches];
+    halfPt=floor(GENERALPARAMS.PatchSz/2);
+    gazeGmap=gazeGmap(halfPt+1:end-halfPt,halfPt+1:end-halfPt);
+    responses=gazeGmap(:);
 end
-data_mat=[Spatches,Mpatches];
-responses=gazeGmap(:);
-
-
 end

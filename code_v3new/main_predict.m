@@ -10,7 +10,7 @@ cache.renew = false;%true; %true; % use in case the preprocessing mechanism upda
 videos = videoListLoad(DataRoot, 'DIEM');
 testIdx = TREEPARAMS.testset;
 
-visVideo = true;s
+visVideo = true;
 
 %% visualization
 cmap = jet(256);
@@ -43,9 +43,6 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         continue;
     else % nobody works on the file - lock it and work on it
         dosave(lockfile,'compname',getComputerName());
-    end
-    if (~exist(fullfile(FinalResultRoot,videos{iv}), 'dir'))
-        mkdir(fullfile(FinalResultRoot,videos{iv}));
     end
     try % MAIN ROUTINE to do.
         % PREPARE DATA Routine
@@ -89,7 +86,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                     'self', ...
                     struct('method', ['saliency_',methods{1}], 'map', method1.predMaps(:,:,indFr(ifr))), ...
                     struct('method', ['saliency_',methods{2}], 'map', fr.saliencyDIMA));
-                if (saveVideo && verNum >= 2012)
+                if visVideo
                     outfr = renderSideBySide(fr.image, outMaps, colors, cmap, sim(:,:,ifr),methods);
                     writeVideo(vw, outfr);
                 end
@@ -105,7 +102,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                 rethrow(me);
             end
         end   
-        if (saveVideo && verNum >= 2012)
+        if visVideo
             close(vw);
         end
         fprintf('%f sec\n', toc);
@@ -130,7 +127,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
 end
 % FINISHED RUN wrap things up
 telapse=toc(tstart);
-subject=['MATLAB: Your Exp on: ',getComputerName(),'  -  has finished'];
+subject=['MATLAB: Your Exp on: ',getComputerName(),'  -  has finished\n'];
 massege=['Time for the Exp to run on ',getComputerName(),' is: ',num2str(telapse),'[sec]',...
     '\n','Number of Videos processed is:',num2str(video_count),'\n'];
 fprintf(subject);fprintf(massege);

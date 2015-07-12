@@ -97,7 +97,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
 end
 % FINISHED RUN wrap things up
 telapse=toc(tstart);
-subject=['MATLAB: Your Exp on: ',getComputerName(),'  -  has finished'];
+subject=['MATLAB: Your Exp on: ',getComputerName(),'  -  has finished\n'];
 massege=['Time for the Exp to run on ',getComputerName(),' is: ',num2str(telapse),'[sec]',...
     '\n','Number of Videos processed is:',num2str(video_count),'\n'];
 fprintf(subject);fprintf(massege);

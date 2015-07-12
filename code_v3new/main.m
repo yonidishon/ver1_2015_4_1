@@ -5,10 +5,10 @@ DATESTR=sprintf('%d_%d_%d',DATEANDTIME(1:3)); % get date yr_mnt_day
 
 global GENERALPARAMS TREEPARAMS; 
 
-GENERALPARAMS.PatchSz = 7; % 5/3/1
-GENERALPARAMS.GT = 'cluster'; % 'NN'
+GENERALPARAMS.PatchSz = 1; % 5/3/1
+GENERALPARAMS.GT = 'cluster';%'NN'
 GENERALPARAMS.features = 'PCAsPCAm';
-GENERALPARAMS.full_tree_ver = sprintf('P-%d_GT-%s_%s',...
+GENERALPARAMS.full_tree_ver = sprintf('P-%d_GT-%s_%s_TH',...
     GENERALPARAMS.PatchSz,GENERALPARAMS.GT,GENERALPARAMS.features);
 GENERALPARAMS.lockfile_prefix =DATESTR;
 GENERALPARAMS.frame_pred_num = 300;
@@ -22,10 +22,18 @@ TREEPARAMS.numframe2skip = 5;
 % [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84];
 TREEPARAMS.trainset = [6,14,54]; 
 TREEPARAMS.testset = [8,10,11,12,15,16,34,42,44,48,53,55,59,70,74,83,84];
-TREEPARAMS.rand = 1;
+TREEPARAMS.rand = 0;
 TREEPARAMS.HIGHTH = 0.7;
 TREEPARAMS.LOWTH = 0.4;
-
+hosts = {'CGM-AYELLET-1',...
+         'CGM7',...
+         'CGM16',...
+         'CGM22',...
+         'CGM38',...
+         'CGM41',...
+         'CGM45',...
+         'CGM46',...
+         'CGM47'};
 setup_videoSaliency;
 
 % data storage configuration
@@ -42,15 +50,24 @@ collect_data
 
 %Training
 gaze_ensamble_learner;
+fidtrainfin = fopen(fullfile(lockfiles_folder,['train_sync_',getComputerName(),'.txt']),'wt');
+fprintf(fidtrainfin,'finish training'); fclose(fidtrainfin);
 
 % Wait for Ayellet computer to finish writing the full tree
-if strcmp(getComputerName(),'cgm-ayellet-1');
+if strcmp(getComputerName(),'cgm-ayellet-1') && ~exist(fullfile(TreesDst,[GENERALPARAMS.full_tree_ver,'_fulltree.mat']),'file')
+    while(1)
+        numhostsfinished=length(dir(fullfile(lockfiles_folder,'train_sync_*')));
+        if numhostsfinished==length(hosts)
+            break;
+        end
+        pause(60);
+    end
     buildfulltree;
-    sync_file=fullfile(lockfiles_folder,[DATESTR,'_sync\sync_file.mat']);
+    sync_file=fullfile(lockfiles_folder,'sync_file.mat');
     dummy=0;
     save(sync_file,'dummy');
 else
-    sync_file=fullfile(lockfiles_folder,[DATESTR,'_sync\sync_file.mat']);
+    sync_file=fullfile(lockfiles_folder,'sync_file.mat');
     while(~exist(sync_file,'file'))
         pause(30);
     end

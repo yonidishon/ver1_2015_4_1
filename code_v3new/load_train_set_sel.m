@@ -1,4 +1,5 @@
 function [responses_mat,data_mat]=load_train_set_sel(data_folder,train_set,sperim,DOWNSAMPLE)
+global TREEPARAMS;
 if nargin<3
     sperim=-1;
 end
@@ -52,6 +53,7 @@ if isa(train_set,'cell')
                     rperm_rows=randperm(length(responses_mat_tmp));
                     data_mat{offset+jj}=data_mat_tmp(rperm_rows,:);
                     responses_mat{offset+jj}=responses_mat_tmp(rperm_rows);
+                    sperim=hold_sperim;
                 else % Randomize
                     rperm=randperm(length(filedata.responeses));
                     data_mat{offset+jj}=filedata.data(rperm(1:sperim),:);
@@ -60,8 +62,7 @@ if isa(train_set,'cell')
             else
                 data_mat{offset+jj}=filedata.data;
                 responses_mat{offset+jj}=filedata.responeses;
-            end
-            sperim=hold_sperim;
+            end 
         end
         offset=offset+length(1:DOWNSAMPLE:length(files));
         fprintf('Finished loading frames from movie %s\n',train_set{ii});
@@ -87,6 +88,7 @@ else % not part of training set so just do it for all the file.
                 rperm_rows=randperm(length(responses_mat_tmp));
                 data_mat{jj}=data_mat_tmp(rperm_rows,:);
                 responses_mat{jj}=responses_mat_tmp(rperm_rows);
+                sperim=hold_sperim;
             else
                 rperm=randperm(length(filedata.responeses));
                 data_mat{jj}=filedata.data(rperm(1:sperim),:);
@@ -96,7 +98,6 @@ else % not part of training set so just do it for all the file.
             data_mat{jj}=filedata.data;
             responses_mat{jj}=filedata.responeses;
         end
-        sperim=hold_sperim;
     end
     fprintf('Finished loading frames from movie %s\n',train_set);
 end

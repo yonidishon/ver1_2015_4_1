@@ -4,16 +4,16 @@
 fprintf('Start script for building full tree\n');
 FULLTREENAME=fullfile(TreesDst,[GENERALPARAMS.full_tree_ver,'_fulltree']);
 
-treefiles=dir(fullfile(fld,[GENERALPARAMS.full_tree_ver,'*']));
+treefiles=dir(fullfile(TreesDst,[GENERALPARAMS.full_tree_ver,'*']));
 treesoobErrrorArr=zeros(length(treefiles),TREEPARAMS.numtrees);
-fulltree=load(fullfile(fld,treefiles(1).name));
+fulltree=load(fullfile(TreesDst,treefiles(1).name));
 fulltree=fulltree.learned_tree;
 treesoobErrrorArr(1,:)=oobError(fulltree,'mode','individual');
 NumOfObs = size(fulltree.X,1);
 fulltree=fulltree.compact;
 fprintf('Finished loading tree #1\n');
 for ii=2:length(treefiles)
-    curtree=load(fullfile(fld,treefiles(ii).name));
+    curtree=load(fullfile(TreesDst,treefiles(ii).name));
     curtree=curtree.learned_tree;
     treesoobErrrorArr(ii,:)=oobError(curtree,'mode','individual');
     curtree=curtree.compact;
@@ -24,7 +24,7 @@ end
 fprintf('Saving Full tree\n');
 save(FULLTREENAME,'fulltree','-v7.3');
 fprintf('Saving Full tree text file\n');
-fid = fopen([FULLTREENAME,'params'],'wt');
+fid = fopen([FULLTREENAME,'_params.txt'],'wt');
 
 fprintf(fid,'GENERALPARAMS are:\n');
 %// Extract field data
@@ -34,7 +34,7 @@ values = struct2cell(GENERALPARAMS);
 idx = cellfun(@isnumeric, values); 
 values(idx) = cellfun(@num2str, values(idx), 'UniformOutput', false);
 C = {fields{:}; values{:}};
-fprintf(fid,repmat('%s = %s\n',size(C, 2)),C{:});
+fprintf(fid,'%s = %s\n',C{:});
 
 fprintf(fid,'TREEPARAMS are:\n');
 %// Extract field data
@@ -44,9 +44,9 @@ values = struct2cell(TREEPARAMS);
 idx = cellfun(@isnumeric, values); 
 values(idx) = cellfun(@num2str, values(idx), 'UniformOutput', false);
 C = {fields{:}; values{:}};
-fprintf(fid,repmat('%s = %s\n',size(C, 2)),C{:});
+fprintf(fid,'%s = %s\n',C{:});
 fprintf(fid,'\nFrame # in training = %d , Observations # = %d\n',NumOfObs/TREEPARAMS.samples_per_frame,NumOfObs);
-fprintf(fid,'\nOut-of-Bag Mean Error: %s',num2str(mean(treesoobErrrorArr,2)'));
+fprintf(fid,'\nOut-of-Bag Mean Error: %s\n',num2str(mean(treesoobErrrorArr,2)'));
 fprintf(fid,'Out-of-Bag Error:\n');
-fprintf(fid,'%s',num2str(treesoobErrrorArr));
+fprintf(fid,'%s\n',mat2str(treesoobErrrorArr));
 fprintf('Finished!!\n');
