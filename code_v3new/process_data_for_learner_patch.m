@@ -47,4 +47,7 @@ else
     gazeGmap=gazeGmap(halfPt+1:end-halfPt,halfPt+1:end-halfPt);
     responses=gazeGmap(:);
 end
+if size(responses,1) ~= size(data,1) 
+    error('Process_data_for_learner_patch: Size of data and responses is not equal!');
+end
 end
