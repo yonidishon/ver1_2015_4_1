@@ -28,7 +28,6 @@ addpath(genpath(fullfile(gdrive, 'Software', 'dollar_261')));
 
 %% toolboxes
 addpath(genpath(fullfile(proj_dir,'toolbox','PCA_Saliency'))); % PCA saliency
-addpath(genpath(fullfile(proj_dir,'toolbox','OTC'))); % PCA saliency
 addpath(fullfile(gdrive, 'Software', 'OpticalFlow')); % optical flow
 addpath(fullfile(gdrive, 'Software', 'OpticalFlow\mex'));
 addpath(genpath(fullfile(proj_dir,'toolbox', 'NMS_BB')));% Non-Maximal Suppression Bounding Boxes
