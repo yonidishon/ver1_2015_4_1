@@ -71,8 +71,10 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             for ifr = 1:length(indFr)
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
                 gazeData.index = frames(indFr(ifr));
-                [~,Smap,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
-                [responeses,data]=process_data_for_learner_patch(Smap,Mmap,gazeData,GENERALPARAMS.GT,GENERALPARAMS.PatchSz);
+                %[~,Smap,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
+                [~,~,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
+                LAB=rgb2lab(fr.image);
+                [responeses,data]=process_data_for_learner_patch(LAB(:,:,1),Mmap,gazeData,GENERALPARAMS.GT,GENERALPARAMS.PatchSz);
                 if isempty(responeses) || isempty(data) 
                     continue;
                 end

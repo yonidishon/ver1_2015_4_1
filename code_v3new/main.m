@@ -5,10 +5,10 @@ DATESTR=sprintf('%d_%d_%d',DATEANDTIME(1:3)); % get date yr_mnt_day
 
 global GENERALPARAMS TREEPARAMS; 
 
-GENERALPARAMS.PatchSz = 1; % 5/3/1
+GENERALPARAMS.PatchSz = 7; % 7/5/3/1
 GENERALPARAMS.GT = 'cluster';%'NN'
-GENERALPARAMS.features = 'PCAsPCAm';
-GENERALPARAMS.full_tree_ver = sprintf('P-%d_GT-%s_%s_TH',...
+GENERALPARAMS.features = 'VisPCAm';
+GENERALPARAMS.full_tree_ver = sprintf('P-%d_GT-%s_%s',...
     GENERALPARAMS.PatchSz,GENERALPARAMS.GT,GENERALPARAMS.features);
 GENERALPARAMS.lockfile_prefix =DATESTR;
 GENERALPARAMS.frame_pred_num = 300;
@@ -22,7 +22,7 @@ TREEPARAMS.numframe2skip = 5;
 % [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84];
 TREEPARAMS.trainset = [6,14,54]; 
 TREEPARAMS.testset = [8,10,11,12,15,16,34,42,44,48,53,55,59,70,74,83,84];
-TREEPARAMS.rand = 0;
+TREEPARAMS.rand = 1;
 TREEPARAMS.HIGHTH = 0.7;
 TREEPARAMS.LOWTH = 0.4;
 hosts = {'CGM-AYELLET-1',...
