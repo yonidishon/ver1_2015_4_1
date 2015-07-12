@@ -7,7 +7,7 @@ global GENERALPARAMS TREEPARAMS;
 
 GENERALPARAMS.PatchSz = 7; % 7/5/3/1
 GENERALPARAMS.GT = 'cluster';%'NN'
-GENERALPARAMS.features = 'OTCPCAm';
+GENERALPARAMS.features = 'PCAsPCAm';
 GENERALPARAMS.full_tree_ver = sprintf('P-%d_GT-%s_%s',...
     GENERALPARAMS.PatchSz,GENERALPARAMS.GT,GENERALPARAMS.features);
 GENERALPARAMS.lockfile_prefix =DATESTR;
@@ -16,7 +16,7 @@ GENERALPARAMS.offset = 30;
 
 TREEPARAMS.numtrees = 10;
 TREEPARAMS.fraction = 1/5;
-TREEPARAMS.samples_per_frame = 100;
+TREEPARAMS.samples_per_frame = 400;
 TREEPARAMS.numframe2skip = 5;
 %20 videos used by Borji from the list.txt of DIEM:
 % [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84];

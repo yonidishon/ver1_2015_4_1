@@ -40,8 +40,7 @@ if PatchSz == 1
     return;
 else
     Mpatches = im2colstep(mo_map,[PatchSz PatchSz])';
-    %Spatches = im2colstep(sp_map,[PatchSz PatchSz])';
-    [Spatches,~] = OTC_IMAGE(sp_map,PatchSz,1);
+    Spatches = im2colstep(sp_map,[PatchSz PatchSz])';
     data_mat=[Spatches,Mpatches];
     halfPt=floor(GENERALPARAMS.PatchSz/2);
     gazeGmap=gazeGmap(halfPt+1:end-halfPt,halfPt+1:end-halfPt);

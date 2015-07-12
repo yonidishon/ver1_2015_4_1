@@ -13,7 +13,7 @@ cache.renew = false;%true; % use in case the preprocessing mechanism updated
 %% Training and testing settings
 videos = videoListLoad(DataRoot, 'DIEM');
 nv = length(videos);
-testIdx = [TREEPARAMS.trainset,TREEPARAMS.testset]; 
+testIdx = [TREEPARAMS.trainset]; 
 
 %% visualization
 cmap = jet(256);
@@ -71,9 +71,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             for ifr = 1:length(indFr)
                 fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);
                 gazeData.index = frames(indFr(ifr));
-                %[~,Smap,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
-                [~,~,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
-                [responeses,data]=process_data_for_learner_patch(im2double(fr.image),Mmap,gazeData,GENERALPARAMS.GT,GENERALPARAMS.PatchSz);
+                [~,Smap,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
+                [responeses,data]=process_data_for_learner_patch(Smap,Mmap,gazeData,GENERALPARAMS.GT,GENERALPARAMS.PatchSz);
                 if isempty(responeses) || isempty(data) 
                     continue;
                 end
