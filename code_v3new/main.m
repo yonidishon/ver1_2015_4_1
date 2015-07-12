@@ -7,7 +7,7 @@ global GENERALPARAMS TREEPARAMS;
 
 GENERALPARAMS.PatchSz = 7; % 7/5/3/1
 GENERALPARAMS.GT = 'cluster';%'NN'
-GENERALPARAMS.features = 'VisPCAm';
+GENERALPARAMS.features = 'OTCPCAm';
 GENERALPARAMS.full_tree_ver = sprintf('P-%d_GT-%s_%s',...
     GENERALPARAMS.PatchSz,GENERALPARAMS.GT,GENERALPARAMS.features);
 GENERALPARAMS.lockfile_prefix =DATESTR;
