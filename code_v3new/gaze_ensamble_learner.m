@@ -19,5 +19,5 @@ try
     save(fullfile(TreesDst,[GENERALPARAMS.full_tree_ver,getComputerName(),'.mat']),'learned_tree','-v7.3');
 catch me
     delete(poolobj);
-    error(me);
+    error(me.message);
 end

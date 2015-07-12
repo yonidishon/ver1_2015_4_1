@@ -15,7 +15,7 @@ global GENERALPARAMS TREEPARAMS;
 % Outputs:
 % - responses - a vector of the expected responses (numel)x1 where -
 % numel=mxn
-[m,n]=size(sp_map);
+[m,n,~]=size(sp_map);
 gz.points = gaze_gt_strct.points{gaze_gt_strct.index};
 gazePts = gz.points(~isnan(gz.points(:,1)), :);
 if isempty(gazePts)
