@@ -77,6 +77,10 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                     continue;
                 end
                 save(fullfile(CollectDataDst,videos{iv},sprintf('frame_%06d.mat',frames(indFr(ifr)))),'responeses','data');
+                if ismember(videos{iv},videos(TREEPARAMS.trainset))
+                    fidcollectfin = fopen(fullfile(lockfiles_folder,['collect_train_sync_',getComputerName(),'.txt']),'wt');
+                    fprintf(fidcollectfin,'finish collect'); fclose(fidcollectfin);
+                end
             end
         catch me
             rethrow(me);

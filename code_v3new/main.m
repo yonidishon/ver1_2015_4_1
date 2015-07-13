@@ -8,7 +8,7 @@ global GENERALPARAMS TREEPARAMS;
 GENERALPARAMS.PatchSz = 7; % 7/5/3/1
 GENERALPARAMS.GT = 'cluster';%'NN'
 GENERALPARAMS.features = 'PCAsPCAm';
-GENERALPARAMS.full_tree_ver = sprintf('P-%d_GT-%s_%s',...
+GENERALPARAMS.full_tree_ver = sprintf('P-%d_GT-%s_%s_400Sa_w_Time',...
     GENERALPARAMS.PatchSz,GENERALPARAMS.GT,GENERALPARAMS.features);
 GENERALPARAMS.lockfile_prefix =DATESTR;
 GENERALPARAMS.frame_pred_num = 300;
@@ -47,6 +47,14 @@ methods_paths = {'\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2
 
 %Prepare Data for tree
 collect_data
+% sync creation of trees untill all traindata is prepared.
+while(1)
+    if length(dir(fullfile(CollectDataDst,'collect_train_sync_*')))==length(TREEPARAMS.trainset);
+        break;
+    end
+    pause(60*5);
+end
+
 
 %Training
 gaze_ensamble_learner;
