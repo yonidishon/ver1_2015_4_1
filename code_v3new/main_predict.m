@@ -80,12 +80,13 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             for ifr=1:length(indFr)
              fr = preprocessFrames(param.videoReader, frames(indFr(ifr)), gbvsParam, ofParam, poseletModel, cache);   
              tic;
+             gazeData.index = indFr(ifr);
              [~,Smap,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
              [~,data]=process_data_for_learner_patch(Smap,Mmap,gazeData,GENERALPARAMS.GT,GENERALPARAMS.PatchSz);
              predMaps_tree(halfPt+1:end-halfPt,halfPt+1:end-halfPt,jj)=reshape(predict(tree,data)...
                  ,m-GENERALPARAMS.PatchSz+1,n-GENERALPARAMS.PatchSz+1);             
              tlapse = tlapse+toc;
-             gazeData.index = frames(indFr(ifr));
+             
              [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps_tree(:,:,indFr(ifr)), gazeData, measures, ...
                     'self', ...
                     struct('method', ['saliency_',methods{1}], 'map', method1.predMaps(:,:,indFr(ifr))), ...
