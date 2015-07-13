@@ -97,7 +97,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                     writeVideo(vw, outfr);
                 end
             end
-            ftmeasure = fopen(fullfile(FinalResultRoot,['Mean_pred_time_',videos{iv},'.txt']));
+            ftmeasure = fopen(fullfile(FinalResultRoot,['Mean_pred_time_',videos{iv},'.txt']),'wt');
             fprintf(ftmeasure,'%s secs',num2str(tlapse/GENERALPARAMS.frame_pred_num));
             fclose(ftmeasure);
         catch me
