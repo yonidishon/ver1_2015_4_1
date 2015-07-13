@@ -89,5 +89,5 @@ for ii=1:length(active_hosts);
 %         copyfile([dima_server,'\*'],dist_host_dima);
 %     end
 end
-fprintf('Finished copying on all active hosts\n');
+fprintf('Finished copying on all active hosts on %s\n',datestr(datetime()));
 %run('distributed_main');

@@ -83,7 +83,8 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
              gazeData.index = indFr(ifr);
              [~,Smap,Mmap]=PCA_Saliency_all(fr.ofx,fr.ofy,fr.image);
              [~,data]=process_data_for_learner_patch(Smap,Mmap,gazeData,GENERALPARAMS.GT,GENERALPARAMS.PatchSz);
-             predMaps_tree(halfPt+1:end-halfPt,halfPt+1:end-halfPt,jj)=reshape(predict(tree,data)...
+             halfPt = floor(GENERALPARAMS.PatchSz/2);
+             predMaps_tree(halfPt+1:end-halfPt,halfPt+1:end-halfPt,ifr)=reshape(predict(tree,data)...
                  ,m-GENERALPARAMS.PatchSz+1,n-GENERALPARAMS.PatchSz+1);             
              tlapse = tlapse+toc;
              
@@ -96,7 +97,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
                     writeVideo(vw, outfr);
                 end
             end
-            ftmeasure = fopen(FinalResultRoot,['Mean_pred_time_',videos{iv},'.txt']);
+            ftmeasure = fopen(fullfile(FinalResultRoot,['Mean_pred_time_',videos{iv},'.txt']));
             fprintf(ftmeasure,'%s secs',num2str(tlapse/GENERALPARAMS.frame_pred_num));
             fclose(ftmeasure);
         catch me
