@@ -49,7 +49,7 @@ methods_paths = {'\\CGM10\D\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2
 collect_data
 % sync creation of trees untill all traindata is prepared.
 while(1)
-    if length(dir(fullfile(CollectDataDst,'collect_train_sync_*')))==length(TREEPARAMS.trainset);
+    if length(dir(fullfile(lockfiles_folder,'collect_train_sync_*')))==length(TREEPARAMS.trainset);
         break;
     end
     pause(60*5);
