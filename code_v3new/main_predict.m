@@ -37,8 +37,7 @@ tree = tree.fulltree;
 data_folder = CollectDataDst;
 for ii=1:length(testIdx) % run for the length of the defined exp.
     lockfile = fullfile(lockfiles_folder,[videos{testIdx(ii)},'_predict.mat']);
-    if exist(lockfile,'file') ||...
-        ~exist(fullfile(lockfiles_folder,[videos{testIdx(ii)},'_collect.mat']),'file');
+    if exist(lockfile,'file')
         % somebody already working on this file or there isn't collect on this version
         continue;
     else % nobody works on the file - lock it and work on it

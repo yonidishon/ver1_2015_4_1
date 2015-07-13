@@ -57,10 +57,11 @@ end
 
 
 %Training
-gaze_ensamble_learner;
-fidtrainfin = fopen(fullfile(lockfiles_folder,['train_sync_',getComputerName(),'.txt']),'wt');
-fprintf(fidtrainfin,'finish training'); fclose(fidtrainfin);
-
+if ~exist(fullfile(TreesDst,[GENERALPARAMS.full_tree_ver,getComputerName(),'.mat']),'file');
+    gaze_ensamble_learner;
+    fidtrainfin = fopen(fullfile(lockfiles_folder,['train_sync_',getComputerName(),'.txt']),'wt');
+    fprintf(fidtrainfin,'finish training'); fclose(fidtrainfin);
+end
 % Wait for Ayellet computer to finish writing the full tree
 if strcmp(getComputerName(),'cgm-ayellet-1') && ~exist(fullfile(TreesDst,[GENERALPARAMS.full_tree_ver,'_fulltree.mat']),'file')
     while(1)
