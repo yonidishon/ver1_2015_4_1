@@ -1,5 +1,5 @@
 %hist3  of quadrants
-src_fold = '\\cgm10\d\head_pose_estimation\Test_vis_Borji';% Train_vis_15;
+src_fold = '\\cgm10\d\head_pose_estimation\Train_vis_15';% Test_vis_Borji;
 is_dir = cell2mat(extractfield(dir(src_fold),'isdir'));
 avail_ch = extractfield(dir(src_fold),'name');
 avail_ch = avail_ch(is_dir);
@@ -27,12 +27,15 @@ for  ii=1:length(avail_ch)
 %         end
     end
     im_sum = im_sum./length(avail_files);
-    fig_name = sprintf('Results of :%s Channel:%s','whole',avail_ch{ii});
-    fighand=figure('Name',fig_name);
-    set(fighand,'units','normalized','outerposition',[0 0 1 1]);
-    imagesc(im_sum); colormap(hot);colorbar
-    axis image
-    title(sprintf('%s Num of Fr: %i',fig_name,length(avail_files)),'Interpreter','None');
-    drawnow;
-    print(fighand,fullfile(src_fold,'saved_results',sprintf('prob_NN_%s_%s','whole',avail_ch{ii})),'-dpng','-r0');
+    
+    save(fullfile(src_fold,'saved_results',sprintf('prob_NN_%s_%s.mat','whole',avail_ch{ii})),'im_sum');
+    % TODO - UNCOMMENT THIS
+%     fig_name = sprintf('Results of :%s Channel:%s','whole',avail_ch{ii});
+%     fighand=figure('Name',fig_name);
+%     set(fighand,'units','normalized','outerposition',[0 0 1 1]);
+%     imagesc(im_sum); colormap(hot);colorbar
+%     axis image
+%     title(sprintf('%s Num of Fr: %i',fig_name,length(avail_files)),'Interpreter','None');
+%     drawnow;
+%     print(fighand,fullfile(src_fold,'saved_results',sprintf('prob_NN_%s_%s','whole',avail_ch{ii})),'-dpng','-r0');
 end

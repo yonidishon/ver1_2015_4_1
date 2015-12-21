@@ -1,8 +1,8 @@
 % This script:
 % 1. takes all quadrants (folders) of a certain modality.
-% 2. for each patch
-%   1. Find the Nearest Neigbour to the Patch (Euclid dist) that aren't
-%    from the same movie!
+% 2. for all patches
+%   1. Find the Nearest Neigbour to the Patch (Euclid dist) from the image
+%   of the modality prob map
 %   2. record their quadrant in a 4x4 matrix
 %   5. present results on a Nice figure. (tight subplot)
 
