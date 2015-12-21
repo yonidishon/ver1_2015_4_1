@@ -32,14 +32,14 @@ addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\PCA_Sali
 % Optical Flow
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\GDrive\Software\OpticalFlow\mex'));
 frnum=0;
-for k=6:6%length(test_and_train_set);
+for k=7:length(test_and_train_set);
     movie_name_no_ext = movie_list{test_and_train_set(k)};
     if ~exist(fullfile(dst_folder,movie_name_no_ext),'dir')
         mkdir(fullfile(dst_folder,movie_name_no_ext));
     end
     vobj = VideoReader(fullfile(videosFold,[movie_name_no_ext,'.avi']));
     read(vobj,inf);
-    for ii=3562:vobj.NumberOfFrames
+    for ii=1:vobj.NumberOfFrames
         frnum=frnum+1;
         if (mod(frnum,1000)==0)
             fprintf('Processing %s total frames process so far is %i\n',movie_name_no_ext,frnum);

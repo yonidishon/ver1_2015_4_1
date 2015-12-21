@@ -23,7 +23,7 @@
 % - list of fullfile pathes
 
 % [BB_neg,BB_pos]=patch_extract(framedata,gazepnts,gazesigma)
-filenmsuffix = '_15_1_TH_hard.txt'; % TODO
+filenmsuffix = '_15_1TH_1S2S.txt'; % TODO
 %filenmsuffix = '.txt';
 gaze = '\\cgm10\D\DIEM\gaze';
 movie_list = importdata('\\cgm10\D\DIEM\list.txt');
@@ -34,7 +34,7 @@ my_training_set = [7,18,20,21,22,32,39,41,46,51,56,60,65,72,73]; %15 vids - hand
 %          'one_show_1280x712'};
 train_set = movie_list(my_training_set);
 src_folder = '\\cgm10\D\head_pose_estimation\DIEMpng';
-dst_folder ='\\cgm10\D\head_pose_estimation\2015_10_25_hard_neg';%'\\cgm10\D\head_pose_estimation\DIEMpng';
+dst_folder ='\\cgm10\D\head_pose_estimation\2015_19_12_new_train_form';%'\\cgm10\D\head_pose_estimation\DIEMpng';
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention'));
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\pose_estimation'));
 NUMIMAGES=-1;% -1 = all in the dataset %100;

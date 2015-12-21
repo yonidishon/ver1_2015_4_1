@@ -23,9 +23,9 @@ config_path = fullfile(pose_path,'config_files');
 
 % Configuration Options:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-EXP_FOLD_NM = '2015_11_11_wColor'; %'origandPCAmPCAs_15_float_post1'; %'origandPCAmPCAs_15_post';
+EXP_FOLD_NM = '2015_19_12_new_train_form'; %'origandPCAmPCAs_15_float_post1'; %'origandPCAmPCAs_15_post';
 test_fnm_suf ='test';%'test_post';%'test';
-resultFoldforPost ='DIEMpng';%'origandPCAmPCAs_15_float'; %'origandPCAmPCAs_15';
+resultFoldforPost =EXP_FOLD_NM;%'DIEMpng';%'origandPCAmPCAs_15_float'; %'origandPCAmPCAs_15';
 resultFoldforHard = '';
 FORESTSZ = 10;%8;%15;%10
 % calculation of the workload per host
@@ -38,7 +38,7 @@ SCALES = 1; %can be a vector of 1xn
 RATIOS = 1; %can be a vector of 1xn
 SCALE_FC_IM = 2^16; % scale factor for final prediction map (TODO -needs to see if it is nessecary)
 POSSUBSET = -1; %Subset of positive images -1: all images
-POSPERLN = 50; % Sample patches from pos. examples (each line in posexamplefile)
+POSPERLN = 10; % Sample patches from pos. examples (each line in posexamplefile)
 NEGSUBSET = -1;%Subset of negative images -1: all images
 NEGPERLN = 1;% Sample patches from neg. examples (each line in negexamplefile)
 HARDNEGPERFRAME = 20; % HARD NEGATIVE
@@ -50,10 +50,10 @@ path_images_from_movies = fullfile(pose_path,resultFoldforPost);
 %outputpath = fullfile(pose_path,sprintf('pred_%s',EXP_FOLD_NM)); %TODO change of mining
 outputpath = fullfile(pose_path,sprintf('%s',EXP_FOLD_NM));
 % TODO commented for HARD NEGATIVE
-posexamplepath = path_images_from_movies; % current is the same as images - only 3 movies as training set.
-posexamplefile = fullfile(posexamplepath,'train_pos_15_1_TH.txt'); % TODO
-negexamplepath = path_images_from_movies; % current is the same as images - only 3 movies as training set.
-negexamplefile = fullfile(posexamplepath,'train_neg_15_1_TH.txt'); % TODO
+posexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
+posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos_15_1TH_1S2S.txt'); % TODO
+negexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
+negexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_neg_15_1TH_1S2S.txt'); % TODO
 % TODO UNcommented for HARD NEGATIVE
 % posexamplepath = path_images_from_movies;
 % posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos_15_1_TH_hard.txt') ;

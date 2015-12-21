@@ -14,7 +14,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-pred_fold = '2015_11_11_wColor';%'pred_origandPCAmPCAs_15_1_TH';
+pred_fold = '2015_19_12_new_train_form';%'pred_origandPCAmPCAs_15_1_TH';
 %finalResultRoot = '\\cgm10\D\head_pose_estimation\result_eval\';
 finalResultRoot = ['\\cgm10\D\head_pose_estimation\',pred_fold,'\result_eval\'];
 visRoot = fullfileCreate(finalResultRoot,'vis');
@@ -22,11 +22,11 @@ PredMatDirPCAFbest='\\Cgm10\d\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8
 
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {'hough_forest_PCAwColor','self','PCA F+F+P'};
+methods = {'hough_forest_New_Train','self','PCA F+F+P'};
 
 %% Training and testing settings
 videos = dir(fullfile('\\cgm10\D\head_pose_estimation',pred_fold));
-videos = {videos.name}';
+videos = {videos(cell2mat(extractfield(videos,'isdir'))).name}';
 videos(ismember(videos,{'.','..','result_eval','result_eval_fixed'}))=[];
 visVideo = false; %true; %TODO
 %% visualization
@@ -44,7 +44,7 @@ tstart=tic;%start_clock
 warnNum=0;
 video_count=0;
 
-for ii=1:length(videos) % run for the length of the defined exp.
+for ii=19:length(videos) % run for the length of the defined exp.
     try % MAIN ROUTINE to do.
         % PREPARE DATA Routine
         iv = ii;

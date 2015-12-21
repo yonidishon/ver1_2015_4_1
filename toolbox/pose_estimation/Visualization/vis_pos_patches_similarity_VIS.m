@@ -23,8 +23,10 @@ BB_size =40;
 % 2. choose test set or train set
 %train_set = movie_list(test_set);
 %train_set = movie_list(train_set);
-movie_list([train_set,test_set])=[];
-train_set = movie_list;
+mov_ind = 1:84;
+mov_ind([train_set,test_set]) =[];
+
+train_set = movie_list(mov_ind);
 % 3. for each movie extract the quadrant to the right folder.
 
 for k=1:length(train_set);
@@ -65,12 +67,12 @@ for k=1:length(train_set);
 %         subplot(2,3,5);imshow(ld_quad_m,[]);
 %         subplot(2,3,6);imshow(rd_quad_m,[]);
         % save images : % img format is : <video_name_shorthand>_<frame#>_<BB_size>_<cent_coordinate>.png
-        imwrite(lu_quad_m,fullfile(dst_folder,'VIS','2nd',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(ru_quad_m,fullfile(dst_folder,'VIS','1st',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(ld_quad_m,fullfile(dst_folder,'VIS','3rd',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(rd_quad_m,fullfile(dst_folder,'VIS','4th',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
+        imwrite(lu_quad_m,fullfile(dst_folder,'VIS','2nd',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(ru_quad_m,fullfile(dst_folder,'VIS','1st',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(ld_quad_m,fullfile(dst_folder,'VIS','3rd',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(rd_quad_m,fullfile(dst_folder,'VIS','4th',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
         imwrite(f_m(max(cent(1)-BB_size/2,1):min(cent(1)+BB_size/2-1,size(f_m,1)),max(cent(2)-BB_size/2,1):min(cent(2)+BB_size/2-1,size(f_m,2)),:)...
-            ,fullfile(dst_folder,'VIS','whole',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
+            ,fullfile(dst_folder,'VIS','whole',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
     end
     t= datetime('now','TimeZone','local','Format','d-MMM-y HH:mm:ss');
     fprintf('%s: Finish processing #%i/%i movie:%s\n',datestr(t),k,length(train_set),movie_name_no_ext);

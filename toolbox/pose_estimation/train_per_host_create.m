@@ -43,7 +43,7 @@ MOVIESPERHOST = repmat(floor(length(train_set)/length(hosts)),length(hosts),1);
 carry_over = mod(length(train_set),length(hosts));
 MOVIESPERHOST(end-(carry_over-1):end,:) = MOVIESPERHOST(end-(carry_over-1):end,:)+1;
 src_folder='\\cgm10\D\head_pose_estimation\DIEMpng';
-dst_folder ='\\cgm10\D\head_pose_estimation\2015_10_25_hard_neg';%'\\cgm10\D\head_pose_estimation\DIEMpng';
+dst_folder ='\\cgm10\D\head_pose_estimation\2015_19_12_new_train_form';%'\\cgm10\D\head_pose_estimation\DIEMpng';
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention'));
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\pose_estimation'));
 NUMIMAGES=-1;% -1 = all in the dataset %100;

@@ -12,16 +12,18 @@ addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_salien
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\pose_estimation'));
 test_set = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % Used by Borji on DIEM
 train_set = [7,18,20,21,22,32,39,41,46,51,56,60,65,72,73]; %15 vids - hand selected
+mov_ind = test_set;
 
 src_folder = '\\cgm10\D\head_pose_estimation\DIEMPCApng'; % PCA images
-dst_folder ='\\cgm10\D\head_pose_estimation\Train_vis_15';%'\\cgm10\D\head_pose_estimation\DIEMpng';
+dst_folder ='\\cgm10\D\head_pose_estimation\Test_vis_Borji'; %Train_vis_15';%'\\cgm10\D\head_pose_estimation\DIEMpng';
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% Exp description %%%%%%%%%%%%%%%%%%%%%%%
 % 1.GetNumberof frame per movie
 FRPERMOV = 100;
 OFFSET = 30;
 BB_size =40;
 % 2. choose test set or train set
-train_set = movie_list(test_set);
+
+train_set = movie_list(mov_ind);
 % 3. for each movie extract the quadrant to the right folder.
 
 for k=1:length(train_set);
@@ -67,18 +69,18 @@ for k=1:length(train_set);
 %         subplot(2,3,5);imshow(ld_quad_m,[]);
 %         subplot(2,3,6);imshow(rd_quad_m,[]);
         % save images : % img format is : <video_name_shorthand>_<frame#>_<BB_size>_<cent_coordinate>.png
-        imwrite(lu_quad_m,fullfile(dst_folder,'PCA_m','2nd',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(ru_quad_m,fullfile(dst_folder,'PCA_m','1st',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(ld_quad_m,fullfile(dst_folder,'PCA_m','3rd',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(rd_quad_m,fullfile(dst_folder,'PCA_m','4th',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(lu_quad_s,fullfile(dst_folder,'PCA_s','2nd',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(ru_quad_s,fullfile(dst_folder,'PCA_s','1st',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(ld_quad_s,fullfile(dst_folder,'PCA_s','3rd',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
-        imwrite(rd_quad_s,fullfile(dst_folder,'PCA_s','4th',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
+        imwrite(lu_quad_m,fullfile(dst_folder,'PCA_m','2nd',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(ru_quad_m,fullfile(dst_folder,'PCA_m','1st',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(ld_quad_m,fullfile(dst_folder,'PCA_m','3rd',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(rd_quad_m,fullfile(dst_folder,'PCA_m','4th',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(lu_quad_s,fullfile(dst_folder,'PCA_s','2nd',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(ru_quad_s,fullfile(dst_folder,'PCA_s','1st',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(ld_quad_s,fullfile(dst_folder,'PCA_s','3rd',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
+        imwrite(rd_quad_s,fullfile(dst_folder,'PCA_s','4th',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
         imwrite(f_m(max(cent(1)-BB_size/2,1):min(cent(1)+BB_size/2-1,size(f_m,1)),max(cent(2)-BB_size/2,1):min(cent(2)+BB_size/2-1,size(f_m,2)),:)...
-            ,fullfile(dst_folder,'PCA_m','whole',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
+            ,fullfile(dst_folder,'PCA_m','whole',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
         imwrite(f_s(max(cent(1)-BB_size/2,1):min(cent(1)+BB_size/2-1,size(f_m,1)),max(cent(2)-BB_size/2,1):min(cent(2)+BB_size/2-1,size(f_m,2)),:)...
-            ,fullfile(dst_folder,'PCA_s','whole',sprintf('%i_%i_%i_%i-%i.png',k,ii,BB_size,cent(1),cent(2))));
+            ,fullfile(dst_folder,'PCA_s','whole',sprintf('%i_%i_%i_%i-%i.png',mov_ind(k),ii,BB_size,cent(1),cent(2))));
     
 
     end
