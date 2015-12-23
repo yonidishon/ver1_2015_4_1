@@ -14,7 +14,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-pred_fold = '2015_23_12_new_train_form_1S2_5S';%'pred_origandPCAmPCAs_15_1_TH';
+pred_fold = '2015_19_12_new_train_form';%'pred_origandPCAmPCAs_15_1_TH';
 %finalResultRoot = '\\cgm10\D\head_pose_estimation\result_eval\';
 finalResultRoot = ['\\cgm10\D\head_pose_estimation\',pred_fold,'\result_eval\'];
 visRoot = fullfileCreate(finalResultRoot,'vis');
@@ -22,7 +22,7 @@ PredMatDirPCAFbest='\\Cgm10\d\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8
 
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {'hough_forest_New_Train2','self','PCA F+F+P'};
+methods = {'hough_forest_New_Train','self','PCA F+F+P'};
 
 %% Training and testing settings
 videos = dir(fullfile('\\cgm10\D\head_pose_estimation',pred_fold));

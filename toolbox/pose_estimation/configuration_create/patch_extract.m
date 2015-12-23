@@ -3,7 +3,7 @@ function [BB_neg,BB_pos]=patch_extract(sz,gazepnts,gazesigma,numsamples)
 % 3. Calculate the peak of fixation point and retrieve a BB around it.
 % 4. stores the BB in a BB_pos and stores an array of BB_neg
 PATCHSZ=16;
-BB_size = gazesigma*4;
+BB_size = gazesigma*5;
 HIGHTH=exp(-(1)^2/2);% distance of 1 sigma from maximum;
 %LOWTH=exp(-(4)^2/2);% distance of 4 sigma from maximum;
 fix_points = gazepnts;

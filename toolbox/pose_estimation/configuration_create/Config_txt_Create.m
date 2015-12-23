@@ -23,7 +23,7 @@ config_path = fullfile(pose_path,'config_files');
 
 % Configuration Options:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-EXP_FOLD_NM = '2015_19_12_new_train_form'; %'origandPCAmPCAs_15_float_post1'; %'origandPCAmPCAs_15_post';
+EXP_FOLD_NM = '2015_23_12_new_train_form_1S2_5S'; %'origandPCAmPCAs_15_float_post1'; %'origandPCAmPCAs_15_post';
 test_fnm_suf ='test';%'test_post';%'test';
 resultFoldforPost =EXP_FOLD_NM;%'DIEMpng';%'origandPCAmPCAs_15_float'; %'origandPCAmPCAs_15';
 resultFoldforHard = '';
@@ -51,9 +51,9 @@ path_images_from_movies = fullfile(pose_path,resultFoldforPost);
 outputpath = fullfile(pose_path,sprintf('%s',EXP_FOLD_NM));
 % TODO commented for HARD NEGATIVE
 posexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
-posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos_15_1TH_1S2S.txt'); % TODO
+posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos_15_1TH_1S2_5S.txt'); % TODO
 negexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
-negexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_neg_15_1TH_1S2S.txt'); % TODO
+negexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_neg_15_1TH_1S2_5S.txt'); % TODO
 % TODO UNcommented for HARD NEGATIVE
 % posexamplepath = path_images_from_movies;
 % posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos_15_1_TH_hard.txt') ;
