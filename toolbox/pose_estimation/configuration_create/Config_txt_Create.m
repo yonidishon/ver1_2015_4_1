@@ -23,7 +23,7 @@ config_path = fullfile(pose_path,'config_files');
 
 % Configuration Options:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-EXP_FOLD_NM = '2015_23_12_new_train_form_1S2_5S'; %'origandPCAmPCAs_15_float_post1'; %'origandPCAmPCAs_15_post';
+EXP_FOLD_NM = '2015_24_12_new_train_form_2S_PatchSz20'; %'origandPCAmPCAs_15_float_post1'; %'origandPCAmPCAs_15_post';
 test_fnm_suf ='test';%'test_post';%'test';
 resultFoldforPost =EXP_FOLD_NM;%'DIEMpng';%'origandPCAmPCAs_15_float'; %'origandPCAmPCAs_15';
 resultFoldforHard = '';
@@ -32,7 +32,7 @@ FORESTSZ = 10;%8;%15;%10
 TREESPERHOST = repmat(floor(FORESTSZ/length(hosts)),length(hosts),1);
 carry_over=mod(FORESTSZ,length(hosts));
 TREESPERHOST(end-(carry_over-1):end,:)=TREESPERHOST(end-(carry_over-1):end,:)+1;
-PATCHSZ = 16;
+PATCHSZ = 20;%16;
 FEATURES = 1; % NOT USED
 SCALES = 1; %can be a vector of 1xn
 RATIOS = 1; %can be a vector of 1xn
@@ -51,9 +51,9 @@ path_images_from_movies = fullfile(pose_path,resultFoldforPost);
 outputpath = fullfile(pose_path,sprintf('%s',EXP_FOLD_NM));
 % TODO commented for HARD NEGATIVE
 posexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
-posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos_15_1TH_1S2_5S.txt'); % TODO
+posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos_15_1TH_2S.txt'); % TODO
 negexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
-negexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_neg_15_1TH_1S2_5S.txt'); % TODO
+negexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_neg_15_1TH_2S.txt'); % TODO
 % TODO UNcommented for HARD NEGATIVE
 % posexamplepath = path_images_from_movies;
 % posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos_15_1_TH_hard.txt') ;

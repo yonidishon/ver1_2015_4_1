@@ -28,13 +28,13 @@ if(exist(dst_fold,'file') ~= 7) % dst_fold doesn't exist
 end
 
 %% Getting list of all the files in the src_fold (should be .png files)
-files = dir(fullfile(src_fold,'*.png');
-files = extractfield(files,'name');
+files = dir(fullfile(src_fold,'*.png'));
+files = extractfield(files,'name')';
 
 %% For each of the predictions images
 
 for ii = 1: length(files)
-    im = 
+    im = im2double(imread(fullfile(src_fold,files{ii})));
     % 1. Check the prediction total energy signiture (gives an estimate on the
     %    compactness of the prediction
     
