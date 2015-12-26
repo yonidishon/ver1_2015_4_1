@@ -35,8 +35,9 @@ files = extractfield(files,'name')';
 
 for ii = 1: length(files)
     im = im2double(imread(fullfile(src_fold,files{ii})));
-    % 1. Check the prediction total energy signiture (gives an estimate on the
+    % 1. Check the prediction total energy (gives an estimate on the
     %    compactness of the prediction
+    %    The energyi
     
     
 end

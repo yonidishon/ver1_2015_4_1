@@ -23,7 +23,7 @@ config_path = fullfile(pose_path,'config_files');
 
 % Configuration Options:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
-EXP_FOLD_NM = '2015_24_12_new_train_form_2S_PatchSz20'; %'origandPCAmPCAs_15_float_post1'; %'origandPCAmPCAs_15_post';
+EXP_FOLD_NM = '2015_24_12_new_train_form_2S_PatchSz20_50perIm'; %'origandPCAmPCAs_15_float_post1'; %'origandPCAmPCAs_15_post';
 test_fnm_suf ='test';%'test_post';%'test';
 resultFoldforPost =EXP_FOLD_NM;%'DIEMpng';%'origandPCAmPCAs_15_float'; %'origandPCAmPCAs_15';
 resultFoldforHard = '';
@@ -38,7 +38,7 @@ SCALES = 1; %can be a vector of 1xn
 RATIOS = 1; %can be a vector of 1xn
 SCALE_FC_IM = 2^16; % scale factor for final prediction map (TODO -needs to see if it is nessecary)
 POSSUBSET = -1; %Subset of positive images -1: all images
-POSPERLN = 10; % Sample patches from pos. examples (each line in posexamplefile)
+POSPERLN = 50; % Sample patches from pos. examples (each line in posexamplefile)
 NEGSUBSET = -1;%Subset of negative images -1: all images
 NEGPERLN = 1;% Sample patches from neg. examples (each line in negexamplefile)
 HARDNEGPERFRAME = 20; % HARD NEGATIVE

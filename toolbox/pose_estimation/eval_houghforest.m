@@ -14,7 +14,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-pred_fold = '2015_23_12_new_train_form_1S2_5S';%'pred_origandPCAmPCAs_15_1_TH';
+pred_fold = '2015_24_12_new_train_form_2S_PatchSz20';%'pred_origandPCAmPCAs_15_1_TH';
 %finalResultRoot = '\\cgm10\D\head_pose_estimation\result_eval\';
 finalResultRoot = ['\\cgm10\D\head_pose_estimation\',pred_fold,'\result_eval\'];
 visRoot = fullfileCreate(finalResultRoot,'vis');
