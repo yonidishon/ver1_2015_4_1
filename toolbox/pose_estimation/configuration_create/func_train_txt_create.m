@@ -1,3 +1,4 @@
+function [] = func_train_txt_create(EXP_FOLD,NUMSAMPLESIM)
 % Script to produce the .txt from DIEM movies to train the
 % HoughForest
 
@@ -34,13 +35,13 @@ my_training_set = [7,18,20,21,22,32,39,41,46,51,56,60,65,72,73]; %15 vids - hand
 %          'one_show_1280x712'};
 train_set = movie_list(my_training_set);
 src_folder = '\\cgm10\D\head_pose_estimation\DIEMpng';
-dst_folder ='\\cgm10\D\head_pose_estimation\2015_24_12_new_train_form_2S_PatchSz20_50perIm';%'\\cgm10\D\head_pose_estimation\DIEMpng';
+dst_folder =fullfile('\\cgm10\D\head_pose_estimation',EXP_FOLD);%'\\cgm10\D\head_pose_estimation\DIEMpng';
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention'));
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\pose_estimation'));
 NUMIMAGES=-1;% -1 = all in the dataset %100;
 SKIP =10;%5;
 OFFSET = 30;% to be consistent with Dmitry.
-NUMSAMPLESIM=50;%%10;
+%NUMSAMPLESIM=50;%%10;
 %train_size = NUMIMAGES/2;
 totnumframes=0;
 
