@@ -209,7 +209,7 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
         end
         
         fprintf('%f sec\n', toc);
-        fprintf('Time is: %s\n',datestr(clock,'yyyy_mm_dd_HH_MM'));
+        fprintf('Time is: %s\n',datestr(clock,'dd/mm/yyyy, HH:MM'));
         vidnameonly=strsplit(vr.name,'.');vidnameonly=vidnameonly{1};
         movieIdx=iv;
         save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx');
