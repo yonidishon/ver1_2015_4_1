@@ -14,7 +14,7 @@ uncVideoRoot = fullfile(DataRoot, 'video_unc'); % uncompress video.
 gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 
 % visualizations results
-pred_fold = '2015_24_12_new_train_form_2S_PatchSz20_50perIm';%'pred_origandPCAmPCAs_15_1_TH';
+pred_fold = '29_12_2015_only_classification';%'pred_origandPCAmPCAs_15_1_TH';
 %finalResultRoot = '\\cgm10\D\head_pose_estimation\result_eval\';
 finalResultRoot = ['\\cgm10\D\head_pose_estimation\',pred_fold,'\result_eval\'];
 visRoot = fullfileCreate(finalResultRoot,'vis');
@@ -22,13 +22,13 @@ PredMatDirPCAFbest='\\Cgm10\d\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8
 
 measures = {'chisq', 'auc'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {'hough_forest_New_Train2','self','PCA F+F+P'};
+methods = {'only_classification','self','PCA F+F+P'};
 
 %% Training and testing settings
 videos = dir(fullfile('\\cgm10\D\head_pose_estimation',pred_fold));
 videos = {videos(cell2mat(extractfield(videos,'isdir'))).name}';
 videos(ismember(videos,{'.','..','result_eval','result_eval_fixed'}))=[];
-visVideo = false; %true; %TODO
+visVideo = true; %TODO
 %% visualization
 cmap = jet(256);
 colors = [1 0 0;

@@ -64,6 +64,9 @@ for frame=L_t+1:size(obdl_maps,3)+L_t
     localMinSal = imerode(sal, true(3));
     localMaxSal = imdilate(sal, true(3));
     mask = mask_ex(:,:,frame);
+    if ~mod(frame,100)
+        fprintf('Processed %i Frames already\n',frame);
+    end
     for i=2:size(mask_ex,1)-1
         for j=2:size(mask_ex,2)-1
             if mask(i,j)
