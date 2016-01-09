@@ -2,7 +2,7 @@ function [BB_neg,BB_pos]=patch_extract(sz,gazepnts,gazesigma,numsamples)
 % This function gets a framedata contains frame cache and retrieve 
 % 3. Calculate the peak of fixation point and retrieve a BB around it.
 % 4. stores the BB in a BB_pos and stores an array of BB_neg
-PATCHSZ=20;
+PATCHSZ=40;
 BB_size = gazesigma*5;
 HIGHTH=exp(-(2)^2/2);% distance of 1 sigma from maximum;
 %LOWTH=exp(-(4)^2/2);% distance of 4 sigma from maximum;
@@ -29,9 +29,16 @@ else
 end
 cent = round((cent-1));
 BB_pos = [max(cent(2)-BB_size/2,1),min(cent(2)+BB_size/2-1,size(th_att_map,1)),max(cent(1)-BB_size/2,1),min(cent(1)+BB_size/2-1,size(th_att_map,2))];
-% with converstion to OpenCv (start from 0) and (x,y) format; BB_pos = [x,y,width,height,center_x,center_y]
+% with converstion to OpenCv (start from 0) and (x,y) format; BB_pos = [x,y,x+width,y+height,center_x,center_y]
 BB_pos=[ceil((BB_pos(1:2)))-1,(BB_pos(3:4)-1)];
 BB_pos=[BB_pos([3,1,4,2]),cent];
+
+if ((BB_pos(3)-BB_pos(1))<PATCHSZ || (BB_pos(4)-BB_pos(2))<PATCHSZ)
+    BB_neg=[];
+    BB_pos=[];
+    return;
+end
+
 %BB_image = insertShape(framedata.image, 'Rectangle', [BB_pos(1:2),BB_pos(3:4)-BB_pos(1:2)], 'LineWidth', 5);
 %BB_image = insertShape(BB_image, 'FilledCircle', [BB_pos(5:6),1], 'LineWidth', 1);
 % h=imshow(BB_image);
@@ -59,3 +66,4 @@ neg_smaples=find(th_att_map_neg(:));
 % with converstion to OpenCv (start from 0) and (x,y) format;
 neg_subs=[neg_x,neg_y]-PATCHSZ/2; 
 BB_neg=[neg_subs,neg_subs+PATCHSZ];
+% check that the size of the positive BBs is enough
