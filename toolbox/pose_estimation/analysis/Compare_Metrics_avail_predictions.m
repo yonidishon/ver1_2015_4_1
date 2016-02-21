@@ -83,3 +83,6 @@ end
 % histogram
 visCompareMethods(sim, methods, measures, videos, testIdx(testSubset), 'boxplot');
 fprintf('Finished Processing:  %s\n',datestr(datetime('now')));
+rmpath(genpath('C:\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\toolbox\piotr_toolbox_V2.60'));
+rmpath(genpath('C:\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\release'));
+rmpath(genpath('C:\Users\ydishon\Documents\Video_Saliency\toolbox\visualization\figstate'));

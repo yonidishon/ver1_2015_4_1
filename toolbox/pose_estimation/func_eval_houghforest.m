@@ -4,7 +4,7 @@ function []=func_eval_houghforest(pred_fold)
 % If I want a longer add files function to add all nessary files.
 %  addincludes;
 %clear all;close all;clc
-
+pred_fold = '20_02_2016_Pcas_only_subpatches_40_0_8conf';
 %% Setup file to rule them all
 addpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention');
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\compare'));
@@ -17,16 +17,16 @@ gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 % visualizations results
 %pred_fold = '2015_24_12_new_train_form_2S_PatchSz20_50perIm';%'pred_origandPCAmPCAs_15_1_TH';
 %finalResultRoot = '\\cgm10\D\head_pose_estimation\result_eval\';
-finalResultRoot = ['\\cgm10\D\head_pose_estimation\',pred_fold,'\result_eval\'];
+finalResultRoot = ['\\cgm10\D\head_pose_estimation\','Predictions\',pred_fold,'\result_eval\'];
 visRoot = fullfileCreate(finalResultRoot,'vis');
 PredMatDirPCAFbest='\\Cgm10\d\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2';
 
-measures = {'chisq', 'auc'};
+measures = {'chisq','auc','nss'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
 methods = {pred_fold,'self','PCA F+F+P'};
 
 %% Training and testing settings
-videos = dir(fullfile('\\cgm10\D\head_pose_estimation',pred_fold));
+videos = dir(fullfile('\\cgm10\D\head_pose_estimation','Predictions',pred_fold));
 videos = {videos(cell2mat(extractfield(videos,'isdir'))).name}';
 videos(ismember(videos,{'.','..','result_eval','result_eval_fixed'}))=[];
 visVideo = false; %true; %TODO
@@ -45,7 +45,7 @@ tstart=tic;%start_clock
 warnNum=0;
 video_count=0;
 
-for ii=1:length(videos) % run for the length of the defined exp.
+for ii=6:length(videos) % run for the length of the defined exp.
     try % MAIN ROUTINE to do.
         % PREPARE DATA Routine
         iv = ii;
@@ -75,7 +75,7 @@ for ii=1:length(videos) % run for the length of the defined exp.
             offset = 29;
             for ifr=1:length(indFr)
              fr = read(vr,indFr(ifr)+offset);
-             predMap = im2double(imread(fullfile('\\cgm10\D\head_pose_estimation',pred_fold,videos{iv},sprintf('%06d_sc0_c0_predmap.png',indFr(ifr)+offset))));
+             predMap = im2double(imread(fullfile('\\cgm10\D\head_pose_estimation','Predictions',pred_fold,videos{iv},sprintf('%06d_sc0_c0_predmap.png',indFr(ifr)+offset))));
              predMap = predMap./max(predMap(:));
              gazeData.index = offset + indFr(ifr);
              gazeData.otherMaps(gazeData.index)=gazeData.otherMaps(gazeData.index)-gazeData.binaryMaps(gazeData.index);
@@ -103,7 +103,7 @@ for ii=1:length(videos) % run for the length of the defined exp.
         %save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps','-v7.3');
         % Finish processing saving and moving on
         video_count=video_count+1;
-       
+        fprintf('Finished Processing video#%i %s  at %s\n',video_count,vidnameonly,datestr(datetime('now')));
         % ERROR handling
     catch me
         warning('Run failed on %s- check log!',videos{iv});

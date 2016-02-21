@@ -26,7 +26,7 @@ config_path = fullfile(pose_path,'config_files');
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %EXP_FOLD_NM = '2015_24_12_new_train_form_2S_PatchSz20_50perIm'; %'origandPCAmPCAs_15_float_post1'; %'origandPCAmPCAs_15_post';
 test_fnm_suf ='test';%'test_post';%'test';
-resultFoldforPost =EXP_FOLD_NM;%'DIEMpng';%'origandPCAmPCAs_15_float'; %'origandPCAmPCAs_15';
+resultFoldforPost ='DIEMpng';%'origandPCAmPCAs_15_float'; %'origandPCAmPCAs_15';
 resultFoldforHard = '';
 FORESTSZ = 10;%8;%15;%10
 % calculation of the workload per host
@@ -49,12 +49,12 @@ path_treetable = fullfile(pose_path,'trees',['trees_',EXP_FOLD_NM,'\']);
 % path_treetable = fullfile(pose_path,'trees',['treetable_','origandPCAmPCAs_15']); % TODO!!!
 path_images_from_movies = fullfile(pose_path,resultFoldforPost);
 %outputpath = fullfile(pose_path,sprintf('pred_%s',EXP_FOLD_NM)); %TODO change of mining
-outputpath = fullfile(pose_path,sprintf('%s',EXP_FOLD_NM));
+outputpath = fullfile(pose_path,'Predictions',sprintf('%s',EXP_FOLD_NM));
 % TODO commented for HARD NEGATIVE
 posexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
-posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos.txt'); % TODO
+posexamplefile = fullfile(pose_path,'Predictions',EXP_FOLD_NM,'train_pos.txt'); % TODO
 negexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
-negexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_neg.txt'); % TODO
+negexamplefile = fullfile(pose_path,'Predictions',EXP_FOLD_NM,'train_neg.txt'); % TODO
 % TODO UNcommented for HARD NEGATIVE
 % posexamplepath = path_images_from_movies;
 % posexamplefile = fullfile(pose_path,EXP_FOLD_NM,'train_pos_15_1_TH_hard.txt') ;
