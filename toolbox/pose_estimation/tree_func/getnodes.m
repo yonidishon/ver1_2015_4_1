@@ -11,7 +11,7 @@
 % exp_title = 'Analysis on tree trained over 1 image';
 clear all;close all; clc
 % open the file
-fid = fopen('D:\head_pose_estimation\trees\trees_2015_24_12_new_train_form_2S_PatchSz20\000.txt');
+fid = fopen('D:\head_pose_estimation\trees\trees_25_02_2016_Pcas_and_GT_conf_0_8_16\000.txt');
 %fid = fopen('D:\head_pose_estimation\trees\trees_2015_11_11_wColor\000.txt');
 tline = fgetl(fid);
 header=str2num(tline);
