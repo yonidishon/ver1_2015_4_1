@@ -4,7 +4,6 @@ function []=func_eval_houghforest(pred_fold)
 % If I want a longer add files function to add all nessary files.
 %  addincludes;
 %clear all;close all;clc
-pred_fold = '20_02_2016_Pcas_only_subpatches_40_0_8conf';
 %% Setup file to rule them all
 addpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention');
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\compare'));
@@ -45,7 +44,7 @@ tstart=tic;%start_clock
 warnNum=0;
 video_count=0;
 
-for ii=6:length(videos) % run for the length of the defined exp.
+for ii=1:length(videos) % run for the length of the defined exp.
     try % MAIN ROUTINE to do.
         % PREPARE DATA Routine
         iv = ii;

@@ -16,8 +16,8 @@ hosts = {'CGM-AYELLET-1',...
     'CGM16',...
     'CGM22',...
     'CGM45',...
-    'CGM46',...
-    'CGM47'};
+    'CGM46'};%,...
+    %'CGM47'};
 pose_path = '\\cgm10\D\head_pose_estimation';
 config_path = fullfile(pose_path,'config_files');
 
@@ -33,7 +33,7 @@ FORESTSZ = 10;%8;%15;%10
 TREESPERHOST = repmat(floor(FORESTSZ/length(hosts)),length(hosts),1);
 carry_over=mod(FORESTSZ,length(hosts));
 TREESPERHOST(end-(carry_over-1):end,:)=TREESPERHOST(end-(carry_over-1):end,:)+1;
-PATCHSZ = 40;%16;
+PATCHSZ = 16;
 FEATURES = 1; % NOT USED
 SCALES = 1; %can be a vector of 1xn
 RATIOS = 1; %can be a vector of 1xn

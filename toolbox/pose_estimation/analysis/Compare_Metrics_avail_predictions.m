@@ -46,7 +46,7 @@ for im = 1:length(measures)
                 tmp=matfile(fullfile(predFolder,methods{k},suffixfold,[videos{testIdx(i)},'_similarity.mat']));
                 %fprintf('%s\n',mat2str(size(tmp.sim)));
                 %sim{i}(k,:,:)=tmp.sim(meth_loc(k),:,1:sim_length);
-                sim{i}(k,:,:)=tmp.sim(1,:,1:sim_length);
+                sim{i}(k,:,:)=tmp.sim(1,1:nmeas,1:sim_length);
              else
                  sim{i}(k,:,:)=NaN(sim_height,sim_length);
                     fprintf(['Video:',videos{testIdx(i)},' has no Similarity.mat file',' For Method ',methods{k},'\n']);
@@ -69,7 +69,8 @@ for im = 1:length(measures)
     % add dummy if there is only one test
     if (size(meanChiSq, 1) == 1), meanChiSq = [meanChiSq; zeros(1, length(methods))]; end;
     
-    f=figure, bar(meanChiSq);set(gca,'Xlim',[0 size(meanChiSq,1)+6.5]);
+    f=figure;
+    bar(meanChiSq);set(gca,'Xlim',[0 size(meanChiSq,1)+6.5]);
     imLabel(lbl, 'bottom', -90, {'FontSize',8, 'Interpreter', 'None'});
     ylabel(measures{im});
     title(sprintf('Mean %s', mat2str(meanMeas, 2)));

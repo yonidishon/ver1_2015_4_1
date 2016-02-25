@@ -46,7 +46,7 @@ tstart=tic;%start_clock
 warnNum=0;
 video_count=0;
 
-for ii=1:length(videos) % run for the length of the defined exp.
+for ii=length(videos)-1:length(videos) % run for the length of the defined exp.
     try % MAIN ROUTINE to do.
         % PREPARE DATA Routine
         iv = ii;
