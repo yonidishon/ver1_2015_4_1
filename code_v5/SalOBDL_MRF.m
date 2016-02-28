@@ -28,13 +28,13 @@ if nargin < 3
     T_c=1;
 end
 
-% obdls = Normalize3d(obdls);
-% obdls = imfilter(obdls,fspecial('gauss',3,ONE_DEGREE_MBLKS*2));
-% obdls = Normalize3d(obdls);
+obdls = Normalize3d(obdls);
+obdls = imfilter(obdls,fspecial('gauss',3,ONE_DEGREE_MBLKS*2));
+obdls = Normalize3d(obdls);
 
-% flt = ones(1,1,2*L-1); flt(L+1:end) = 0;
-% obdl_maps = imfilter(obdls,flt,'symmetric');
-obdl_maps = Normalize3d(obdls);
+flt = ones(1,1,2*L-1); flt(L+1:end) = 0;
+obdl_maps = imfilter(obdls,flt,'symmetric');
+obdl_maps = Normalize3d(obdl_maps);
 
 % spatial weight
 W_sp = fspecial('gauss',3,ONE_DEGREE_MBLKS*2);
@@ -134,8 +134,8 @@ end
 
 S = Normalize3d(obdl_maps);
 
-% S = imresize(S,4,'bilinear');
-% S = Normalize3d(S);
+S = imresize(S,2,'bilinear');
+S = Normalize3d(S);
 
 % handle when no saliency is detected for a frame
 zeroSaliency = find(sum(sum(S,1),2)==0);
@@ -152,6 +152,5 @@ if ~isempty(zeroSaliency)
     end
 end
 
-% S = imresize(S,4,'nearest');
-% Saliency = uint8(S*255);
-Saliency = S;
+S = imresize(S,2,'nearest');
+Saliency = uint8(S*255);

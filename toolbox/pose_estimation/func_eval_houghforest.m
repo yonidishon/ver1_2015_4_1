@@ -18,11 +18,9 @@ gazeDataRoot = fullfile(DataRoot, 'gaze'); % gaze data from the DIEM.
 %finalResultRoot = '\\cgm10\D\head_pose_estimation\result_eval\';
 finalResultRoot = ['\\cgm10\D\head_pose_estimation\','Predictions\',pred_fold,'\result_eval\'];
 visRoot = fullfileCreate(finalResultRoot,'vis');
-PredMatDirPCAFbest='\\Cgm10\d\Video_Saliency_Results\FinalResults2\PCA_Fusion_v8_2';
-
 measures = {'chisq','auc','nss'};
 %methods = {'PCA F','self','center','Dima','GBVS','PCA M'};
-methods = {pred_fold,'self','PCA F+F+P'};
+methods = {pred_fold,'self'};
 
 %% Training and testing settings
 videos = dir(fullfile('\\cgm10\D\head_pose_estimation','Predictions',pred_fold));
@@ -69,7 +67,6 @@ for ii=1:length(videos) % run for the length of the defined exp.
         end
         
         try
-            predMapPCAFbest=load(fullfile(PredMatDirPCAFbest,[temp,'.mat']),'predMaps');
             indFr = 1:videoLen-59;
             offset = 29;
             for ifr=1:length(indFr)
@@ -79,8 +76,8 @@ for ii=1:length(videos) % run for the length of the defined exp.
              gazeData.index = offset + indFr(ifr);
              gazeData.otherMaps(gazeData.index)=gazeData.otherMaps(gazeData.index)-gazeData.binaryMaps(gazeData.index);
              [sim(:,:,ifr), outMaps] = similarityFrame3(predMap, gazeData, measures, ...
-                    'self', ...
-                    struct('method', 'saliency_PCAF+F+P', 'map', predMapPCAFbest.predMaps(:,:,indFr(ifr))));
+                    'self');
+                    
                 if visVideo
                     outfr = renderSideBySide(fr, outMaps, colors, cmap, sim(:,:,ifr),methods);
                     writeVideo(vw, outfr);

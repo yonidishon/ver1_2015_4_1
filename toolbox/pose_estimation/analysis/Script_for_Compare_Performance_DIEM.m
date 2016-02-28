@@ -1,5 +1,5 @@
 %% visualize - AUC & X^2 & NSS
-%clear all;close all;clc
+clear all;close all;clc
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\toolbox\piotr_toolbox_V2.60'));
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\release'));
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\visualization\figstate'));
@@ -35,10 +35,10 @@ Predinfo(3).name = 'Hough_PatchSz20';
 Predinfo(3).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
 Predinfo(3).sim_ind = 3;
 Predinfo(4).name = 'PCAs';
-Predinfo(4).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\20_02_2016_DIEMPCApng_PCAs\result_eval';
+Predinfo(4).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\DIEMPCApng_PCAs\result_eval';
 Predinfo(4).sim_ind = 1;
 Predinfo(5).name = 'PCAm';
-Predinfo(5).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\20_02_2016_DIEMPCApng_PCAm\result_eval';
+Predinfo(5).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\DIEMPCApng_PCAm\result_eval';
 Predinfo(5).sim_ind = 1;
 Predinfo(6).name = 'Roduy';
 Predinfo(6).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
@@ -49,6 +49,9 @@ Predinfo(7).sim_ind = 4;
 Predinfo(8).name = 'OBDL';
 Predinfo(8).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
 Predinfo(8).sim_ind = 5;
+Predinfo(9).name = 'Hough_PCA_only_0_8_conf';
+Predinfo(9).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\22_02_2016_Pcas_only_subpatches_16_0_8conf\result_eval';
+Predinfo(9).sim_ind = 1;
 fprintf('Reporting Results on the following methods::\n');
 
 nm = extractfield(Predinfo,'name')';
@@ -63,4 +66,5 @@ clear str fold nm
 fprintf('Finished Processing:  %s\n',datestr(datetime('now')));
 rmpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\toolbox\piotr_toolbox_V2.60'));
 rmpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\release'));
+rmpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\GDrive\Software\dollar_261'));
 rmpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\visualization\figstate'));

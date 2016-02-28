@@ -21,12 +21,12 @@ for im = 1:length(measures)
             end
             
         for k=1:length(pred_nms)
-             if exist(fullfile(sim_folds{im},[videos{ii},'_similarity.mat']),'file')
-                tmp=matfile(fullfile(sim_folds{im},[videos{ii},'_similarity.mat']));
+             if exist(fullfile(sim_folds{k},[videos{ii},'_similarity.mat']),'file')
+                tmp=matfile(fullfile(sim_folds{k},[videos{ii},'_similarity.mat']));
                 sim{ii}(k,:,:)=tmp.sim(sim_inds(k),:,1:sim_length);
              else
                  sim{ii}(k,:,:)=NaN(nmeas,sim_length);
-                    fprintf(['Video:',videos{testIdx(ii)},' has no Similarity.mat file',' For Method ',pred_nms{k},'\n']);
+                    fprintf(['Video:',videos{ii},' has no Similarity.mat file',' For Method ',pred_nms{k},'\n']);
              end
         end
         for j = 1:length(pred_nms)
