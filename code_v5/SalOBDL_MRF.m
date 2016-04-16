@@ -134,7 +134,7 @@ end
 
 S = Normalize3d(obdl_maps);
 
-S = imresize(S,4,'bilinear');
+S = imresize(S,2,'bilinear');
 S = Normalize3d(S);
 
 % handle when no saliency is detected for a frame
@@ -152,5 +152,5 @@ if ~isempty(zeroSaliency)
     end
 end
 
-S = imresize(S,4,'nearest');
+S = imresize(S,2,'nearest');
 Saliency = uint8(S*255);
