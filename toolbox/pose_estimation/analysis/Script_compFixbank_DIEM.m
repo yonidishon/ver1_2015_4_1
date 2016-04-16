@@ -6,9 +6,9 @@ addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\visualiz
 diemDataRoot = '\\cgm10\D\DIEM';
 
 measures = {'chisq','auc','nss'};
-%List of Movies Used by Borji on DIEM
+%List of Movies Used by Fixation Bank on DIEM
 videos=importdata(fullfile(diemDataRoot, 'list.txt'));
-testIdx = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84];
+testIdx = [35,17,16,56,11,57,69,82,48,67,46,81,30,31,47,25,75,73,74,26,65,9,62,40,7,50,70]; % Fixbank
 seq_names = cell(1,numel(testIdx));
 videos = videos(testIdx);
 for ii = 1:numel(seq_names)
@@ -26,29 +26,32 @@ fprintf('Measures::\n');
 fprintf('%s\n', measures{:});
 %% List of Predictors to measure performance on
 Predinfo(1).name = 'self';
-Predinfo(1).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
+Predinfo(1).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\2016_04_07_Fix_compare\result_eval';
 Predinfo(1).sim_ind = 2;
-Predinfo(2).name = 'Ours';%'Hough_p_MRF';
-Predinfo(2).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\2016_02_27_Post_MRF2';
-Predinfo(2).sim_ind = 3;
-Predinfo(3).name = 'Ours (No MRF)';%'Hough_15_p';
-Predinfo(3).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
-Predinfo(3).sim_ind = 1;
-Predinfo(4).name = 'PCAs';
-Predinfo(4).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\DIEMPCApng_PCAs\result_eval';
-Predinfo(4).sim_ind = 1;
-Predinfo(5).name = 'PCAm';
-Predinfo(5).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\DIEMPCApng_PCAm\result_eval';
-Predinfo(5).sim_ind = 1;
-Predinfo(6).name = 'Roduy';
-Predinfo(6).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
-Predinfo(6).sim_ind = 6;
-Predinfo(7).name = 'OBDL-MRF';
-Predinfo(7).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
-Predinfo(7).sim_ind = 4;
-Predinfo(8).name = 'OBDL';
-Predinfo(8).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
-Predinfo(8).sim_ind = 5;
+Predinfo(2).name = 'Ours (No MRF)';%'Hough_p_MRF';
+Predinfo(2).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\2016_04_07_Fix_compare\result_eval';
+Predinfo(2).sim_ind = 1;
+% Predinfo(3).name = 'Ours';%'Hough_15_p';
+% Predinfo(3).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\2016_04_07_Fix_compare';
+% Predinfo(3).sim_ind = 3;
+% Predinfo(4).name = 'PCAs';
+% Predinfo(4).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\DIEMPCApng_PCAs\result_eval';
+% Predinfo(4).sim_ind = 1;
+% Predinfo(5).name = 'PCAm';
+% Predinfo(5).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\DIEMPCApng_PCAm\result_eval';
+% Predinfo(5).sim_ind = 1;
+% Predinfo(6).name = 'Roduy';
+% Predinfo(6).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
+% Predinfo(6).sim_ind = 6;
+% Predinfo(7).name = 'OBDL-MRF';
+% Predinfo(7).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
+% Predinfo(7).sim_ind = 4;
+% Predinfo(8).name = 'OBDL';
+% Predinfo(8).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
+% Predinfo(8).sim_ind = 5;
+% Predinfo(9).name = 'OBDL';
+% Predinfo(9).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
+% Predinfo(9).sim_ind = 1;
 
 % Predinfo(3).name = 'Hough_PatchSz20';
 % Predinfo(3).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';

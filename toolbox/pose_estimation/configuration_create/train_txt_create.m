@@ -28,13 +28,11 @@ filenmsuffix = '.txt';
 gaze = '\\cgm10\D\DIEM\gaze';
 movie_list = importdata('\\cgm10\D\DIEM\list.txt');
 % borji_list_subset = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % Used by Borji on DIEM
-my_training_set = [7,18,20,21,22,32,39,41,46,51,56,60,65,72,73]; %15 vids - hand selected
-%train_set={'BBC_life_in_cold_blood_1278x710'
-%           'advert_iphone_1272x720'
-%          'one_show_1280x712'};
-train_set = movie_list(my_training_set);
+% my_training_set = [7,18,20,21,22,32,39,41,46,51,56,60,65,72,73]; %15 vids - hand selected
+fix_train_set = [18,20,21,22,32,39,41,51,60,72,19,23,36,49,66]; % 15 vids - hand picked to compare to Fixation Bank
+train_set = movie_list(fix_train_set);
 src_folder = '\\cgm10\D\head_pose_estimation\DIEMpng';
-dst_folder ='\\cgm10\D\head_pose_estimation\2015_24_12_new_train_form_2S_PatchSz20_50perIm';%'\\cgm10\D\head_pose_estimation\DIEMpng';
+dst_folder ='\\cgm10\D\head_pose_estimation\Predictions\2016_04_07_Fix_compare';%'\\cgm10\D\head_pose_estimation\DIEMpng';
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention'));
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\pose_estimation'));
 NUMIMAGES=-1;% -1 = all in the dataset %100;

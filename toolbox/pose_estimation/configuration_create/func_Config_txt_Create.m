@@ -73,7 +73,7 @@ for ii=1:length(hosts)
     end
     fprintf(fid,'# Patch width\n%d\n# Patch height\n%d\n',PATCHSZ,PATCHSZ);
     fprintf(fid,'# Path to images\n%s\n',path_images_from_movies);
-    fprintf(fid,'# File with names of images\n%s\n',fullfile(config_path,sprintf('%s_%s.txt',hosts{ii},test_fnm_suf)));
+    fprintf(fid,'# File with names of images\n%s\n',fullfile(config_path,sprintf('%s_%sFixBank.txt',hosts{ii},test_fnm_suf)));
     fprintf(fid,'# Extract features\n%d\n',FEATURES);
     fprintf(fid,'# Scales (Number of scales - Scales)\n%d %d\n',length(SCALES),SCALES);
     fprintf(fid,'# Ratios (Number of ratios - ratio)\n%d %d\n',length(RATIOS),RATIOS);
