@@ -18,12 +18,20 @@ dst_folder = '\\cgm10\D\head_pose_estimation\CRCNSPCApng';
 png_folder = '\\cgm10\D\head_pose_estimation\CRCNSpng';
 fid=fopen('MPGSIZES.txt','r');
  C = textscan(fid,'%s %d');
- numVids = numel(C{1});
+ fclose(fid);
+ %numVids = numel(C{1});
  VideoFiles = C{1};
  FramesInMovie = C{2};
+ vid_idx = [5,6,8,10,11,15,18,19,21,26,27,40,41,45,46,49,50]; % fixation Bank subset
+ numVids = numel(vid_idx);
+ VideoFiles = VideoFiles(vid_idx);
 %%
 for ii =1:numVids
     VideoFile = fullfile(datapath,'stimuli',VideoFiles{ii});
+    if (exist(fullfile(png_folder,VideoFiles{ii}),'dir'))
+        fprintf('Skipping Folder already processesed this Video!\n');
+        continue
+    end
     if(exist(VideoFile, 'file'))
         % Loop over frames and display the gaze locations over each videe frame
         if ~exist(fullfile(dst_folder,VideoFiles{ii}),'dir')

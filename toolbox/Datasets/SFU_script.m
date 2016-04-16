@@ -1,4 +1,4 @@
-clear all;close all;clc
+%clear all;close all;clc
 %///////////Optical Flow Params////////////////////
 alpha = 0.012;
 ratio = 0.75;
@@ -25,6 +25,11 @@ numVids = numel(VideoFiles);
 for ii =1:numVids
     VideoFile = fullfile(datapath,'RAW',VideoFiles{ii});
     nam = strsplit(lower(VideoFiles{ii}),'_');nam = nam{1};
+    if (exist(fullfile(png_folder,num),'dir') || exist(fullfile(png_folder,upper(nam)),'dir'))
+        fprintf('Skipping Folder:%s already processesed this Video!\n',VideoFiles{ii});
+        continue
+    end
+    
     CSVFile = fullfile(datapath,'CSV',sprintf('%s-Screen.csv',nam));
     if(exist(VideoFile, 'file') && exist(CSVFile,'file'))
         % Loop over frames and display the gaze locations over each videe frame
