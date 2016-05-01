@@ -19,13 +19,13 @@ addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_salien
 datapath ='\\cgm10\D\Competition_Dataset\SFU\SFU_etdb';
 VideoFiles = dir(fullfile(datapath,'RAW','*.yuv'));
 VideoFiles = extractfield(VideoFiles,'name')';
-dst_folder = '\\cgm10\D\head_pose_estimation\SFUPCApng';
-png_folder = '\\cgm10\D\head_pose_estimation\SFUpng';
+dst_folder = '\\cgm10\D\head_pose_estimation\SFUPCApng176x144';
+png_folder = '\\cgm10\D\head_pose_estimation\SFUpng176x144';
 numVids = numel(VideoFiles);
 for ii =1:numVids
     VideoFile = fullfile(datapath,'RAW',VideoFiles{ii});
     nam = strsplit(lower(VideoFiles{ii}),'_');nam = nam{1};
-    if (exist(fullfile(png_folder,num),'dir') || exist(fullfile(png_folder,upper(nam)),'dir'))
+    if (exist(fullfile(png_folder,nam),'dir') || exist(fullfile(png_folder,upper(nam)),'dir'))
         fprintf('Skipping Folder:%s already processesed this Video!\n',VideoFiles{ii});
         continue
     end
@@ -35,31 +35,36 @@ for ii =1:numVids
         % Loop over frames and display the gaze locations over each videe frame
         [GazeLocations, ~] = xlsread(CSVFile);
         [NumberOfFrames, ~] = size(GazeLocations);
-        if ~exist(fullfile(dst_folder,VideoFiles{ii}),'dir')
-           status  = mkdir(fullfile(dst_folder,VideoFiles{ii}));
+        vidnam = strsplit(VideoFiles{ii},'_'); vidnam = upper(vidnam{1});
+        if ~exist(fullfile(dst_folder,vidnam),'dir')
+           status  = mkdir(fullfile(dst_folder,vidnam));
            if ~status
-               error('SFU:: couldn''t create dir for %s',VideoFiles{ii});
+               error('SFU:: couldn''t create dir for %s',vidnam);
            end
         end
-        if ~exist(fullfile(png_folder,VideoFiles{ii}),'dir')
-            status  = mkdir(fullfile(png_folder,VideoFiles{ii}));
+        
+        if ~exist(fullfile(png_folder,vidnam),'dir')
+            status  = mkdir(fullfile(png_folder,vidnam));
             if ~status
-                error('SFU:: couldn''t create dir for %s',VideoFiles{ii});
+                error('SFU:: couldn''t create dir for %s',vidnam);
             end
         end
         for k=1:NumberOfFrames
             % Read one frame from the input YUV file and display it
             rgb = loadFileYuv(VideoFile,W,H,k);
+            rgb = imresize(rgb,0.5);
             if k==1 || k==2
                 [ofx, ofy]=deal(zeros(size(rgb,1),size(rgb,2)));
             else
                 fp = loadFileYuv(VideoFile,W,H,k-2);
+                fp = imresize(fp,0.5);
                 [ofx, ofy] = Coarse2FineTwoFrames(rgb, fp, ofParam);
             end
             [~,Smap,Mmap]=PCA_Saliency_all_color(ofx,ofy,rgb);
-            imwrite(Smap,fullfile(dst_folder,VideoFiles{ii},sprintf('%06d_PCAs.png',k)),'BitDepth',16);
-            imwrite(Mmap,fullfile(dst_folder,VideoFiles{ii},sprintf('%06d_PCAm.png',k)),'BitDepth',16);
-            imwrite(rgb,fullfile(png_folder,VideoFiles{ii},sprintf('%06d.png',k)));
+            
+            imwrite(Smap,fullfile(dst_folder,vidnam,sprintf('%06d_PCAs.png',k)),'BitDepth',16);
+            imwrite(Mmap,fullfile(dst_folder,vidnam,sprintf('%06d_PCAm.png',k)),'BitDepth',16);
+            imwrite(rgb,fullfile(png_folder,vidnam,sprintf('%06d.png',k)));
         end
         disp 'Done!'
     else

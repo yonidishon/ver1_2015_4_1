@@ -70,7 +70,7 @@ end
 tstart=tic;%start_clock
 warnNum=0;
 video_count=0;
-for ii=3:length(testIdx) % run for the length of the defined exp.
+for ii=22:length(testIdx) % run for the length of the defined exp.
 %     lockfile = [lockfiles_folder,'\',videos{testIdx(ii)},'_lockfile','.mat'];
 %     if exist(lockfile,'file') % somebody already working on this file go to next one.
 %         continue;
@@ -137,7 +137,7 @@ for ii=3:length(testIdx) % run for the length of the defined exp.
 %             MBLK_SZ = 1;
 %             PEL_MC = 4;
             ONE_DEGREE_PXLS = 58;
-            h=strsplit(videos{iv},'x');H=str2num(h{2});
+            h=strsplit(videos{iv},'x');H=str2num(h{end});
             ONE_DEGREE_MBLKS = ONE_DEGREE_PXLS*size(predMaps_tmp,1)/H/4;  % div by 4 to reduce cal and be more consice with the OBDL code
             tic
             % div by 4 to reduce cal and be more consice with the OBDL code

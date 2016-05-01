@@ -43,9 +43,9 @@ function [resColor,resSpatial,resMotion] = globalDistinctness(a,rad,I_RGB)
 orgSize=size(I_RGB);
 orgSize=orgSize(1:2);
 numOfLevels=3;
-stDistinc = zeros(orgSize(1),orgSize(2),numOfLevels);
-st1Distinc = stDistinc;
-clDistinc = stDistinc;
+mtDistinc = zeros(orgSize(1),orgSize(2),numOfLevels);
+st1Distinc = mtDistinc;
+clDistinc = mtDistinc;
 Pyramid = I_RGB;
 
 for pInd=1:numOfLevels
@@ -74,7 +74,7 @@ out = imfill(mtDistinc);
 out1 = imfill(st1Result);
 resColor = stableNormalize(clResult);
 resSpatial = stableNormalize(out1);
-resMotion = stableNormalize(out1.*clResult);% TODO
+resMotion = stableNormalize(out);% TODO
 end
 
 function [sDiffMap] = globalDiff(a,rad,I_RGB)

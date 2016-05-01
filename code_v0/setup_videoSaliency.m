@@ -2,13 +2,13 @@
 %% directories
 global dropbox;
 global gdrive;
-dropbox = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency\Dropbox';
-gdrive = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency\GDrive';
+dropbox = '\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox';
+gdrive = '\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\GDrive';
 % dataRoot = 'C:\Users\dmitryr\Documents\Dima Adobe\mturk\results';
 % frameRoot = 'C:\Users\dmitryr\Documents\Dima Adobe\DIEM\frames';
 % saveRoot = 'C:\Users\dmitryr\Documents\Dima Adobe\mturk\save';
-diemDataRoot = '\\CGM41\Users\gleifman\Documents\DimaCode\DIEM';%'Z:\RGB-D\DimaCode\DIEM'; % TODO current on external drive
-saveRoot = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0';
+diemDataRoot = '\\cgm10\D\DIEM';%'Z:\RGB-D\DimaCode\DIEM'; % TODO current on external drive
+saveRoot = '\\cgm10\D\Video_Saliency_cache_Backup';
 %depthDataRoot = 'C:\Users\gleifman\My Documents\DimaCode\DepthDB';%'Z:\RGB-D\DimaCode\DIEM'; % TODO current on external drive
 %crcnsRoot = 'C:\Users\Dmitry\Documents\Phd\Datasets\CRCNS-eye\CRCNS-DataShare';  % TODO current on external drive
 % youtubeRoot = 'C:\Users\dmitryr\Documents\Dima Adobe\YouTube';
@@ -18,12 +18,12 @@ saveRoot = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0';
 %crcnsMtvRoot = fullfile(crcnsRoot, 'Dima_MTV');
 
 %---------------change these lines when moving to other versions----------%
-proj_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency\code_v0';
-saliency_dir='C:\Users\ydishon\Documents\MATLAB\Video_Saliency';
-result_dir = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0\cache';
+proj_dir='\\cgm10\Users\ydishon\Documents\Video_Saliency\code_v0';
+saliency_dir='\\cgm10\Users\ydishon\Documents\Video_Saliency\Video_Saliency';
+%result_dir = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Results_v0\cache';
 
 % Finish up cache files on host and collect results in CGM10 
-lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_03_01';
+lockfiles_folder='\\cgm10\Users\ydishon\Documents\Video_Saliency\lockfiles\20160423';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_01_29';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_01_22';
 %lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_01_19';
@@ -39,15 +39,15 @@ lockfiles_folder='Y:\Users\ydishon\Documents\Video_Saliency\lockfiles\2015_03_01
 %-------------------------------------------------------------------------%
 
 % Local Folders creation
-if ~exist(proj_dir,'dir')
-    mkdir(proj_dir);
-end
-if ~exist(result_dir,'dir')
-    mkdir(result_dir);
-end
-if ~exist(saveRoot,'dir')
-    mkdir(saveRoot);
-end
+% if ~exist(proj_dir,'dir')
+%     mkdir(proj_dir);
+% end
+% if ~exist(result_dir,'dir')
+%     mkdir(result_dir);
+% end
+% if ~exist(saveRoot,'dir')
+%     mkdir(saveRoot);
+% end
 
 addpath(proj_dir);
 

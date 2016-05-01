@@ -1,10 +1,12 @@
 %% visualize - AUC & X^2 & NSS
 clear all;close all;clc
+%%%%%CHANGE THIS IF YOU'DE LIKE TO SAVE%%%%%%%%%%%%%%%%%
+sav = 0;
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\toolbox\piotr_toolbox_V2.60'));
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\release'));
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\visualization\figstate'));
 diemDataRoot = '\\cgm10\D\DIEM';
-
+loc = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
 measures = {'chisq','auc','nss'};
 %List of Movies Used by Borji on DIEM
 videos=importdata(fullfile(diemDataRoot, 'list.txt'));
@@ -49,6 +51,9 @@ Predinfo(7).sim_ind = 4;
 Predinfo(8).name = 'OBDL';
 Predinfo(8).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
 Predinfo(8).sim_ind = 5;
+Predinfo(9).name = 'houghPCAMRF+F+P';
+Predinfo(9).sim_fold = '\\cgm10\D\head_pose_estimation\Predictions\2016_04_23_Faces_and_poselets';
+Predinfo(9).sim_ind = 1;
 
 % Predinfo(3).name = 'Hough_PatchSz20';
 % Predinfo(3).sim_fold = '\\cgm10\D\head_pose_estimation\Analysis_All\OBDL_full';
@@ -68,11 +73,11 @@ fprintf('%s resides in:: %s\n',str{:});
 fprintf('Indices:: %s\n',mat2str(extractfield(Predinfo,'sim_ind')'));
 clear str fold nm
 %% Do the Calculations of the similarity
- calc_graphs_and_mean( Predinfo, measures, videos, frames ,seq_names);
+ calc_graphs_and_mean( Predinfo, measures, videos, frames ,seq_names,sav,loc);
 %% Finish Up
 fprintf('Finished Processing:  %s\n',datestr(datetime('now')));
 rmpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\toolbox\piotr_toolbox_V2.60'));
-rmpath(genpath('C:\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\toolbox\piotr_toolbox_V2.60\toolbox'));
+rmpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\toolbox\piotr_toolbox_V2.60\toolbox'));
 rmpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention\release'));
 rmpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\GDrive\Software\dollar_261'));
 rmpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\visualization\figstate'));

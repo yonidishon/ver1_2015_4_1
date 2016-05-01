@@ -25,12 +25,22 @@ clear ii jj testIdx diemDataRoot vid_name_splt
 fprintf('Measures::\n');
 fprintf('%s\n', measures{:});
 %% List of Predictors to measure performance on
+% 1st exp no resizing
+% Predinfo(1).name = 'self';
+% Predinfo(1).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\2016_04_07_Fix_compare\result_eval';
+% Predinfo(1).sim_ind = 2;
+% Predinfo(2).name = 'Ours (No MRF)';%'Hough_p_MRF';
+% Predinfo(2).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\2016_04_07_Fix_compare\result_eval';
+% Predinfo(2).sim_ind = 1;
 Predinfo(1).name = 'self';
-Predinfo(1).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\2016_04_07_Fix_compare\result_eval';
+Predinfo(1).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\\2016_04_07_Fix_MRFComp';
 Predinfo(1).sim_ind = 2;
-Predinfo(2).name = 'Ours (No MRF)';%'Hough_p_MRF';
-Predinfo(2).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\2016_04_07_Fix_compare\result_eval';
+Predinfo(2).name = 'Ours';%'Hough_p_MRF';
+Predinfo(2).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\\2016_04_07_Fix_MRFComp';
 Predinfo(2).sim_ind = 1;
+Predinfo(3).name = 'Ours (No MRF)';%'Hough_p_MRF';
+Predinfo(3).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\\2016_04_07_Fix_MRFComp';
+Predinfo(3).sim_ind = 3;
 % Predinfo(3).name = 'Ours';%'Hough_15_p';
 % Predinfo(3).sim_fold = '\\cgm10\d\head_pose_estimation\Predictions\2016_04_07_Fix_compare';
 % Predinfo(3).sim_ind = 3;

@@ -1,5 +1,7 @@
-function [] = calc_graphs_and_mean( Predinfo, measures, videos, frames , seq_names )
-
+function [] = calc_graphs_and_mean( Predinfo, measures, videos, frames , seq_names,sav,loc )
+if ~exist('sav','var')
+    sav = 0;
+end
 pred_nms = extractfield(Predinfo,'name');
 sim_folds = extractfield(Predinfo,'sim_fold');
 sim_inds = extractfield(Predinfo,'sim_ind');
@@ -47,8 +49,26 @@ for im = 1:length(measures)
     if (size(meanChiSq, 1) == 1), meanChiSq = [meanChiSq; zeros(1, length(pred_nms))]; end;
     
     f=figure;
-    bar(meanChiSq);set(gca,'Xlim',[0 size(meanChiSq,1)+6.5]);
-    imLabel(lbl, 'bottom', -90, {'FontSize',8, 'Interpreter', 'None'});
+    mycolors =[0    1.0000         0
+         0    0.6667         0
+         0    0.3333         0
+    1.0000         0         0
+    0.6667         0         0];
+theircolors =[ 0.7500    0.7500    0.7500
+    0.5000    0.5000    0.5000
+    0.2500    0.2500    0.2500];
+%     mymap = [1.0000    1.0000         0
+%     1.0000         0    1.0000
+%     0.6667         0         0
+%          0    0.3333         0
+%          0    1.0000         0
+%          0         0    0.6667
+%          0         0         0
+%     0.6667    0.6667    0.6667];
+mymap = [mycolors;theircolors];
+    b = bar(meanChiSq);colormap(mymap); set(gca,'Xlim',[0 size(meanChiSq,1)+6.5]);
+    b(2).EdgeColor = 'k';
+    imLabel(lbl, 'bottom', -45, {'FontSize',8, 'Interpreter', 'None'});
     ylabel(measures{im});
     title(sprintf('Mean %s', mat2str(meanMeas, 2)));
     
@@ -56,6 +76,11 @@ for im = 1:length(measures)
     %maxfig(f,1);
     pause(5);
     %print('-dpng', fullfile(predFolder, sprintf('mean_%s_scores.png', measures{im})));
+    if sav
+        formatOut = 'yyyymmdd';
+        dstr=datestr(now,formatOut);
+        print(f,fullfile(loc,sprintf('%s_mean_%s',measures{im},dstr)),'-depsc','-r300');
+    end
     
 end
 
