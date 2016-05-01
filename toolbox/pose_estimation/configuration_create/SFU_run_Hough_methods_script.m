@@ -9,8 +9,8 @@ clear all;close all;clc
 %% DONE - Run Detections:
 
 % 1. Prepare config files
-data_fold = '\\cgm10\D\head_pose_estimation\SFUpng';
-EXP_FOLD_NM = '22_02_2016_Pcas_only_subpatches_16_0_8conf';
+data_fold = '\\cgm10\D\head_pose_estimation\SFUpng176x144';
+EXP_FOLD_NM = '01_05_2016_PCAonly_subpatches_08confSFU176x144';
 hosts = {'CGM-AYELLET-1','CGM7','CGM16','CGM45','CGM46','CGM47'};
 addpath(genpath('C:\Users\ydishon\Documents\Video_Saliency\toolbox\pose_estimation\configuration_create'))
 func_Config_txt_CreateSFU(EXP_FOLD_NM,hosts)

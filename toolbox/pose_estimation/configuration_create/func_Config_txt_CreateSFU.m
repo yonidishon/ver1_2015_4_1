@@ -4,7 +4,7 @@ config_path = fullfile(pose_path,'config_files');
 % Configuration Options:
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 test_fnm_suf ='test';%'test_post';%'test';
-resultFoldforPost ='SFUpng';%'origandPCAmPCAs_15_float'; %'origandPCAmPCAs_15';
+resultFoldforPost ='SFUpng176x144';%'origandPCAmPCAs_15_float'; %'origandPCAmPCAs_15';
 resultFoldforHard = '';
 FORESTSZ = 10;%8;%15;%10
 % calculation of the workload per host
@@ -20,14 +20,14 @@ NEGPERLN = 1;% Sample patches from neg. examples (each line in negexamplefile)
 HARDNEGPERFRAME = 20; % HARD NEGATIVE
 phase ={'test'};
 % Path to data etc.:
-path_treetable = fullfile(pose_path,'trees',['trees_',EXP_FOLD_NM,'\']);
+path_treetable = fullfile(pose_path,'trees',['trees_','22_02_2016_Pcas_only_subpatches_16_0_8conf','\']);
 % path_treetable = fullfile(pose_path,'trees',['treetable_','origandPCAmPCAs_15']); % TODO!!!
 path_images_from_movies = fullfile(pose_path,resultFoldforPost);
 %outputpath = fullfile(pose_path,sprintf('pred_%s',EXP_FOLD_NM)); %TODO change of mining
 outputpath = fullfile('\\cgm10\D\head_pose_estimation\PredictionsSFU',sprintf('pred_%s',EXP_FOLD_NM));
-posexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
+posexamplepath = fullfile(pose_path,'DIEMpng'); % only test so it doesn't matter really
 posexamplefile = fullfile(pose_path,'Predictions',EXP_FOLD_NM,'train_pos.txt'); % TODO
-negexamplepath = fullfile(pose_path,'DIEMpng'); % current is the same as images - only 3 movies as training set.
+negexamplepath = fullfile(pose_path,'DIEMpng'); % only test so it doesn't matter really
 negexamplefile = fullfile(pose_path,'Predictions',EXP_FOLD_NM,'train_neg.txt'); % TODO
 % foreach host
 for ii=1:length(hosts)
