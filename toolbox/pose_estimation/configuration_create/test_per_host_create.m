@@ -31,9 +31,9 @@ filenmsuffix ='.txt'; % TODO
 %filenmsuffix = '.txt';
 gaze = '\\cgm10\D\DIEM\gaze';
 movie_list = importdata('\\cgm10\D\DIEM\list.txt');
-% borji_list_subset = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % Used by Borji on DIEM
-fix_test_set =[35,17,16,56,11,57,69,82,48,67,46,81,30,31,47,25,75,73,74,26,65,9,62,40,7,50,70];
-train_set = movie_list(fix_test_set);
+borji_list_subset = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % Used by Borji on DIEM
+%fix_test_set =[35,17,16,56,11,57,69,82,48,67,46,81,30,31,47,25,75,73,74,26,65,9,62,40,7,50,70];
+train_set = movie_list(borji_list_subset);
 MOVIESPERHOST = repmat(floor(length(train_set)/length(hosts)),length(hosts),1);
 carry_over = mod(length(train_set),length(hosts));
 MOVIESPERHOST(end-(carry_over-1):end,:) = MOVIESPERHOST(end-(carry_over-1):end,:)+1;
@@ -47,7 +47,7 @@ OFFSET = 1;% to be consistent with Dmitry.
 counter = 1;
 
 for ii=1:length(hosts)
-    fid=fopen(fullfile(dst_folder,[hosts{ii},'_testFixBank',filenmsuffix]),'w');
+    fid=fopen(fullfile(dst_folder,[hosts{ii},'_testNew',filenmsuffix]),'w');
     fprintf(fid,'%d\n',0); % dummy value
     foldernms = train_set(counter:counter+(MOVIESPERHOST(ii)-1));
     totnumframes=0;
@@ -61,9 +61,9 @@ for ii=1:length(hosts)
         end
     end
 fclose(fid);
-A = regexp(fileread(fullfile(dst_folder,[hosts{ii},'_testFixBank',filenmsuffix])), '\n', 'split');
+A = regexp(fileread(fullfile(dst_folder,[hosts{ii},'_testNew',filenmsuffix])), '\n', 'split');
 A{1} = sprintf('%d',totnumframes);
-fid = fopen(fullfile(dst_folder,[hosts{ii},'_testFixBank',filenmsuffix]), 'w');
+fid = fopen(fullfile(dst_folder,[hosts{ii},'_testNew',filenmsuffix]), 'w');
 fprintf(fid, '%s\n', A{:});
 fclose(fid);
 counter = counter + MOVIESPERHOST(ii);

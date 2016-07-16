@@ -25,7 +25,10 @@ for im = 1:length(measures)
         for k=1:length(pred_nms)
              if exist(fullfile(sim_folds{k},[videos{ii},'_similarity.mat']),'file')
                 tmp=matfile(fullfile(sim_folds{k},[videos{ii},'_similarity.mat']));
-                sim{ii}(k,:,:)=tmp.sim(sim_inds(k),:,1:sim_length);
+                sim{ii}(k,:,:)=tmp.sim(sim_inds(k),find(ismember(tmp.measures,measures)),1:sim_length);
+             elseif exist(fullfile(sim_folds{k},[videos{ii},'_similarity_compressed.mat']),'file')
+                tmp=matfile(fullfile(sim_folds{k},[videos{ii},'_similarity_compressed.mat']));
+                sim{ii}(k,:,:)=tmp.sim(sim_inds(k),find(ismember(tmp.measures,measures)),1:sim_length);
              else
                  sim{ii}(k,:,:)=NaN(nmeas,sim_length);
                     fprintf(['Video:',videos{ii},' has no Similarity.mat file',' For Method ',pred_nms{k},'\n']);
@@ -41,7 +44,7 @@ for im = 1:length(measures)
     meanChiSq = meanChiSq(ind, :);
     meanMeas = mean(meanChiSq, 1);
     for ii =1:length(meanMeas)
-        fprintf('%s : Mean (%s)  %.2f\n',pred_nms{ii},measures{im},meanMeas(ii));
+        fprintf('%s : Mean (%s)  %.3f\n',pred_nms{ii},measures{im},meanMeas(ii));
     end
     %lbl = videos(testIdx(testSubset(ind)));
     lbl = seq_names;

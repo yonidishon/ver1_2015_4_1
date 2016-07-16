@@ -18,6 +18,8 @@ func_Config_txt_CreateSFU(EXP_FOLD_NM,hosts)
 EXP_FOLD_NM
 % 3. Change the HoughGaze...exe to the correct one.
 % 04_03_2016_Pcas_only_subpatches_0_8_confSFU
+%% create test per host
+
 %% Something isn't right with the PScripts
 
 % So open cmd.exe on each hosts and run this:
