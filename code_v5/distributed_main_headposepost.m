@@ -1,7 +1,7 @@
 %% Setup file to rule them all
 %setup_videoSaliency;
-dropbox = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency\Dropbox';
-gdrive = 'C:\Users\ydishon\Documents\MATLAB\Video_Saliency\Dimarudoy_saliency\GDrive';
+dropbox = 'C:\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox';
+gdrive = 'C:\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\GDrive';
 addpath(genpath(fullfile(gdrive, 'Software', 'dollar_261')));
 addpath(fullfile(dropbox, 'Matlab', 'video_attention'));
 addpath(fullfile(dropbox, 'Matlab', 'video_attention', 'compare', 'BorjiMetrics')); % measures
@@ -146,19 +146,24 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             tic
             % div by 4 to reduce cal and be more consice with the OBDL code
             predMaps = SalOBDL_MRF(imresize(predMaps_tmp(:,:,1:FRMS_CNT),1/4), ONE_DEGREE_MBLKS,T_t,T_o,T_c);
-            predMaps1 = SalOBDL_MRF(imresize(predMaps_tmp1(:,:,1:FRMS_CNT),1/4), ONE_DEGREE_MBLKS,T_t,T_o,T_c);
+            tot = toc;
+            disp(toc)
             times = toc/FRMS_CNT;
-            disp(times*1000)
-            for ifr = 1:length(indFr)
-                gazeData.index = frames(indFr(ifr));
-                [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
-                    'self',...
-                    'saliency__15_p',predMaps1(:,:,indFr(ifr)));
-                if (saveVideo && verNum >= 2012)
-                    outfr = renderSideBySide(read(vr,frames(indFr(ifr))), outMaps, colors, cmap, sim(:,:,ifr),methods);
-                    writeVideo(vw, outfr);
-                end
-            end
+            disp(times)
+            fprintf('This is how much time it took waiting for user');
+            return
+%             predMaps1 = SalOBDL_MRF(imresize(predMaps_tmp1(:,:,1:FRMS_CNT),1/4), ONE_DEGREE_MBLKS,T_t,T_o,T_c);
+% 
+%             for ifr = 1:length(indFr)
+%                 gazeData.index = frames(indFr(ifr));
+%                 [sim(:,:,ifr), outMaps] = similarityFrame3(predMaps(:,:,indFr(ifr)), gazeData, measures, ...
+%                     'self',...
+%                     'saliency__15_p',predMaps1(:,:,indFr(ifr)));
+%                 if (saveVideo && verNum >= 2012)
+%                     outfr = renderSideBySide(read(vr,frames(indFr(ifr))), outMaps, colors, cmap, sim(:,:,ifr),methods);
+%                     writeVideo(vw, outfr);
+%                 end
+%             end
         catch me
             if (saveVideo && verNum >= 2012)
                 close(vw);
@@ -166,19 +171,19 @@ for ii=1:length(testIdx) % run for the length of the defined exp.
             rethrow(me);
         end
         
-        if (saveVideo && verNum >= 2012)
-            close(vw);
-        end
-        
-        fprintf('%f sec\n', toc);
-        fprintf('Time is: %s\n',datestr(clock,'dd/mm/yyyy, HH:MM'));
-        vidnameonly=strsplit(vr.name,'.');vidnameonly=vidnameonly{1};
-        movieIdx=iv;
-        save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx');
-        save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps');
-        % Finish processing saving and moving on
-        %dosave(lockfile,'success',1,'compname',getComputerName());
-        video_count=video_count+1;
+%         if (saveVideo && verNum >= 2012)
+%             close(vw);
+%         end
+%         
+%         fprintf('%f sec\n', toc);
+%         fprintf('Time is: %s\n',datestr(clock,'dd/mm/yyyy, HH:MM'));
+%         vidnameonly=strsplit(vr.name,'.');vidnameonly=vidnameonly{1};
+%         movieIdx=iv;
+%         save(fullfile(finalResultRoot, [vidnameonly,'_similarity.mat']), 'sim', 'measures', 'methods', 'movieIdx');
+%         save(fullfile(finalResultRoot, [vidnameonly,'.mat']),'frames', 'indFr', 'predMaps');
+%         % Finish processing saving and moving on
+%         %dosave(lockfile,'success',1,'compname',getComputerName());
+%         video_count=video_count+1;
         
         % ERROR handling
     catch me
