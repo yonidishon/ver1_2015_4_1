@@ -30,9 +30,9 @@ movie_list = importdata('\\cgm10\D\DIEM\list.txt');
 % borji_list_subset = [6,8,10,11,12,14,15,16,34,42,44,48,53,54,55,59,70,74,83,84]; % Used by Borji on DIEM
 my_training_set = [7,18,20,21,22,32,39,41,46,51,56,60,65,72,73]; %15 vids - hand selected
 %fix_train_set = [18,20,21,22,32,39,41,51,60,72,19,23,36,49,66]; % 15 vids - hand picked to compare to Fixation Bank
-train_set = movie_list(fix_train_set);
+train_set = movie_list(my_training_set);
 src_folder = '\\cgm10\D\head_pose_estimation\DIEMpng';
-dst_folder ='\\cgm10\D\head_pose_estimation\Predictions\2016_04_07_Fix_compare';%'\\cgm10\D\head_pose_estimation\DIEMpng';
+dst_folder ='\\cgm10\D\head_pose_estimation\dev\tmp';%'\\cgm10\D\head_pose_estimation\DIEMpng';
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\Dimarudoy_saliency\Dropbox\Matlab\video_attention'));
 addpath(genpath('\\cgm10\Users\ydishon\Documents\Video_Saliency\toolbox\pose_estimation'));
 NUMIMAGES=-1;% -1 = all in the dataset %100;
@@ -46,11 +46,19 @@ fid_neg=fopen(fullfile(dst_folder,['train_neg',filenmsuffix]),'w');
 fid_pos=fopen(fullfile(dst_folder,['train_pos',filenmsuffix]),'w');
 fprintf(fid_neg,'%d 1\n',NUMSAMPLESIM*totnumframes);
 fprintf(fid_pos,'%d 1\n',NUMSAMPLESIM);
+global stat;
+stat = 0;
+f=figure();
+btnacc = uicontrol('Style', 'pushbutton', 'String', 'Accept','Position', [20 20 50 20],'Callback', @(~,~)rejfunc('acc'));    
+btnrej = uicontrol('Style', 'pushbutton', 'String', 'Reject','Position', [20 50 50 20],'Callback', @(~,~)rejfunc('rej'));
 for k=1:length(train_set);
     movie_name_no_ext = train_set{k};
+    f.Name = movie_name_no_ext;
     gazeinfo=importdata(fullfile(gaze,[movie_name_no_ext,'.mat']),'data');
     for ii=OFFSET:SKIP:length(gazeinfo.points);
-        [BB_NEG,BB_POS]=patch_extract([gazeinfo.width,gazeinfo.height],gazeinfo.points{ii},gazeinfo.pointSigma,NUMSAMPLESIM);
+        fr=imread(fullfile(src_folder,movie_name_no_ext,sprintf('%06d.png',ii)));
+        
+        [BB_NEG,BB_POS]=patch_extract(f,fr,[gazeinfo.width,gazeinfo.height],gazeinfo.points{ii},gazeinfo.pointSigma,NUMSAMPLESIM,ii);
         if isempty(BB_NEG) || isempty(BB_POS)
             continue;
         end
